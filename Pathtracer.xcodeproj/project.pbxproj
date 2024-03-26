@@ -11,6 +11,8 @@
 		E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2D22BB3173400C3D3BA /* ContentView.swift */; };
 		E098C2D52BB3173400C3D3BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E098C2D42BB3173400C3D3BA /* Assets.xcassets */; };
 		E098C2D92BB3173400C3D3BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E098C2D82BB3173400C3D3BA /* Preview Assets.xcassets */; };
+		E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */ = {isa = PBXBuildFile; fileRef = E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */; };
+		E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E12BB3252100C3D3BA /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +22,8 @@
 		E098C2D42BB3173400C3D3BA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E098C2D62BB3173400C3D3BA /* Pathtracer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pathtracer.entitlements; sourceTree = "<group>"; };
 		E098C2D82BB3173400C3D3BA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pathtracer.metal; sourceTree = "<group>"; };
+		E098C2E12BB3252100C3D3BA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,11 +56,13 @@
 		E098C2CF2BB3173400C3D3BA /* Pathtracer */ = {
 			isa = PBXGroup;
 			children = (
+				E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */,
 				E098C2D02BB3173400C3D3BA /* PathtracerApp.swift */,
 				E098C2D22BB3173400C3D3BA /* ContentView.swift */,
 				E098C2D42BB3173400C3D3BA /* Assets.xcassets */,
 				E098C2D62BB3173400C3D3BA /* Pathtracer.entitlements */,
 				E098C2D72BB3173400C3D3BA /* Preview Content */,
+				E098C2E12BB3252100C3D3BA /* ViewController.swift */,
 			);
 			path = Pathtracer;
 			sourceTree = "<group>";
@@ -141,6 +147,8 @@
 			files = (
 				E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */,
 				E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */,
+				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,
+				E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,7 +300,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.AdellarIrankunda.Pathtracer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -330,7 +338,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.AdellarIrankunda.Pathtracer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
