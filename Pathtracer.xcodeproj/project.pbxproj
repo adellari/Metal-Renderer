@@ -13,6 +13,7 @@
 		E098C2D92BB3173400C3D3BA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E098C2D82BB3173400C3D3BA /* Preview Assets.xcassets */; };
 		E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */ = {isa = PBXBuildFile; fileRef = E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */; };
 		E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E12BB3252100C3D3BA /* ViewController.swift */; };
+		E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E32BB32A6600C3D3BA /* Encoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		E098C2D82BB3173400C3D3BA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pathtracer.metal; sourceTree = "<group>"; };
 		E098C2E12BB3252100C3D3BA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E098C2E32BB32A6600C3D3BA /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +42,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E098C2E32BB32A6600C3D3BA /* Encoder.swift */,
 				E098C2CF2BB3173400C3D3BA /* Pathtracer */,
 				E098C2CE2BB3173400C3D3BA /* Products */,
 			);
@@ -147,6 +150,7 @@
 			files = (
 				E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */,
 				E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */,
+				E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */,
 				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,
 				E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */,
 			);
