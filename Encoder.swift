@@ -7,7 +7,9 @@
 
 import Metal
 
-final class UniformsSetter{
+
+//Prepares the pipeline and uinforms
+final class PipelineEncoder{
     var tint: Float = .zero
     private var deviceSupportsNonuniformThreadgroups: Bool
     private let pipelineState: MTLComputePipelineState
@@ -17,7 +19,7 @@ final class UniformsSetter{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
         let constantValues = MTLFunctionConstantValues()
         constantValues.setConstantValue(&self.deviceSupportsNonuniformThreadgroups, type: .bool, index: 0)
-        let function = try library.makeFunction(name: "main", constantValues: constantValues)
+        let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
         self.pipelineState = try library.device.makeComputePipelineState(function: function)
     }
     

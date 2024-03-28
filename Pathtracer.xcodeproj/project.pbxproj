@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2D02BB3173400C3D3BA /* PathtracerApp.swift */; };
 		E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2D22BB3173400C3D3BA /* ContentView.swift */; };
 		E098C2D52BB3173400C3D3BA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E098C2D42BB3173400C3D3BA /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E068B2052BB4E41E006F2DB0 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		E098C2CD2BB3173400C3D3BA /* Pathtracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pathtracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E098C2D02BB3173400C3D3BA /* PathtracerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathtracerApp.swift; sourceTree = "<group>"; };
 		E098C2D22BB3173400C3D3BA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -42,6 +44,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E068B2052BB4E41E006F2DB0 /* TextureManager.swift */,
 				E098C2E32BB32A6600C3D3BA /* Encoder.swift */,
 				E098C2CF2BB3173400C3D3BA /* Pathtracer */,
 				E098C2CE2BB3173400C3D3BA /* Products */,
@@ -149,6 +152,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */,
+				E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */,
 				E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */,
 				E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */,
 				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,

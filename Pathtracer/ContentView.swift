@@ -14,6 +14,13 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+            
+            Button(action: {
+                print("hello")
+            }) {
+                Image(systemName: "eye.fill")
+                    //.resizable()
+            }
         }
         .padding()
     }
