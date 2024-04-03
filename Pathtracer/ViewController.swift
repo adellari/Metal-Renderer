@@ -19,7 +19,7 @@ class ViewController: UIViewController {
     
     private let device: MTLDevice
     private let encoder: PipelineEncoder
-    private let imageView: UIImageView
+    public let imageView: UIImageView
     private let commandQueue: MTLCommandQueue
     private let textureManager: TextureManager
     private var texturePair: (source: MTLTexture, destination: MTLTexture)?
@@ -47,18 +47,29 @@ class ViewController: UIViewController {
     
     
     
-    private func redraw() {
+    public func redraw() {
+        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 400, height: 200, mipmapped: false)
+        desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
+        self.texturePair?.source = device.makeTexture(descriptor: desc)!
+        self.texturePair?.destination = device.makeTexture(descriptor: desc)!
+        
         guard let source = self.texturePair?.source,
               let destination = self.texturePair?.destination,
               let commandBuffer = self.commandQueue.makeCommandBuffer()
-        else { return }
+        else { 
+            print("something went wrong when setting uniforms and cmd buffer")
+            return
+        }
         
         self.encoder.encode(source: source, destination: destination, in: commandBuffer)
         
         //what will happen to the result of the compute kernel
         commandBuffer.addCompletedHandler { _ in
             guard let cgImage = try? self.textureManager.cgImage(from: destination)
-            else { return }
+            else {
+                print("unable to make cg image in redraw function")
+                return
+            }
             
             DispatchQueue.main.async {
                 self.imageView.image = .init(cgImage: cgImage)
