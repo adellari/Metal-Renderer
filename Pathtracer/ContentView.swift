@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    var viewController: ViewController?
+     var viewController: ViewController?
 
         init() {
             do {
@@ -33,6 +33,7 @@ struct ContentView: View {
             
             Button(action: {
                 print("hello")
+                viewController?.redraw()
                 print(viewController?.imageView)
             }) {
                 Image(systemName: "eye.fill")
@@ -41,7 +42,7 @@ struct ContentView: View {
         }
         .ignoresSafeArea()
         .onAppear(perform: {
-            viewController?.redraw()
+            
         })
         .padding()
     }

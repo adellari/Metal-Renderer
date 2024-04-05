@@ -15,8 +15,6 @@ class ViewController: UIViewController {
         case commandQueuereationFailed
     }
     
-    private let picker = UIImagePickerController()
-    
     private let device: MTLDevice
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
@@ -50,8 +48,15 @@ class ViewController: UIViewController {
     public func redraw() {
         let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 400, height: 200, mipmapped: false)
         desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
-        self.texturePair?.source = device.makeTexture(descriptor: desc)!
-        self.texturePair?.destination = device.makeTexture(descriptor: desc)!
+        //self.texturePair?.source = device.makeTexture(descriptor: desc)!
+        //self.texturePair?.destination = device.makeTexture(descriptor: desc)!
+        var src : MTLTexture = device.makeTexture(descriptor: desc)!
+        var dst : MTLTexture = device.makeTexture(descriptor: desc)!
+        
+        self.texturePair = (src, dst)
+        if self.texturePair == nil{
+            print("sourcePair is not initialized")
+        }
         
         guard let source = self.texturePair?.source,
               let destination = self.texturePair?.destination,
@@ -60,6 +65,7 @@ class ViewController: UIViewController {
             print("something went wrong when setting uniforms and cmd buffer")
             return
         }
+        
         
         self.encoder.encode(source: source, destination: destination, in: commandBuffer)
         

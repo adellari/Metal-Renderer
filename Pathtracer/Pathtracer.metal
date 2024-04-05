@@ -38,7 +38,7 @@ kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture
     }
     
     const auto pixVal = source.read(position);
-    const auto result = float4(0.f, 0.5f, 1.f, 1.f);
+    const auto result = float4(0.5f, 0.5f, 1.f, 1.f);
     
     destination.write(result, position);
 }
