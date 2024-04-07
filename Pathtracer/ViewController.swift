@@ -26,7 +26,7 @@ class ViewController: UIViewController {
     
     init(device: MTLDevice) throws{
         let library = try device.makeDefaultLibrary(bundle: .main)
-        guard let commandQueue = device.makeCommandQueue()
+        guard let commandQueue = device.makeCommandQueue()          //make a command queue from the device
         else { throw Error.commandQueuereationFailed}
         self.device = device
         self.encoder = try .init(library: library)
@@ -46,7 +46,7 @@ class ViewController: UIViewController {
     
     
     public func redraw() {
-        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 400, height: 200, mipmapped: false)
+        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 496, height: 248, mipmapped: false)
         desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
         //self.texturePair?.source = device.makeTexture(descriptor: desc)!
         //self.texturePair?.destination = device.makeTexture(descriptor: desc)!
@@ -66,7 +66,7 @@ class ViewController: UIViewController {
             return
         }
         
-        
+            //use the pipeline encoder to define a compute pipeline and fill command buffer
         self.encoder.encode(source: source, destination: destination, in: commandBuffer)
         
         //what will happen to the result of the compute kernel
