@@ -37,31 +37,26 @@ final class PipelineEncoder{
         var WorldToCamera = float4x4().CameraToWorld(origin: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0).inverse
         var ProjectionInvMatrix = float4x4().Projection(fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0).inverse
 
+        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, dummy: 1.0)
+        var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
+        
         
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
         encoder.setTexture(destination, index: 1)
-        /*
         encoder.setBytes(&self.tint, length: MemoryLayout<Float>.stride, index: 0)
-        encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
-        encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)*/
+        encoder.setBuffer(camBuffer, offset: 0, index: 1)
+        //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
+        //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)
         
-        let threadDimensions = MTLSize(width: source.width, height: source.height, depth: 1)
-        let threadGroupsX = self.pipelineState.threadExecutionWidth
-        let threadGroupsY = self.pipelineState.maxTotalThreadsPerThreadgroup / threadGroupsX
+       
         let threadGroupSize = MTLSize(width: 16, height: 16, depth: 1)
-        let threadCountPerGroup = MTLSize(width: source.width / 16, height: source.height / 16, depth: 1)
+        let threadCountPerGroup = MTLSize(width: destination.width / 16, height: destination.height / 16, depth: 1)
         
         encoder.setComputePipelineState(self.pipelineState)
-        if self.deviceSupportsNonuniformThreadgroups {
-            encoder.dispatchThreadgroups(threadDimensions, threadsPerThreadgroup: threadGroupSize)
-        }
-        else {
-            let threadGroupCount = MTLSize(width: (threadDimensions.width + threadGroupSize.width - 1) / threadGroupSize.width, height: (threadDimensions.height + threadGroupSize.height - 1) / threadGroupSize.height, depth: 1)
-            
-            //encoder.dispatchThreadgroups(threadGroupCount, threadsPerThreadgroup: threadGroupSize)
-            encoder.dispatchThreadgroups(threadGroupSize, threadsPerThreadgroup: threadCountPerGroup)
-        }
+        //encoder.dispatchThreadgroups(threadGroupCount, threadsPerThreadgroup: threadGroupSize)
+        encoder.dispatchThreadgroups(threadGroupSize, threadsPerThreadgroup: threadCountPerGroup)
+        
         
         encoder.endEncoding()
     }

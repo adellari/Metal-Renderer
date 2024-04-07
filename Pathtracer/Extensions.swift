@@ -8,6 +8,12 @@
 import SwiftUI
 import simd
 
+struct CameraParams{
+    var WorldToCamera : float4x4;
+    var ProjectionInv: float4x4;
+    var dummy: Float;
+}
+
 extension UIImageView {
     func asSwiftUIView() -> some View {
         return ImageViewWrapper(uiImageView: self)

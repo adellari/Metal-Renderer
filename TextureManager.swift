@@ -22,6 +22,23 @@ final class TextureManager{
         self.textureLoader = .init(device: device)
     }
     
+    func loadTexture(path: String) -> MTLTexture? {
+        guard let image = UIImage(named: path)?.cgImage else {
+            print("failed to create load image from path")
+            return nil
+        }
+        
+        do {
+            let result = try texture(from:image)
+            return result
+        }
+        catch {
+            print("could not create MTLTexture from CGImage")
+            return nil
+        }
+        
+    }
+    
     //create a metal texture from a cg image that has read/write enabled
     func texture(from cgImage: CGImage, usage: MTLTextureUsage = [.shaderRead, .shaderWrite]) throws -> MTLTexture{
         

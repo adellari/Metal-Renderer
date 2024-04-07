@@ -15,6 +15,12 @@ constant float2 _Pixel [[function_constant(1)]];
 constant float init_Seed [[function_constant(2)]];
 //device float _Seed;
 
+struct CameraParams {
+    float4x4 worldToCamera;
+    float4x4 projectionInv;
+    float dummy;
+};
+
 struct Ray {
     float3 direction;
     float3 origin;
@@ -79,7 +85,7 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
     }
 }
 
-kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
     
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
     
@@ -97,7 +103,7 @@ kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture
     //const auto result = float4(1.f, 0.f, 0.f, 1.f);       //brg
     
     
-    const auto result = float4(abs(uv), 0.f, 1.f);
+    const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
     
     destination.write(result, position);
 }

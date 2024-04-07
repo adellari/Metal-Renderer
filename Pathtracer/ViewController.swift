@@ -50,7 +50,8 @@ class ViewController: UIViewController {
         desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
         //self.texturePair?.source = device.makeTexture(descriptor: desc)!
         //self.texturePair?.destination = device.makeTexture(descriptor: desc)!
-        var src : MTLTexture = device.makeTexture(descriptor: desc)!
+        //var src : MTLTexture = device.makeTexture(descriptor: desc)!
+        var src : MTLTexture = textureManager.loadTexture(path: "cliffs")!
         var dst : MTLTexture = device.makeTexture(descriptor: desc)!
         
         self.texturePair = (src, dst)
