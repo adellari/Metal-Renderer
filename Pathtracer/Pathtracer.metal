@@ -49,6 +49,18 @@ Ray CreateRay(float3 origin, float3 direction){
     return ray;
 }
 
+Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
+{
+    Ray ray;
+    float3 origin = (float4(0, 0, 5, 1) * cam->worldToCamera).xyz;
+    float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
+    
+    dir = normalize(float4(dir, 0) * cam->worldToCamera).xyz;
+    ray = CreateRay(origin, dir);
+    
+    return ray;
+}
+
 RayHit CreateRayHit(){
     RayHit hit;
     hit.distance = INFINITY;
@@ -101,9 +113,11 @@ kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture
     
     //const auto pixVal = source.read(position);
     //const auto result = float4(1.f, 0.f, 0.f, 1.f);       //brg
+    Ray r;
+    r = CreateCameraRay(uv, cam);
     
-    
-    const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
+    //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
+    const auto result = float4(r.direction, 1.f) * cam->dummy;
     
     destination.write(result, position);
 }

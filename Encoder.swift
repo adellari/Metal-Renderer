@@ -34,8 +34,8 @@ final class PipelineEncoder{
         let up = float3(0, 1, 0)
         
         //take an inverse of the camera to world
-        var WorldToCamera = float4x4().CameraToWorld(origin: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0).inverse
-        var ProjectionInvMatrix = float4x4().Projection(fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0).inverse
+        var WorldToCamera = float4x4().CameraToWorld(origin: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0)//.inverse
+        var ProjectionInvMatrix = float4x4().Projection(fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0)//.inverse
 
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, dummy: 1.0)
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
