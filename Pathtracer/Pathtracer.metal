@@ -13,6 +13,8 @@ using namespace metal;
 constant bool deviceSupportsNonuniformThreadgroups [[function_constant(0)]];
 constant float2 _Pixel [[function_constant(1)]];
 constant float init_Seed [[function_constant(2)]];
+
+constexpr sampler textureSampler(filter::linear, address::repeat);
 //device float _Seed;
 
 struct CameraParams {
@@ -52,10 +54,10 @@ Ray CreateRay(float3 origin, float3 direction){
 Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
 {
     Ray ray;
-    float3 origin = (float4(0, 0, 5, 1) * cam->worldToCamera).xyz;
+    float3 origin = (float4(0, 0, 0, 1) * cam->worldToCamera).xyz;
     float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
     
-    dir = normalize(float4(dir, 0) * cam->worldToCamera).xyz;
+    dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
     ray = CreateRay(origin, dir);
     
     return ray;
@@ -97,7 +99,7 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
     }
 }
 
-kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
     
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
     
@@ -109,15 +111,25 @@ kernel void Tracer(texture2d<float, access::read> source [[texture(0)]], texture
      */
     
     float2 uv = float2((float)position.x / (float)textureSize.x, (float)position.y / (float)textureSize.y);
+    //auto result = source.sample(textureSampler, uv);
     uv = uv * 2.f - 1.f;
     
     //const auto pixVal = source.read(position);
     //const auto result = float4(1.f, 0.f, 0.f, 1.f);       //brg
-    Ray r;
-    r = CreateCameraRay(uv, cam);
+    Ray ray;
+    RayHit hit = CreateRayHit();
+    
+    
+    ray = CreateCameraRay(uv, cam);
+    IntersectGroundPlane(ray, &hit);
+    float2 sph = CartesianToSpherical(ray.direction);
+    
+    float3 col = source.sample(textureSampler, sph).rgb;
+    auto result = float4(col.b, col.g, col.r, 1.0);
+    
     
     //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
-    const auto result = float4(r.direction, 1.f) * cam->dummy;
+    //auto result = float4(ray.direction.z, ray.direction.g, ray.direction.x, 1.f) * cam->dummy;
     
     destination.write(result, position);
 }

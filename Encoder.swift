@@ -29,13 +29,14 @@ final class PipelineEncoder{
         guard let encoder = commandBuffer.makeComputeCommandEncoder()
         else{ return}
         
-        let eye = float3(0, 0, 5)
-        let target = float3(0, 0, 0)
+        let eye = float3(0, 0, 0)
+        let target = float3(0, 0, 5)
         let up = float3(0, 1, 0)
         
-        //take an inverse of the camera to world
-        var WorldToCamera = float4x4().CameraToWorld(origin: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0)//.inverse
-        var ProjectionInvMatrix = float4x4().Projection(fov: 60.0, aspect: 2.0, near: 0.1, far: 100.0)//.inverse
+        //to take our 3d objects and bring them to camera space
+        let WorldToCamera = float4x4().WorldToCamera(eye: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.01, far: 100.0)
+        //to take our screen (clip) coordinates and move them to world space
+        let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
 
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, dummy: 1.0)
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])

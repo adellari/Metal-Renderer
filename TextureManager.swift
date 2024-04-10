@@ -45,6 +45,8 @@ final class TextureManager{
         //do not make mipmaps, and make sure it's in linear space
         let textureOptions: [MTKTextureLoader.Option: Any] = [.textureUsage: NSNumber(value: usage.rawValue), .generateMipmaps: NSNumber(value: false), .SRGB: NSNumber(value: false)]
         
+        //let textureOptions: [MTKTextureLoader.Option: Any] = [.textureUsage: NSNumber(value: (MTLTextureUsage.shaderRead.rawValue | MTLTextureUsage.sample.rawValue | MTLTextureUsage.shaderWrite.rawValue)), .generateMipmaps: NSNumber(value: false), .SRGB: NSNumber(value: false)]
+        
         return try self.textureLoader.newTexture(cgImage: cgImage, options: textureOptions)
         
     }
