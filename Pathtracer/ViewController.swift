@@ -8,23 +8,22 @@
 import Foundation
 import UIKit
 import Metal
+import Combine
+import Swift
 
-class ViewController: UIViewController {
+class ViewController {
     
-    enum Error: Swift.Error {
-        case commandQueuereationFailed
-    }
-    
+    public var SceneData: SceneDataModel
     private let device: MTLDevice
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
     private let commandQueue: MTLCommandQueue
     private let textureManager: TextureManager
     private var texturePair: (source: MTLTexture, destination: MTLTexture)?
+    var cancellables: Set<AnyCancellable> = []
     
     
-    
-    init(device: MTLDevice) throws{
+    init(device: MTLDevice, sceneData: SceneDataModel) throws{
         let library = try device.makeDefaultLibrary(bundle: .main)
         guard let commandQueue = device.makeCommandQueue()          //make a command queue from the device
         else { throw Error.commandQueuereationFailed}
@@ -32,14 +31,30 @@ class ViewController: UIViewController {
         self.encoder = try .init(library: library)
         self.commandQueue = commandQueue
         self.textureManager = .init(device: device)
+        self.SceneData = sceneData
         self.imageView = .init()
-        super.init(nibName: nil, bundle: nil)
+        //super.init(nibName: nil, bundle: nil)
+        
+        sceneData.objectWillChange.sink {   [weak self] _ in
+            print("value changed")
+            self?.sceneUpdated()
+        }
+        .store(in: &cancellables)
+        
         
     }
     
     
     required init?(coder: NSCoder){
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    enum Error: Swift.Error {
+        case commandQueuereationFailed
+    }
+    
+    public func sceneUpdated() {
+        print("scene data updated")
     }
     
     
@@ -68,6 +83,7 @@ class ViewController: UIViewController {
         }
         
             //use the pipeline encoder to define a compute pipeline and fill command buffer
+        self.encoder.sceneParams = SceneData
         self.encoder.encode(source: source, destination: destination, in: commandBuffer)
         
         //what will happen to the result of the compute kernel

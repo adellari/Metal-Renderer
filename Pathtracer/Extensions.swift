@@ -33,6 +33,7 @@ struct ImageViewWrapper: UIViewRepresentable {
     }
 }
 
+
 extension float4x4{
     func WorldToCamera(eye: float3, target: float3, up: float3, fov: Float, aspect: Float, near: Float, far: Float) -> float4x4{
         
@@ -43,11 +44,20 @@ extension float4x4{
         //the rotation matrix
         //for our case this is an identity matrix
         //since our world is the usual x - right, y - up, z - forward
+        
         let R = float4x4([float4(xAxis.x, yAxis.x, zAxis.x, 0),
                           float4(xAxis.y, yAxis.y, zAxis.y, 0),
                           float4(xAxis.z, yAxis.z, zAxis.z, 0),
                           float4(0, 0, 0, 1)
                          ])
+        
+        /*
+        let R = float4x4([float4(1, 0, 0, 0),
+                          float4(0, 1, 0, 0),
+                          float4(0, 0, 1, 0),
+                          float4(0, 0, 0, 1)
+                         ])
+         */
         
         //the translation matrix
         let T = float4x4([float4(1, 0, 0, 0),
@@ -65,7 +75,7 @@ extension float4x4{
         
         let P = float4x4([
             float4(1.0 / (aspect * tanHalfFov), 0, 0, 0),
-            float4(0, 1.0 / tanHalfFov, 0, 0),
+            float4(0, -1.0 / tanHalfFov, 0, 0),
             float4(0, 0, -(far + near) / (far - near), -1),
             float4(0, 0, -(2 * far * near) / (far - near), 0)
         ])
@@ -80,11 +90,11 @@ extension float4x4{
         let zRange = far - near
         let zNear = near
         
-        var m00 = x
-        var m11 = y
-        var m22 = -(far + near) / zRange
+        var m00 = -x
+        var m11 = -y
+        var m22 = (far + near) / zRange
         var m23 = -1
-        var m32 = -2 * zNear * far / zRange
+        var m32 = 2 * zNear * far / zRange
         
         //a 90 degree clockwise rotation
         // i can vision this by creating the vector space with my LEFT hand -> L
@@ -103,7 +113,7 @@ extension float4x4{
         return float4x4([float4(m00, 0, 0, 0),
                         float4(0, m11, 0, 0),
                         float4(0, 0, m22, -1),
-                        float4(0, 0, m32, 0)]) * rotationMatrix
+                        float4(0, 0, m32, 0)]) // * rotationMatrix
         
         
     }
