@@ -15,7 +15,6 @@ constant float2 _Pixel [[function_constant(1)]];
 constant float init_Seed [[function_constant(2)]];
 
 constexpr sampler textureSampler(filter::linear, address::repeat);
-//device float _Seed;
 
 struct CameraParams {
     float4x4 worldToCamera;
@@ -27,6 +26,7 @@ struct Ray {
     float3 direction;
     float3 origin;
     float3 energy;
+    float seed;
 };
 
 struct RayHit {
@@ -60,7 +60,7 @@ Ray CreateRay(float3 origin, float3 direction){
     ray.origin = origin;
     ray.direction = direction;
     ray.energy = float3(1.f, 1.f, 1.f);
-    
+    ray.seed = 23232.f;
     return ray;
 }
 
@@ -92,6 +92,63 @@ RayHit CreateRayHit(){
     return hit;
 };
 
+bool any(float3 val)
+{
+    return (val.x * val.y * val.z) > 0.001f;
+}
+
+float3 channelSwap(float3 col)
+{
+    return float3(col.b, col.g, col.r);
+}
+
+float energy(float3 color)
+{
+    return(dot(color, 1.f / 3.f));
+}
+
+float sdot(float3 v1, float3 v2, float f = 1.f)
+{
+    return saturate(dot(v1, v2) * f);
+}
+
+float FresnelReflectAmount(float n1, float n2, float3 normal, float3 incident, float f0, float f90)
+{
+    //Schlick Approximation
+    float r0 = (n1 - n2) / (n1 + n2);
+    r0 *= r0;
+    float cosx = -dot(normal, incident);
+    
+    if (n1 > n2)
+    {
+        float n = n1/n2;
+        float sinT2 = n*n*(1.f - cosx * cosx);
+        
+        //total internal reflection
+        if (sinT2 > 1.f)
+            return f90;
+        
+        cosx = sqrt(1.f - sinT2);
+    }
+    
+    float x = 1.f-cosx;
+    float ret = r0+(1.f-r0)*x*x*x*x*x;
+    
+    //return a mix between the 90 and 0 deg reflections
+    return mix(f0, f90, ret);
+    
+}
+
+float SmoothnessToAlpha(float s)
+{
+    return pow(1000.f, s);
+}
+
+float rand(float _Seed){
+    float result = fract(sin(_Seed / 100.f * dot(_Pixel.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
+    _Seed += 1.0f;
+    return result;
+}
 
 float2 CartesianToSpherical(float3 dir)
 {
@@ -100,10 +157,27 @@ float2 CartesianToSpherical(float3 dir)
     return float2(theta, phi);
 }
 
-float rand(float _Seed){
-    float result = fract(sin(_Seed / 100.f * dot(_Pixel.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
-    _Seed += 1.0f;
-    return result;
+float3x3 GetTangentSpace(float3 normal)
+{
+    float3 v1 = float3(1, 0, 0);
+    
+    if(abs(normal.x) > 0.99f)
+        v1 = float3(0, 0, 1);
+    
+    float3 v2 = normalize(cross(normal, v1));  //tangent
+    float3 v3 = normalize(cross(normal, v2));  //bitangent
+    
+    return float3x3(v2, v3, normal);
+}
+
+float3 SampleHemisphere(float3 normal, float alpha)
+{
+    float cosTheta = pow(rand(1.0f), 1.f / (alpha + 1.f));
+    float sinTheta = sqrt(1.f - cosTheta * cosTheta);
+    float phi = 2 * PI * rand(1.f);
+    
+    float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+    return cartesianSpace * GetTangentSpace(normal);
 }
 
 void IntersectGroundPlane(Ray ray, thread RayHit* hit)
@@ -160,24 +234,94 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
     
 }
 
-float3 channelSwap(float3 col)
+RayHit Trace(Ray ray)
 {
-    return float3(col.b, col.g, col.r);
+    RayHit hit = CreateRayHit();
+    Sphere s;
+    s.albedo = 0.f;
+    s.specular = 0.f;
+    s.smoothness = 0.f;
+    s.refractionColor = 0.f;
+    s.refractiveIndex = 1.f;
+    s.refractionChance = 0.f;
+    s.point = float4(0, 0.5f, 2.f, 0.8f);
+    
+    IntersectGroundPlane(ray, &hit);
+    IntersectSphere(ray, &hit, s);
+    
+    return hit;
+}
+
+float3 Shade(thread Ray* ray, RayHit hit)
+{
+    float3 col = 0.f;
+    
+    if(hit.distance < INFINITY)
+    {
+        if(hit.inside)
+            ray->energy *= exp(-hit.refractionColor * hit.distance);
+        
+        float3 reflected = reflect(ray->direction, hit.normal);
+        
+        hit.albedo = min(1.f - hit.specular, hit.albedo);
+        
+        float specularChance = energy(hit.specular);
+        float diffuseChance = energy(hit.albedo);
+        float refractChance = hit.refractionChance;
+        
+        if (specularChance > 0.f)
+        {
+            specularChance = FresnelReflectAmount(hit.inside? hit.IOR : 1.f, hit.inside? 1.f : hit.IOR, ray->direction, hit.normal, specularChance, 1.f);
+            refractChance *= (1.f - specularChance) / (1.f - energy(hit.specular));
+        }
+        
+        float roulette = rand(1.f);
+        
+        if (specularChance > 0.f && roulette < specularChance)
+        {
+            float alpha = SmoothnessToAlpha(hit.smoothness);
+            float f = (alpha + 2) / (alpha + 1);
+            
+            //choose a random direction based on the reflected ray, using alpha for BRDF sample
+            ray->direction = SampleHemisphere(reflected, alpha);
+            ray->energy = (1.f / specularChance) * hit.specular * sdot(hit.normal, ray->direction, f);  //use cosine sampling to terminate rays that are unlikely
+            ray->origin = hit.position + hit.normal * 0.001f;   //we jiggle this a bit to avoid registering the same hit
+        }
+        else if(refractChance > 0.f && roulette < specularChance + refractChance)
+        {
+            float alpha = SmoothnessToAlpha(hit.smoothness);
+            float f = (alpha + 2) / (alpha + 1);
+            
+            float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f)), 0.9f));
+            
+            ray->direction = refractedDir;
+            ray->origin = hit.position - hit.normal * 0.001f;
+        }
+        else if(diffuseChance > 0.f && roulette < specularChance + diffuseChance)
+        {
+            ray->direction = SampleHemisphere(hit.normal, 1.f);
+            ray->energy *= (1.f / diffuseChance) * hit.albedo;
+            ray->origin = hit.position + hit.normal * 0.001f;
+        }
+        else
+        {
+            ray->energy = 0.f;
+            ray->origin = hit.position + hit.normal * 0.001f;
+        }
+        
+        col = hit.emission;
+    }
+    
+    return col;
 }
 
 kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
     
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
     
-    /*
-    if (!deviceSupportsNonuniformThreadgroups){
-        if(position.x >= textureSize.x || position.y >= textureSize.y)
-            return;
-    }
-     */
-    
     float2 uv = float2((float)position.x / (float)textureSize.x, (float)position.y / (float)textureSize.y);
-    float3 col;
+    float3 col = 0.f;
     
     //auto result = source.sample(textureSampler, uv);
     uv = uv * 2.f - 1.f;
@@ -198,6 +342,17 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
 
     
     ray = CreateCameraRay(uv, cam);
+    
+    
+    for (int a=0; a<8; a++)
+    {
+        hit = Trace(ray);
+        col += Shade(&ray, hit) * ray.energy;
+        
+        if(!any(ray.energy))
+            break;
+    }
+    
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
     
