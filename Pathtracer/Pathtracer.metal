@@ -26,7 +26,7 @@ struct Ray {
     float3 direction;
     float3 origin;
     float3 energy;
-    float seed;
+    //float seed;
 };
 
 struct RayHit {
@@ -60,7 +60,7 @@ Ray CreateRay(float3 origin, float3 direction){
     ray.origin = origin;
     ray.direction = direction;
     ray.energy = float3(1.f, 1.f, 1.f);
-    ray.seed = 23232.f;
+    //ray.seed = 23232.f;
     return ray;
 }
 
@@ -81,7 +81,7 @@ RayHit CreateRayHit(){
     hit.distance = INFINITY;
     hit.position = float3(0.f, 0.f, 0.f);
     hit.albedo = float3(0.f, 0.f, 0.f);
-    hit.specular = float3(0.f, 0.f, 0.f);
+    hit.specular = float3(1.f, 1.f, 1.f);
     hit.normal = float3(0.f, 0.f, 0.f);
     hit.refractionColor = float3(0.f, 0.f, 0.f);
     hit.IOR = 1.f;
@@ -144,10 +144,18 @@ float SmoothnessToAlpha(float s)
     return pow(1000.f, s);
 }
 
-float rand(float _Seed){
+float rand(float _Seed)
+{
     float result = fract(sin(_Seed / 100.f * dot(_Pixel.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
     _Seed += 1.0f;
     return result;
+}
+
+float rand2(float3 vec)
+{
+    int seed = vec.x + vec.y * 57 + vec.z * 241;
+    seed = (seed<<13)^seed;
+    return ((1.f - ( (seed * (seed * seed * 15731 + 789221) + 1376312589) & 2147483647) / 1073741824.0f) + 1.0f) / 2.0f;
 }
 
 float2 CartesianToSpherical(float3 dir)
@@ -172,9 +180,9 @@ float3x3 GetTangentSpace(float3 normal)
 
 float3 SampleHemisphere(float3 normal, float alpha)
 {
-    float cosTheta = pow(rand(1.0f), 1.f / (alpha + 1.f));
+    float cosTheta = pow(rand2(normal), 1.f / (alpha + 1.f));
     float sinTheta = sqrt(1.f - cosTheta * cosTheta);
-    float phi = 2 * PI * rand(1.f);
+    float phi = 2 * PI * rand2(float3(normal.x * sinTheta, normal.y * 23138, normal.z));
     
     float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
     return cartesianSpace * GetTangentSpace(normal);
@@ -188,9 +196,9 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->distance = t;
         hit->position = t * ray.direction + ray.origin;
         hit->normal = float3(0.f, 1.f, 0.f);
-        hit->albedo = 0.5f;
-        hit->specular = 0.1f;
-        hit->emission = 0.f;
+        hit->albedo = float3(0.5f, 0.5f, 0.9f);
+        hit->specular = float3(0.9f, 0.9f, 0.9f);
+        hit->emission = 1.5f;
         hit->smoothness = 3.f;
     }
 }
@@ -226,6 +234,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
         hit->normal = normalize(hit->position - sphere.point.xyz) * (inside ? -1.f : 1.f);
         hit->albedo = sphere.albedo;
         hit->emission = sphere.emission;
+        hit->specular = sphere.specular;
         hit->smoothness = sphere.smoothness;
         hit->refractionChance = sphere.refractionChance;
         hit->refractionColor = sphere.refractionColor;
@@ -238,16 +247,28 @@ RayHit Trace(Ray ray)
 {
     RayHit hit = CreateRayHit();
     Sphere s;
-    s.albedo = 0.f;
-    s.specular = 0.f;
-    s.smoothness = 0.f;
+    s.albedo = float3(0.3f, 0.5f, 0.9f);
+    s.specular = float3(0.3f, 1.f, 1.f);
+    s.emission = 0.f;
+    s.smoothness = 0.8f;
     s.refractionColor = 0.f;
     s.refractiveIndex = 1.f;
     s.refractionChance = 0.f;
     s.point = float4(0, 0.5f, 2.f, 0.8f);
     
+    Sphere s1;
+    s1.albedo = float3(0.3f, 0.5f, 0.9f);
+    s1.specular = 0.3f;
+    s1.emission = 1.f;
+    s1.smoothness = 0.8f;
+    s1.refractionColor = 0.f;
+    s1.refractiveIndex = 1.f;
+    s1.refractionChance = 0.f;
+    s1.point = float4(0.2f, 1.1f, 2.f, 0.2f);
+    
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
+    //IntersectSphere(ray, &hit, s1);
     
     return hit;
 }
@@ -275,7 +296,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             refractChance *= (1.f - specularChance) / (1.f - energy(hit.specular));
         }
         
-        float roulette = rand(1.f);
+        float roulette = rand2(ray->energy);
         
         if (specularChance > 0.f && roulette < specularChance)
         {
@@ -347,12 +368,23 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     for (int a=0; a<8; a++)
     {
         hit = Trace(ray);
-        col += Shade(&ray, hit) * ray.energy;
+        
+        if (hit.distance !=INFINITY){
+            float3 n = ray.energy;
+            col += (Shade(&ray, hit) * n);
+        }
+        else
+        {
+            float2 sph = CartesianToSpherical(ray.direction);
+            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb;
+            ray.energy = 0.f;
+        }
         
         if(!any(ray.energy))
             break;
     }
     
+    /*
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
     
@@ -363,6 +395,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     else {
         col = hit.normal;
     }
+    */
     
     auto result = float4(channelSwap(col), 1.0);
     
