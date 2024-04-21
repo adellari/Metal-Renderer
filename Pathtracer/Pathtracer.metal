@@ -26,7 +26,8 @@ struct Ray {
     float3 direction;
     float3 origin;
     float3 energy;
-    //float seed;
+    float seed;
+    float2 jitter;
 };
 
 struct RayHit {
@@ -55,12 +56,13 @@ struct Sphere {
     float refractionChance;
 };
 
-Ray CreateRay(float3 origin, float3 direction){
+Ray CreateRay(float3 origin, float3 direction, float2 clipPos){
     Ray ray;
     ray.origin = origin;
     ray.direction = direction;
     ray.energy = float3(1.f, 1.f, 1.f);
-    //ray.seed = 23232.f;
+    ray.seed = 23232.f;
+    ray.jitter = (clipPos + 1.f) / 2.f;
     return ray;
 }
 
@@ -71,7 +73,7 @@ Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
     float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
     
     dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
-    ray = CreateRay(origin, dir);
+    ray = CreateRay(origin, dir, screenPos);
     
     return ray;
 }
@@ -144,10 +146,10 @@ float SmoothnessToAlpha(float s)
     return pow(1000.f, s);
 }
 
-float rand(float _Seed)
+float rand(thread float* _Seed, float2 Jitter)
 {
-    float result = fract(sin(_Seed / 100.f * dot(_Pixel.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
-    _Seed += 1.0f;
+    float result = fract(sin(*_Seed / 100.f * dot(Jitter.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
+    *_Seed += 1.0f;
     return result;
 }
 
@@ -178,9 +180,9 @@ float3x3 GetTangentSpace(float3 normal)
     return float3x3(v2, v3, normal);
 }
 
-float3 SampleHemisphere(float3 normal, float alpha)
+float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 jitter)
 {
-    float cosTheta = pow(rand2(normal), 1.f / (alpha + 1.f));
+    float cosTheta = pow(rand(seed, jitter), 1.f / (alpha + 1.f));
     float sinTheta = sqrt(1.f - cosTheta * cosTheta);
     float phi = 2 * PI * rand2(float3(normal.x * sinTheta, normal.y * 23138, normal.z));
     
@@ -196,10 +198,10 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->distance = t;
         hit->position = t * ray.direction + ray.origin;
         hit->normal = float3(0.f, 1.f, 0.f);
-        hit->albedo = float3(0.5f, 0.5f, 0.9f);
-        hit->specular = float3(0.9f, 0.9f, 0.9f);
-        hit->emission = 1.5f;
-        hit->smoothness = 3.f;
+        hit->albedo = float3(0.9f, 0.5f, 0.5f);
+        hit->specular = float3(0.1f, 0.1f, 0.1f);
+        hit->emission = 0.5f;
+        hit->smoothness = 0.3f;
     }
 }
 
@@ -247,14 +249,15 @@ RayHit Trace(Ray ray)
 {
     RayHit hit = CreateRayHit();
     Sphere s;
-    s.albedo = float3(0.3f, 0.5f, 0.9f);
-    s.specular = float3(0.3f, 1.f, 1.f);
+    s.albedo = float3(0.5f, 0.5f, 0.3f);
+    //s.specular = float3(0.3f, 1.f, 1.f);
+    s.specular = 0.f;
     s.emission = 0.f;
-    s.smoothness = 0.8f;
+    s.smoothness = 0.2f;
     s.refractionColor = 0.f;
     s.refractiveIndex = 1.f;
     s.refractionChance = 0.f;
-    s.point = float4(0, 0.5f, 2.f, 0.8f);
+    s.point = float4(0, 0.8f, 2.f, 0.8f);
     
     Sphere s1;
     s1.albedo = float3(0.3f, 0.5f, 0.9f);
@@ -264,7 +267,7 @@ RayHit Trace(Ray ray)
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.2f, 1.1f, 2.f, 0.2f);
+    s1.point = float4(0.2f, 1.9f, 2.f, 0.2f);
     
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
@@ -296,7 +299,8 @@ float3 Shade(thread Ray* ray, RayHit hit)
             refractChance *= (1.f - specularChance) / (1.f - energy(hit.specular));
         }
         
-        float roulette = rand2(ray->energy);
+        //float roulette = rand(ray->energy);
+        float roulette = rand(&ray->seed, ray->jitter);
         
         if (specularChance > 0.f && roulette < specularChance)
         {
@@ -304,7 +308,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             //choose a random direction based on the reflected ray, using alpha for BRDF sample
-            ray->direction = SampleHemisphere(reflected, alpha);
+            ray->direction = SampleHemisphere(reflected, alpha, &ray->seed, ray->jitter);
             ray->energy = (1.f / specularChance) * hit.specular * sdot(hit.normal, ray->direction, f);  //use cosine sampling to terminate rays that are unlikely
             ray->origin = hit.position + hit.normal * 0.001f;   //we jiggle this a bit to avoid registering the same hit
         }
@@ -314,14 +318,14 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f)), 0.9f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, &ray->seed, ray->jitter)), 0.9f));
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
         }
         else if(diffuseChance > 0.f && roulette < specularChance + diffuseChance)
         {
-            ray->direction = SampleHemisphere(hit.normal, 1.f);
+            ray->direction = SampleHemisphere(hit.normal, 1.f, &ray->seed, ray->jitter);
             ray->energy *= (1.f / diffuseChance) * hit.albedo;
             ray->origin = hit.position + hit.normal * 0.001f;
         }
@@ -337,11 +341,12 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
     
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
-    
-    float2 uv = float2((float)position.x / (float)textureSize.x, (float)position.y / (float)textureSize.y);
+    float2 Pixel = 0.f;
+    float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
+    float4 colInit = destination.read(position).rgba;
     float3 col = 0.f;
     
     //auto result = source.sample(textureSampler, uv);
@@ -365,7 +370,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     ray = CreateCameraRay(uv, cam);
     
     
-    for (int a=0; a<8; a++)
+    for (int a=0; a<16; a++)
     {
         hit = Trace(ray);
         
@@ -376,8 +381,9 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
-            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb;
+            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             ray.energy = 0.f;
+            break;
         }
         
         if(!any(ray.energy))
@@ -396,9 +402,9 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         col = hit.normal;
     }
     */
-    
-    auto result = float4(channelSwap(col), 1.0);
-    
+    float avgFactor = (1.f / (sampleCount + 1.f));
+    auto result = float4( (channelSwap(col) * avgFactor) + (colInit.rgb * (1.f - avgFactor)), 1.f);
+    //auto result = float4(channelSwap(col), avgFactor) + float4(colInit.rgb, (1.f - avgFactor));
     //result *= tint;
     //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
     //auto result = float4(ray.direction.z, ray.direction.g, ray.direction.x, 1.f) * cam->dummy;

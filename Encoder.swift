@@ -43,14 +43,19 @@ final class PipelineEncoder{
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
         var viewAsFloat = Float(self.sceneParams.cameraView)
+        var sampleCount = self.sceneParams.sampleCount
+        var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, dummy: 1.0)
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
+        
         
         
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
         encoder.setTexture(destination, index: 1)
         encoder.setBytes(&viewAsFloat, length: MemoryLayout<Float>.stride, index: 0)
+        encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
+        encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
         encoder.setBuffer(camBuffer, offset: 0, index: 1)
         //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
         //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)

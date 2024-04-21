@@ -9,6 +9,7 @@ import SwiftUI
 
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
+    @Published var sampleCount : Int = 0
 }
 
 struct ContentView: View {
@@ -37,8 +38,23 @@ struct ContentView: View {
             viewController?.imageView.asSwiftUIView()
             
             Button(action: {
-                //print("hello")
-                viewController?.redraw()
+                print("hello")
+                
+                DispatchQueue.global().async {
+                    
+                    for _ in 0..<2000 {
+                            viewController?.redraw()
+                            SceneData.sampleCount += 1
+                            viewController?.SceneData = self.SceneData
+                        
+                    }
+                    
+                }
+                
+                
+                
+                
+                
                 //print(viewController?.imageView)
             }) {
                 Image(systemName: "eye.fill")
@@ -50,6 +66,8 @@ struct ContentView: View {
         }
         .ignoresSafeArea()
         .onAppear(perform: {
+            
+            
             
         })
         .padding()
