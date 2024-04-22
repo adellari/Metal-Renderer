@@ -10,7 +10,8 @@ import SwiftUI
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
-    @Published var cameraOffset: (Float, Float) = (0.0, 0.0)
+    @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 0.0)
+    
 }
 
 struct ContentView: View {
@@ -38,14 +39,23 @@ struct ContentView: View {
             
             viewController?.imageView.asSwiftUIView()
                 .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        print(value.translation)
-                        SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height))
-                        SceneData.sampleCount = -1
-                        viewController?.SceneData = self.SceneData
-                        print("image view is being dragged")
-                    })
+                    DragGesture()
+                        .onChanged { value in
+                            //print(value.translation)
+                            SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height), SceneData.cameraOffset.2)
+                            SceneData.sampleCount = -1
+                            viewController?.SceneData = self.SceneData
+                            //print("image view is being dragged")
+                        }
+                )
+                .gesture(
+                    MagnifyGesture()
+                        .onChanged{ value in
+                            print(value.magnification)
+                        }
+                
+                
+                )
             
             Button(action: {
                 print("hello")

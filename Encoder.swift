@@ -33,8 +33,9 @@ final class PipelineEncoder{
         let viewX = (Float.pi/180.0) * Float(self.sceneParams.cameraOffset.0)
         let viewY = (Float.pi/180.0) * self.sceneParams.cameraOffset.1;
         
-        let eye = float3(0, 5 * sin(viewY), 0)
-        let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
+        let eye = float3(sin(viewX) * 5, 5 * sin(viewY), -cos(viewY + viewX) * 5)
+        let target = float3(0, 0, 0);
+        //let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
         let up = float3(0, 1, 0)
         
         
