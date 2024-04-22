@@ -200,7 +200,7 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->normal = float3(0.f, 1.f, 0.f);
         hit->albedo = float3(0.9f, 0.5f, 0.5f);
         hit->specular = float3(0.1f, 0.1f, 0.1f);
-        hit->emission = 0.5f;
+        hit->emission = 0.1f;
         hit->smoothness = 0.3f;
     }
 }
@@ -251,27 +251,27 @@ RayHit Trace(Ray ray)
     Sphere s;
     s.albedo = float3(0.5f, 0.5f, 0.3f);
     //s.specular = float3(0.3f, 1.f, 1.f);
-    s.specular = 0.f;
+    s.specular = 0.01f;
     s.emission = 0.f;
-    s.smoothness = 0.2f;
-    s.refractionColor = 0.f;
-    s.refractiveIndex = 1.f;
-    s.refractionChance = 0.f;
+    s.smoothness = 1.f;
+    s.refractionColor = 1.f;
+    s.refractiveIndex = 1.5f;
+    s.refractionChance = 0.99f;
     s.point = float4(0, 0.8f, 2.f, 0.8f);
     
     Sphere s1;
     s1.albedo = float3(0.3f, 0.5f, 0.9f);
-    s1.specular = 0.3f;
-    s1.emission = 1.f;
-    s1.smoothness = 0.8f;
+    s1.specular = 0.1f;
+    s1.emission = 0.f;
+    s1.smoothness = 0.6f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.2f, 1.9f, 2.f, 0.2f);
+    s1.point = float4(0.45f, 1.9f, 2.f, 0.2f);
     
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
-    //IntersectSphere(ray, &hit, s1);
+    IntersectSphere(ray, &hit, s1);
     
     return hit;
 }
@@ -343,6 +343,13 @@ float3 Shade(thread Ray* ray, RayHit hit)
 
 kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
     
+    //this is a reset frame
+    if (sampleCount < 0)
+    {
+        destination.write(float4(0, 0, 0, 0), position);
+        return;
+    }
+    
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
     float2 Pixel = 0.f;
     float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
@@ -357,6 +364,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     Ray ray;
     RayHit hit = CreateRayHit();
     
+    /*
     Sphere s;
     s.albedo = 0.f;
     s.specular = 0.f;
@@ -365,6 +373,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     s.refractiveIndex = 1.f;
     s.refractionChance = 0.f;
     s.point = float4(0, 0.5f, 2.f, 0.8f);
+    */
 
     
     ray = CreateCameraRay(uv, cam);

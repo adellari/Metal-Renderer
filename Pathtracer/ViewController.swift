@@ -105,5 +105,16 @@ class ViewController {
         
     }
     
+    /*
+    @objc func handlePan(_ sender: UITapGestureRecognizer)
+    {
+        let translation = sender.translation(in: self.imageView)
+        
+        
+    }
+    */
+    
+
+    
     
 }

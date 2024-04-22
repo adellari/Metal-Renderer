@@ -30,10 +30,11 @@ final class PipelineEncoder{
         guard let encoder = commandBuffer.makeComputeCommandEncoder()
         else{ return}
         
-        let viewRad = (Float.pi/180) * Float(self.sceneParams.cameraView)
+        let viewX = (Float.pi/180.0) * Float(self.sceneParams.cameraOffset.0)
+        let viewY = (Float.pi/180.0) * self.sceneParams.cameraOffset.1;
         
-        let eye = float3(0, 0, 0)
-        let target = float3(sin(viewRad) * 5, 0, cos(viewRad) * 5)
+        let eye = float3(0, 5 * sin(viewY), 0)
+        let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
         let up = float3(0, 1, 0)
         
         

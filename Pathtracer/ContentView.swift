@@ -10,6 +10,7 @@ import SwiftUI
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
+    @Published var cameraOffset: (Float, Float) = (0.0, 0.0)
 }
 
 struct ContentView: View {
@@ -36,19 +37,36 @@ struct ContentView: View {
             Text("Hello, world!")
             
             viewController?.imageView.asSwiftUIView()
+                .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        print(value.translation)
+                        SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height))
+                        SceneData.sampleCount = -1
+                        viewController?.SceneData = self.SceneData
+                        print("image view is being dragged")
+                    })
             
             Button(action: {
                 print("hello")
                 
-                DispatchQueue.global().async {
+                var counter = 0
+                let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in 
+                    viewController?.redraw()
+                    SceneData.sampleCount += 1
+                    viewController?.SceneData = self.SceneData
                     
-                    for _ in 0..<2000 {
-                            viewController?.redraw()
-                            SceneData.sampleCount += 1
-                            viewController?.SceneData = self.SceneData
-                        
+                    counter += 1
+                }
+                Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                    viewController?.redraw()
+                    SceneData.sampleCount += 1
+                    viewController?.SceneData = self.SceneData
+                    
+                    counter += 1
+                    if self.SceneData.sampleCount >= 5000 {
+                        timer.invalidate()
                     }
-                    
                 }
                 
                 
@@ -60,9 +78,12 @@ struct ContentView: View {
                 Image(systemName: "eye.fill")
                     //.resizable()
             }
+            /*
             Slider(value: $SceneData.cameraView, in: -90.0 ... 90.0, onEditingChanged: {_ in
                 viewController?.SceneData = self.SceneData
             print("changed slider")})
+            
+            */
         }
         .ignoresSafeArea()
         .onAppear(perform: {
@@ -81,6 +102,8 @@ struct ContentView: View {
                 }
             )
         }
+    
+    
 }
 
 
