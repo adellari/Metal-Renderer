@@ -35,7 +35,7 @@ struct ImageViewWrapper: UIViewRepresentable {
 
 
 extension float4x4{
-    func WorldToCamera(eye: float3, target: float3, up: float3, fov: Float, aspect: Float, near: Float, far: Float) -> float4x4{
+    func WorldToCamera(eye: float3, target: float3, up: float3, fov: Float, aspect: Float, near: Float, far: Float, translation: Float) -> float4x4{
         
         let zAxis = float3(normalize(eye - target)) //foward
         let xAxis = normalize(cross(up, zAxis))     //right

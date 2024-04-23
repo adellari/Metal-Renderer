@@ -51,6 +51,9 @@ struct ContentView: View {
                 .gesture(
                     MagnifyGesture()
                         .onChanged{ value in
+                            SceneData.cameraOffset = (SceneData.cameraOffset.0, SceneData.cameraOffset.1, Float(value.magnification))
+                            SceneData.sampleCount = -1
+                            
                             print(value.magnification)
                         }
                 
@@ -61,7 +64,7 @@ struct ContentView: View {
                 print("hello")
                 
                 var counter = 0
-                let timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in 
+                let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()
                     SceneData.sampleCount += 1
                     viewController?.SceneData = self.SceneData
@@ -74,7 +77,7 @@ struct ContentView: View {
                     viewController?.SceneData = self.SceneData
                     
                     counter += 1
-                    if self.SceneData.sampleCount >= 5000 {
+                    if self.SceneData.sampleCount >= 8000 {
                         timer.invalidate()
                     }
                 }

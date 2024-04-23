@@ -69,7 +69,7 @@ Ray CreateRay(float3 origin, float3 direction, float2 clipPos){
 Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
 {
     Ray ray;
-    float3 origin = (float4(0, 0.5f, 0, 1) * cam->worldToCamera).xyz;
+    float3 origin = (float4(0.f, 0.4f, 1.f, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
     float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
     
     dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
@@ -184,7 +184,7 @@ float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 j
 {
     float cosTheta = pow(rand(seed, jitter), 1.f / (alpha + 1.f));
     float sinTheta = sqrt(1.f - cosTheta * cosTheta);
-    float phi = 2 * PI * rand2(float3(normal.x * sinTheta, normal.y * 23138, normal.z));
+    float phi = 2 * PI * rand(seed, jitter);
     
     float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
     return cartesianSpace * GetTangentSpace(normal);
@@ -199,9 +199,9 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->position = t * ray.direction + ray.origin;
         hit->normal = float3(0.f, 1.f, 0.f);
         hit->albedo = float3(0.9f, 0.5f, 0.5f);
-        hit->specular = float3(0.1f, 0.1f, 0.1f);
-        hit->emission = 0.1f;
-        hit->smoothness = 0.3f;
+        hit->specular = float3(0.7f, 0.7f, 0.7f);
+        hit->emission = 0.f;
+        hit->smoothness = 0.76f;
     }
 }
 
@@ -247,31 +247,44 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
 
 RayHit Trace(Ray ray)
 {
+    
+    
     RayHit hit = CreateRayHit();
     Sphere s;
-    s.albedo = float3(0.5f, 0.5f, 0.3f);
+    s.albedo = float3(0.01f, 0.01f, 0.01f);
     //s.specular = float3(0.3f, 1.f, 1.f);
-    s.specular = 0.01f;
+    s.specular = 0.8f;
     s.emission = 0.f;
-    s.smoothness = 1.f;
-    s.refractionColor = 1.f;
+    s.smoothness = 4.f;
+    s.refractionColor = 0.3f;
     s.refractiveIndex = 1.5f;
-    s.refractionChance = 0.99f;
-    s.point = float4(0, 0.8f, 2.f, 0.8f);
+    s.refractionChance = 1.f;
+    s.point = float4(0, 0.8f, 2.f, 0.3f);
     
     Sphere s1;
-    s1.albedo = float3(0.3f, 0.5f, 0.9f);
+    s1.albedo = float3(0.1f, 0.1f, 0.1f);
     s1.specular = 0.1f;
-    s1.emission = 0.f;
-    s1.smoothness = 0.6f;
+    s1.emission = float3(0.4f, 0.4f, 8.f);
+    s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.45f, 1.9f, 2.f, 0.2f);
+    s1.point = float4(0.f, 0.12f, 0.f, 0.10f);
+    
+    Sphere s2;      //stays at origin
+    s2.albedo = 1.f;
+    s2.specular = 0.1f;
+    s2.emission = 0.f;
+    s2.smoothness = 0.3f;
+    s2.refractionColor = 0.f;
+    s2.refractiveIndex = 1.f;
+    s2.refractionChance = 0.f;
+    s2.point = float4(0.f, 0.5f, 0.f, 0.10f);
     
     IntersectGroundPlane(ray, &hit);
-    IntersectSphere(ray, &hit, s);
+    //IntersectSphere(ray, &hit, s);
     IntersectSphere(ray, &hit, s1);
+    //IntersectSphere(ray, &hit, s2);
     
     return hit;
 }
@@ -390,7 +403,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
-            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            //col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             ray.energy = 0.f;
             break;
         }

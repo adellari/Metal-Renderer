@@ -32,16 +32,19 @@ final class PipelineEncoder{
         
         let viewX = (Float.pi/180.0) * Float(self.sceneParams.cameraOffset.0)
         let viewY = (Float.pi/180.0) * self.sceneParams.cameraOffset.1;
+        let translation = self.sceneParams.cameraOffset.2;
         
-        let eye = float3(sin(viewX) * 5, 5 * sin(viewY), -cos(viewY + viewX) * 5)
-        let target = float3(0, 0, 0);
+        //sin(5) * radius, 0, cos(5) * radius
+        
+        let eye = float3(0, 0, 0)
+        let target = float3(0, 0, 1);
         //let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
         let up = float3(0, 1, 0)
         
         
         
         //to take our 3d objects and bring them to camera space
-        let WorldToCamera = float4x4().WorldToCamera(eye: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.01, far: 100.0)
+        let WorldToCamera = float4x4().WorldToCamera(eye: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.01, far: 100.0, translation: translation)
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
         var viewAsFloat = Float(self.sceneParams.cameraView)
