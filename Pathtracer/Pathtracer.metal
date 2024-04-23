@@ -11,8 +11,6 @@ using namespace metal;
 #define EPSILON = 1e-8
 
 constant bool deviceSupportsNonuniformThreadgroups [[function_constant(0)]];
-constant float2 _Pixel [[function_constant(1)]];
-constant float init_Seed [[function_constant(2)]];
 
 constexpr sampler textureSampler(filter::linear, address::repeat);
 
@@ -61,7 +59,7 @@ Ray CreateRay(float3 origin, float3 direction, float2 clipPos){
     ray.origin = origin;
     ray.direction = direction;
     ray.energy = float3(1.f, 1.f, 1.f);
-    ray.seed = 23232.f;
+    ray.seed = -4;
     ray.jitter = (clipPos + 1.f) / 2.f;
     return ray;
 }
@@ -148,7 +146,7 @@ float SmoothnessToAlpha(float s)
 
 float rand(thread float* _Seed, float2 Jitter)
 {
-    float result = fract(sin(*_Seed / 100.f * dot(Jitter.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
+    float result = fract(sin(*_Seed / 100.f * dot(Jitter.yx, float2(12.9898f, 78.233f))) * 43758.5453f);
     *_Seed += 1.0f;
     return result;
 }
@@ -169,15 +167,15 @@ float2 CartesianToSpherical(float3 dir)
 
 float3x3 GetTangentSpace(float3 normal)
 {
-    float3 v1 = float3(1, 0, 0);
+    float3 helper = float3(1, 0, 0);
     
     if(abs(normal.x) > 0.99f)
-        v1 = float3(0, 0, 1);
+        helper = float3(0, 0, 1);
     
-    float3 v2 = normalize(cross(normal, v1));  //tangent
-    float3 v3 = normalize(cross(normal, v2));  //bitangent
+    float3 tangent = normalize(cross(normal, helper));  //tangent
+    float3 binormal = normalize(cross(normal, tangent));  //bitangent
     
-    return float3x3(v2, v3, normal);
+    return float3x3(tangent, binormal, normal);
 }
 
 float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 jitter)
@@ -187,7 +185,7 @@ float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 j
     float phi = 2 * PI * rand(seed, jitter);
     
     float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-    return cartesianSpace * GetTangentSpace(normal);
+    return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER MATTERS 
 }
 
 void IntersectGroundPlane(Ray ray, thread RayHit* hit)
@@ -231,7 +229,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
     if (dist > 0.f && dist < INFINITY)
     {
         hit->distance = dist;
-        hit->position = ray.origin + ray.direction * dist;
+        hit->position = ray.origin + (ray.direction * dist);
         hit->inside = inside;
         hit->normal = normalize(hit->position - sphere.point.xyz) * (inside ? -1.f : 1.f);
         hit->albedo = sphere.albedo;
@@ -269,7 +267,7 @@ RayHit Trace(Ray ray)
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, 0.12f, 0.f, 0.10f);
+    s1.point = float4(0.f, 0.1f, 0.f, 0.10f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -364,7 +362,6 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     }
     
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
-    float2 Pixel = 0.f;
     float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
     float4 colInit = destination.read(position).rgba;
     float3 col = 0.f;
