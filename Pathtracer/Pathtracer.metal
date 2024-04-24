@@ -17,6 +17,7 @@ constexpr sampler textureSampler(filter::linear, address::repeat);
 struct CameraParams {
     float4x4 worldToCamera;
     float4x4 projectionInv;
+    float3 cameraPosition;
     float dummy;
 };
 
@@ -67,7 +68,7 @@ Ray CreateRay(float3 origin, float3 direction, float2 clipPos){
 Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
 {
     Ray ray;
-    float3 origin = (float4(0.f, 0.4f, 1.f, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
+    float3 origin = (float4(cam->cameraPosition, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
     float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
     
     dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
@@ -185,7 +186,7 @@ float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 j
     float phi = 2 * PI * rand(seed, jitter);
     
     float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
-    return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER MATTERS 
+    return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER   MATTERS
 }
 
 void IntersectGroundPlane(Ray ray, thread RayHit* hit)
@@ -254,20 +255,20 @@ RayHit Trace(Ray ray)
     s.specular = 0.8f;
     s.emission = 0.f;
     s.smoothness = 4.f;
-    s.refractionColor = 0.3f;
-    s.refractiveIndex = 1.5f;
-    s.refractionChance = 1.f;
-    s.point = float4(0, 0.8f, 2.f, 0.3f);
+    s.refractionColor = 0.6f;
+    s.refractiveIndex = 1.2f;
+    s.refractionChance = 0.8f;
+    s.point = float4(0, 0.4f, 0.f, 0.3f);
     
     Sphere s1;
     s1.albedo = float3(0.1f, 0.1f, 0.1f);
     s1.specular = 0.1f;
-    s1.emission = float3(0.4f, 0.4f, 8.f);
+    s1.emission = float3(3.f, 3.f, 3.f);
     s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, 0.1f, 0.f, 0.10f);
+    s1.point = float4(0.f, 0.1f, 5.f, 0.10f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -280,7 +281,7 @@ RayHit Trace(Ray ray)
     s2.point = float4(0.f, 0.5f, 0.f, 0.10f);
     
     IntersectGroundPlane(ray, &hit);
-    //IntersectSphere(ray, &hit, s);
+    IntersectSphere(ray, &hit, s);
     IntersectSphere(ray, &hit, s1);
     //IntersectSphere(ray, &hit, s2);
     
@@ -400,7 +401,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
-            //col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             ray.energy = 0.f;
             break;
         }

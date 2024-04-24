@@ -61,7 +61,7 @@ class ViewController {
     
     
     public func redraw() {
-        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 496, height: 248, mipmapped: false)
+        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba8Unorm, width: 500, height: 1000, mipmapped: false)
         desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
         //self.texturePair?.source = device.makeTexture(descriptor: desc)!
         //self.texturePair?.destination = device.makeTexture(descriptor: desc)!

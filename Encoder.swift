@@ -37,7 +37,7 @@ final class PipelineEncoder{
         //sin(5) * radius, 0, cos(5) * radius
         
         let eye = float3(0, 0, 0)
-        let target = float3(0, 0, 1);
+        let target = float3(sin(Float.pi - viewX), 0, 1 * cos(Float.pi - viewX ));
         //let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
         let up = float3(0, 1, 0)
         
@@ -50,7 +50,7 @@ final class PipelineEncoder{
         var viewAsFloat = Float(self.sceneParams.cameraView)
         var sampleCount = self.sceneParams.sampleCount
         var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
-        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, dummy: 1.0)
+        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(1.0 * sin(viewX * 0), 0.4, 1.0 * cos(viewX * 0)), dummy: 1.0)
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
         
         
@@ -66,8 +66,8 @@ final class PipelineEncoder{
         //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)
         
        
-        let threadGroupSize = MTLSize(width: 16, height: 16, depth: 1)
-        let threadCountPerGroup = MTLSize(width: destination.width / 16, height: destination.height / 16, depth: 1)
+        let threadGroupSize = MTLSize(width: 32, height: 32, depth: 1)
+        let threadCountPerGroup = MTLSize(width: destination.width / 32, height: destination.height / 32, depth: 1)
         
         encoder.setComputePipelineState(self.pipelineState)
         //encoder.dispatchThreadgroups(threadGroupCount, threadsPerThreadgroup: threadGroupSize)

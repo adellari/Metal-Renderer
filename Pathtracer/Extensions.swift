@@ -12,6 +12,7 @@ import GLKit
 struct CameraParams{
     var WorldToCamera : float4x4;
     var ProjectionInv: float4x4;
+    var cameraPosition: float3;
     var dummy: Float;
 }
 
