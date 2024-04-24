@@ -55,12 +55,12 @@ struct Sphere {
     float refractionChance;
 };
 
-Ray CreateRay(float3 origin, float3 direction, float2 clipPos){
+Ray CreateRay(float3 origin, float3 direction, float2 clipPos, float seed){
     Ray ray;
     ray.origin = origin;
     ray.direction = direction;
     ray.energy = float3(1.f, 1.f, 1.f);
-    ray.seed = -4;
+    ray.seed = seed;
     ray.jitter = (clipPos + 1.f) / 2.f;
     return ray;
 }
@@ -72,7 +72,7 @@ Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
     float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
     
     dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
-    ray = CreateRay(origin, dir, screenPos);
+    ray = CreateRay(origin, dir, screenPos, cam->dummy);
     
     return ray;
 }
@@ -189,6 +189,17 @@ float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 j
     return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER   MATTERS
 }
 
+float3 SampleHemisphere(float3 normal, float alpha, int3 randSeeds)
+{
+    float cosTheta = pow(rand2(randSeeds.x, randSeeds.y, randSeeds.z), 1.f / (alpha + 1.f));
+    randSeeds += 1323;
+    float sinTheta = sqrt(1.f - cosTheta * cosTheta);
+    float phi = 2 * PI * rand2(randSeeds.x, randSeeds.y, randSeeds.z);
+    
+    float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+    return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER   MATTERS
+}
+
 void IntersectGroundPlane(Ray ray, thread RayHit* hit)
 {
     float t = -ray.origin.y / ray.direction.y;
@@ -200,7 +211,7 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->albedo = float3(0.5f, 0.5f, 0.5f);
         hit->specular = float3(0.1f, 0.1f, 0.1f);
         hit->emission = 0.f;
-        hit->smoothness = 3.0f;
+        hit->smoothness = 3.f;
     }
 }
 
@@ -227,7 +238,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
         dist = -p1 + sqrt(p2sqr);
     }
     
-    if (dist > 0.f && dist < INFINITY)
+    if (dist > 0.f && dist < hit->distance)
     {
         hit->distance = dist;
         hit->position = ray.origin + (ray.direction * dist);
@@ -252,23 +263,23 @@ RayHit Trace(Ray ray)
     Sphere s;
     s.albedo = float3(0.1f, 0.42f, 0.93f);
     //s.specular = float3(0.3f, 1.f, 1.f);
-    s.specular = 0.f;
+    s.specular = 0.1f;
     s.emission = 0.f;
     s.smoothness = 4.f;
     s.refractionColor = 1.f;
-    s.refractiveIndex = 1.8f;
-    s.refractionChance = 1.f;
+    s.refractiveIndex = 1.2f;
+    s.refractionChance = 0.9f;
     s.point = float4(0, 0.4f, 0.f, 0.3f);
     
     Sphere s1;
-    s1.albedo = float3(0.1f, 0.1f, 0.f);
-    s1.specular = 0.1f;
-    s1.emission = float3(1, 10, 20);
+    s1.albedo = float3(0.2f, 0.2f, 1.f);
+    s1.specular = float3(0.2f, 0.2f, 1.f);
+    s1.emission = float3(1, 4, 9);
     s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
-    s1.refractiveIndex = 1.f;
+    s1.refractiveIndex = 0.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, 1.2f, 0.2f, 0.10f);
+    s1.point = float4(0.f, .4f, 0.5f, 0.10f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -276,11 +287,12 @@ RayHit Trace(Ray ray)
     s2.emission = 0.f;
     s2.smoothness = 0.3f;
     s2.refractionColor = 0.f;
-    s2.refractiveIndex = 1.f;
+    s2.refractiveIndex = 0.f;
     s2.refractionChance = 0.f;
     s2.point = float4(0.f, 0.5f, 1.2f, 0.10f);
     
     IntersectGroundPlane(ray, &hit);
+    
     IntersectSphere(ray, &hit, s);
     IntersectSphere(ray, &hit, s1);
     //IntersectSphere(ray, &hit, s2);
@@ -291,7 +303,7 @@ RayHit Trace(Ray ray)
 float3 Shade(thread Ray* ray, RayHit hit)
 {
     float3 col = 0.f;
-    int3 randSeeds = int3(ray->direction.x, ray->direction.y, ray->direction.z);
+    int3 randSeeds = int3(ray->direction.x * 10000, ray->direction.y * 10002, ray->direction.z * 50002) * int(ray->seed * 10000);
     
     if(hit.distance < INFINITY)
     {
@@ -313,8 +325,9 @@ float3 Shade(thread Ray* ray, RayHit hit)
         }
         
         //float roulette = rand(ray->energy);
-        float roulette = rand(&ray->seed, ray->jitter);
-        //float roulette = rand2(randSeeds.x, randSeeds.y, randSeeds.z);
+        //float roulette = rand(&ray->seed, ray->jitter);
+        float roulette = rand2(randSeeds.x, randSeeds.y, randSeeds.z);
+        randSeeds ^= int(4000 * ray->seed);
         
         if (specularChance > 0.f && roulette < specularChance)
         {
@@ -322,7 +335,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             //choose a random direction based on the reflected ray, using alpha for BRDF sample
-            ray->direction = SampleHemisphere(reflected, alpha, &ray->seed, ray->jitter);
+            ray->direction = SampleHemisphere(reflected, alpha, randSeeds);
             ray->energy = (1.f / specularChance) * hit.specular * sdot(hit.normal, ray->direction, f);  //use cosine sampling to terminate rays that are unlikely
             ray->origin = hit.position + hit.normal * 0.001f;   //we jiggle this a bit to avoid registering the same hit
         }
@@ -332,14 +345,14 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, &ray->seed, ray->jitter)), 0.9f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, randSeeds)), 0.01f));
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
         }
         else if(diffuseChance > 0.f && roulette < specularChance + diffuseChance)
         {
-            ray->direction = SampleHemisphere(hit.normal, 1.f, &ray->seed, ray->jitter);
+            ray->direction = SampleHemisphere(hit.normal, 1.f, randSeeds);
             ray->energy *= (1.f / diffuseChance) * hit.albedo;
             ray->origin = hit.position + hit.normal * 0.001f;
         }
@@ -392,7 +405,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     ray = CreateCameraRay(uv, cam);
     
     
-    for (int a=0; a<16; a++)
+    for (int a=0; a<8; a++)
     {
         hit = Trace(ray);
         

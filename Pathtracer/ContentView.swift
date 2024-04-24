@@ -77,7 +77,7 @@ struct ContentView: View {
                     viewController?.SceneData = self.SceneData
                     
                     counter += 1
-                    if self.SceneData.sampleCount >= 80000 {
+                    if self.SceneData.sampleCount >= 8000000 {
                         timer.invalidate()
                     }
                 }

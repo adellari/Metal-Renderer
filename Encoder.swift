@@ -50,7 +50,7 @@ final class PipelineEncoder{
         var viewAsFloat = Float(self.sceneParams.cameraView)
         var sampleCount = self.sceneParams.sampleCount
         var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
-        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(1.0 * sin(viewX * 0), 0.4, 1.0 * cos(viewX * 0)), dummy: 1.0)
+        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(1.0 * sin(viewX * 0), 0.4, 1.0 * cos(viewX * 0)), dummy: Float.random(in: 0..<1))
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
         
         
