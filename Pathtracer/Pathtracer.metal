@@ -152,11 +152,11 @@ float rand(thread float* _Seed, float2 Jitter)
     return result;
 }
 
-float rand2(float3 vec)
+float rand2(int x, int y, int z)
 {
-    int seed = vec.x + vec.y * 57 + vec.z * 241;
-    seed = (seed<<13)^seed;
-    return ((1.f - ( (seed * (seed * seed * 15731 + 789221) + 1376312589) & 2147483647) / 1073741824.0f) + 1.0f) / 2.0f;
+    int seed = x + y * 57 + z * 241;
+    seed= (seed<< 13) ^ seed;
+    return (( 1.0 - ( (seed * (seed * seed * 15731 + 789221) + 1376312589) & 2147483647) / 1073741824.0f) + 1.0f) / 2.0f;
 }
 
 float2 CartesianToSpherical(float3 dir)
@@ -197,10 +197,10 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
         hit->distance = t;
         hit->position = t * ray.direction + ray.origin;
         hit->normal = float3(0.f, 1.f, 0.f);
-        hit->albedo = float3(0.9f, 0.5f, 0.5f);
-        hit->specular = float3(0.7f, 0.7f, 0.7f);
+        hit->albedo = float3(0.5f, 0.5f, 0.5f);
+        hit->specular = float3(0.1f, 0.1f, 0.1f);
         hit->emission = 0.f;
-        hit->smoothness = 0.76f;
+        hit->smoothness = 3.0f;
     }
 }
 
@@ -250,25 +250,25 @@ RayHit Trace(Ray ray)
     
     RayHit hit = CreateRayHit();
     Sphere s;
-    s.albedo = float3(0.01f, 0.01f, 0.01f);
+    s.albedo = float3(0.1f, 0.42f, 0.93f);
     //s.specular = float3(0.3f, 1.f, 1.f);
-    s.specular = 0.8f;
+    s.specular = 0.f;
     s.emission = 0.f;
     s.smoothness = 4.f;
-    s.refractionColor = 0.6f;
-    s.refractiveIndex = 1.2f;
-    s.refractionChance = 0.8f;
+    s.refractionColor = 1.f;
+    s.refractiveIndex = 1.8f;
+    s.refractionChance = 1.f;
     s.point = float4(0, 0.4f, 0.f, 0.3f);
     
     Sphere s1;
-    s1.albedo = float3(0.1f, 0.1f, 0.1f);
+    s1.albedo = float3(0.1f, 0.1f, 0.f);
     s1.specular = 0.1f;
-    s1.emission = float3(3.f, 3.f, 3.f);
+    s1.emission = float3(1, 10, 20);
     s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 1.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, 0.1f, 5.f, 0.10f);
+    s1.point = float4(0.f, 1.2f, 0.2f, 0.10f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -278,7 +278,7 @@ RayHit Trace(Ray ray)
     s2.refractionColor = 0.f;
     s2.refractiveIndex = 1.f;
     s2.refractionChance = 0.f;
-    s2.point = float4(0.f, 0.5f, 0.f, 0.10f);
+    s2.point = float4(0.f, 0.5f, 1.2f, 0.10f);
     
     IntersectGroundPlane(ray, &hit);
     IntersectSphere(ray, &hit, s);
@@ -291,6 +291,7 @@ RayHit Trace(Ray ray)
 float3 Shade(thread Ray* ray, RayHit hit)
 {
     float3 col = 0.f;
+    int3 randSeeds = int3(ray->direction.x, ray->direction.y, ray->direction.z);
     
     if(hit.distance < INFINITY)
     {
@@ -313,6 +314,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
         
         //float roulette = rand(ray->energy);
         float roulette = rand(&ray->seed, ray->jitter);
+        //float roulette = rand2(randSeeds.x, randSeeds.y, randSeeds.z);
         
         if (specularChance > 0.f && roulette < specularChance)
         {
