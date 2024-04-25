@@ -204,7 +204,7 @@ void IntersectGroundPlane(Ray ray, thread RayHit* hit)
 {
     float t = -ray.origin.y / ray.direction.y;
     
-    if(t > 0 && t < hit->distance){
+    if(t > 0.f && t < hit->distance){
         hit->distance = t;
         hit->position = t * ray.direction + ray.origin;
         hit->normal = float3(0.f, 1.f, 0.f);
@@ -265,10 +265,10 @@ RayHit Trace(Ray ray)
     //s.specular = float3(0.3f, 1.f, 1.f);
     s.specular = 0.1f;
     s.emission = 0.f;
-    s.smoothness = 4.f;
+    s.smoothness = 3.f;
     s.refractionColor = 1.f;
-    s.refractiveIndex = 1.2f;
-    s.refractionChance = 0.9f;
+    s.refractiveIndex = 1.8f;
+    s.refractionChance = 1.f;
     s.point = float4(0, 0.4f, 0.f, 0.3f);
     
     Sphere s1;
@@ -279,7 +279,7 @@ RayHit Trace(Ray ray)
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 0.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, .4f, 0.5f, 0.10f);
+    s1.point = float4(0.f, .8f, 0.8f, 0.10f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -303,7 +303,7 @@ RayHit Trace(Ray ray)
 float3 Shade(thread Ray* ray, RayHit hit)
 {
     float3 col = 0.f;
-    int3 randSeeds = int3(ray->direction.x * 10000, ray->direction.y * 10002, ray->direction.z * 50002) * int(ray->seed * 10000);
+    int3 randSeeds = int3(ray->direction.x * 10000, ray->direction.y * 10002, ray->direction.z * 50002) * int(ray->seed * 100);
     
     if(hit.distance < INFINITY)
     {
@@ -380,7 +380,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     const auto textureSize = ushort2(destination.get_width(), destination.get_height());
     float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
     float4 colInit = destination.read(position).rgba;
-    float3 col = 0.f;
+    float3 col = float3(0.f, 0.f, 0.f);
     
     //auto result = source.sample(textureSampler, uv);
     uv = uv * 2.f - 1.f;
@@ -405,13 +405,13 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     ray = CreateCameraRay(uv, cam);
     
     
-    for (int a=0; a<8; a++)
+    for (int a=0; a<64; a++)
     {
         hit = Trace(ray);
         
         if (hit.distance !=INFINITY){
             float3 n = ray.energy;
-            col += (Shade(&ray, hit) * n);
+            col += (Shade(&ray, hit) * ray.energy);
         }
         else
         {

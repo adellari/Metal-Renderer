@@ -10,7 +10,7 @@ import SwiftUI
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
-    @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 0.0)
+    @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
     
 }
 
@@ -71,7 +71,7 @@ struct ContentView: View {
                     
                     counter += 1
                 }
-                Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
+                Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { _ in
                     viewController?.redraw()
                     SceneData.sampleCount += 1
                     viewController?.SceneData = self.SceneData
