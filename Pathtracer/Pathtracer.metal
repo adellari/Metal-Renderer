@@ -152,6 +152,13 @@ float rand(thread float* _Seed, float2 Jitter)
     return result;
 }
 
+float rand(float _Seed, float2 Jitter)
+{
+    float result = fract(sin(_Seed / 100.f * dot(Jitter.xy, float2(12.9898f, 78.233f))) * 43758.5453f);
+    //*_Seed += 1.0f;
+    return result;
+}
+
 float rand2(int x, int y, int z)
 {
     int seed = x + y * 57 + z * 241;
@@ -179,9 +186,10 @@ float3x3 GetTangentSpace(float3 normal)
     return float3x3(tangent, binormal, normal);
 }
 
-float3 SampleHemisphere(float3 normal, float alpha, thread float* seed, float2 jitter)
+float3 SampleHemisphere(float3 normal, float alpha, float seed, float2 jitter)
 {
     float cosTheta = pow(rand(seed, jitter), 1.f / (alpha + 1.f));
+    seed += 1.f;
     float sinTheta = sqrt(1.f - cosTheta * cosTheta);
     float phi = 2 * PI * rand(seed, jitter);
     
@@ -274,7 +282,7 @@ RayHit Trace(Ray ray)
     Sphere s1;
     s1.albedo = float3(0.2f, 0.2f, 1.f);
     s1.specular = float3(0.2f, 0.2f, 1.f);
-    s1.emission = float3(1, 4, 9);
+    s1.emission = float3(1.f, 4.f, 20.f);
     s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 0.f;
@@ -303,7 +311,8 @@ RayHit Trace(Ray ray)
 float3 Shade(thread Ray* ray, RayHit hit)
 {
     float3 col = 0.f;
-    int3 randSeeds = int3(ray->direction.x * 10000, ray->direction.y * 10002, ray->direction.z * 50002) * int(ray->seed * 100);
+    float _seed = ray->seed;
+    float2 jitter = ray->jitter;
     
     if(hit.distance < INFINITY)
     {
@@ -326,8 +335,9 @@ float3 Shade(thread Ray* ray, RayHit hit)
         
         //float roulette = rand(ray->energy);
         //float roulette = rand(&ray->seed, ray->jitter);
-        float roulette = rand2(randSeeds.x, randSeeds.y, randSeeds.z);
-        randSeeds ^= int(4000 * ray->seed);
+        float roulette = rand(_seed, jitter);
+        
+        _seed += 1.f;
         
         if (specularChance > 0.f && roulette < specularChance)
         {
@@ -335,7 +345,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             //choose a random direction based on the reflected ray, using alpha for BRDF sample
-            ray->direction = SampleHemisphere(reflected, alpha, randSeeds);
+            ray->direction = SampleHemisphere(reflected, alpha, _seed, jitter);
             ray->energy = (1.f / specularChance) * hit.specular * sdot(hit.normal, ray->direction, f);  //use cosine sampling to terminate rays that are unlikely
             ray->origin = hit.position + hit.normal * 0.001f;   //we jiggle this a bit to avoid registering the same hit
         }
@@ -345,14 +355,14 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, randSeeds)), 0.01f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, _seed, jitter)), 0.1f));
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
         }
         else if(diffuseChance > 0.f && roulette < specularChance + diffuseChance)
         {
-            ray->direction = SampleHemisphere(hit.normal, 1.f, randSeeds);
+            ray->direction = SampleHemisphere(hit.normal, 1.f, _seed, jitter);
             ray->energy *= (1.f / diffuseChance) * hit.albedo;
             ray->origin = hit.position + hit.normal * 0.001f;
         }
@@ -389,7 +399,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     //const auto result = float4(1.f, 0.f, 0.f, 1.f);       //brg
     Ray ray;
     RayHit hit = CreateRayHit();
-    
+    ray.jitter = float2(position.x, position.y);
     /*
     Sphere s;
     s.albedo = 0.f;
@@ -412,6 +422,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         if (hit.distance !=INFINITY){
             float3 n = ray.energy;
             col += (Shade(&ray, hit) * ray.energy);
+            ray.seed += 4.f;
         }
         else
         {
@@ -438,8 +449,10 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     }
     */
     float avgFactor = (1.f / (sampleCount + 1.f));
-    auto result = float4( (channelSwap(col) * avgFactor) + (colInit.rgb * (1.f - avgFactor)), 1.f);
+    auto result = float4( col * avgFactor + (colInit.rgb * (1.f - avgFactor)), 1.f);
     //auto result = float4(channelSwap(col), avgFactor) + float4(colInit.rgb, (1.f - avgFactor));
+    //auto result = float4(channelSwap(col), 1.f);
+    //auto result = float4(12.f, 0.f, 0.f, 1.f);
     //result *= tint;
     //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
     //auto result = float4(ray.direction.z, ray.direction.g, ray.direction.x, 1.f) * cam->dummy;

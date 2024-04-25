@@ -69,10 +69,10 @@ final class TextureManager{
     
     //create a CGImage from a metal texture
     func cgImage(from texture: MTLTexture) throws -> CGImage {
-        let bytesPerRow = texture.width * 4 //rgba
+        let bytesPerRow = texture.width * 4 * 4 //rgba
         let length = bytesPerRow * texture.height
         
-        let pixelBytes = UnsafeMutableRawPointer.allocate(byteCount: length, alignment: MemoryLayout<UInt8>.alignment)
+        let pixelBytes = UnsafeMutableRawPointer.allocate(byteCount: length, alignment: MemoryLayout<Float32>.alignment)
         defer { pixelBytes.deallocate() }
         
         let destinationRegion = MTLRegion(origin: .init(x: 0, y: 0, z: 0), size: .init(width: texture.width, height: texture.height, depth: texture.depth))
@@ -80,11 +80,12 @@ final class TextureManager{
         texture.getBytes(pixelBytes, bytesPerRow: bytesPerRow, from: destinationRegion, mipmapLevel: 0)
         
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.noneSkipFirst.rawValue)
+        let hdrSpace = CGColorSpace(name: CGColorSpace.extendedLinearSRGB)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.floatComponents.rawValue)
         
-        guard let data = CFDataCreate(nil, pixelBytes.assumingMemoryBound(to: UInt8.self), length),
+        guard let data = CFDataCreate(nil, pixelBytes.assumingMemoryBound(to: Float.self), length),
               let dataProvider = CGDataProvider(data: data),
-              let cgImage = CGImage(width: texture.width, height: texture.height, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo, provider: dataProvider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
+              let cgImage = CGImage(width: texture.width, height: texture.height, bitsPerComponent: 32, bitsPerPixel: 128, bytesPerRow: bytesPerRow, space: hdrSpace!, bitmapInfo: bitmapInfo, provider: dataProvider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
                 
         else {throw Error.cgImageCreationFailed}
         return cgImage
