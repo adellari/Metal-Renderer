@@ -8,7 +8,7 @@
 #include <metal_stdlib>
 using namespace metal;
 #define PI 3.1415926535
-#define EPSILON = 1e-8
+#define EPSILON 1e-8
 
 constant bool deviceSupportsNonuniformThreadgroups [[function_constant(0)]];
 
@@ -261,6 +261,42 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
         hit->IOR = sphere.refractiveIndex;
     }
     
+}
+
+//The Tomas Akenine-Moller and Ben Trumbone 1997 fast triangle intersection algorithm
+//https://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/pubs/raytri_tam.pdf
+//out params: t - how far along ray.direction we hit the triangle
+//          u, v, w are barycentrinc coords where w = 1 - u - v
+//barycentric equation for a point on a triangle is P = wA + uB + vC, where ABC are the vertices
+bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t, thread float* u, thread float* v)
+{
+    //find edges sharing the same vertex
+    float3 edge1 = v1 - v0;
+    float3 edge2 = v2 - v0;
+    
+    //calculate the determinant
+    float3 pvec = cross(ray.direction, edge2);
+    
+    float det = dot(edge1, pvec);
+    
+    if(det < EPSILON)
+        return false;
+    
+    float inv_det = 1.f / det;
+    
+    float3 tvec = ray.origin - v0;
+    *u = dot(tvec, pvec) * inv_det;
+    if(*u < 0.f || *u > 1.f)
+        return false;
+    
+    float3 qvec = cross(tvec, edge1);
+    
+    *v = dot(ray.direction, qvec) * inv_det;
+    if(*v < 0.f || *u + *v > 1.f)
+        return false;
+    
+    *t = dot(edge2, qvec) * inv_det;
+    return true;
 }
 
 RayHit Trace(Ray ray)
