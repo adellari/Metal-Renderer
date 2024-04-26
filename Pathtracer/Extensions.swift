@@ -16,6 +16,18 @@ struct CameraParams{
     var dummy: Float;
 }
 
+struct Sphere {
+    var point : float4; //position, size
+    var albedo : float3;
+    var specular : float3;
+    var emission : float3;
+    var refractiveColor : float3;
+    var smoothness : Float;
+    var IOR : Float;
+    var internalSmoothness : Float;
+    var transmissionChance : Float;
+}
+
 extension UIImageView {
     func asSwiftUIView() -> some View {
         return ImageViewWrapper(uiImageView: self)
