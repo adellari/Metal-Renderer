@@ -10,7 +10,7 @@ Metal implementation of https://github.com/adellari/Pathtracer/
 
 - ~~Triangle Support~~
 
-- Object editing
+- Realtime Object editing
 
 - Pinhole -> Real lens with Depth of field
 
