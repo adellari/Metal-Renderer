@@ -2,10 +2,11 @@
 Metal implementation of https://github.com/adellari/Pathtracer/
 
 ## Roadmap
+- ~~Diffuse & Specular BRDF~~
 
 - ~~Transparency/translucency BSDF~~
 
-- ~~HDR swapchain support~~
+- ~~HDR swapchain~~
 
 - ~~Triangle Support~~
 
@@ -14,6 +15,8 @@ Metal implementation of https://github.com/adellari/Pathtracer/
 - Pinhole -> Real lens with Depth of field
 
 - Multiple Importance Sampling
+
+- Bounding Volume Heirarchy (BVHs) acceleration
 
 
 
