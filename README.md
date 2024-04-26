@@ -6,9 +6,9 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 ![](https://github.com/adellari/Metal-Renderer/blob/main/Captures/4-09.png)
 
 #### 04/24/24
-![](https://github.com/adellari/Metal-Renderer/blob/main/Captures/4-24-0.png)
+![](https://github.com/adellari/Metal-Renderer/blob/main/Captures/4-24-0.PNG)
 
-![](https://github.com/adellari/Metal-Renderer/blob/main/Captures/4-24-1.png)
+![](https://github.com/adellari/Metal-Renderer/blob/main/Captures/4-24-1.PNG)
 
 ## Roadmap
 - ~~Diffuse & Specular BRDF~~
