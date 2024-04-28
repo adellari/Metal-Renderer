@@ -16,8 +16,8 @@ class SceneDataModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
-     var viewController: ViewController?
-
+    var viewController: ViewController?
+    @State private var Col = Color.blue.opacity(0.5)
         init() {
             do {
                 guard let device = MTLCreateSystemDefaultDevice() else {
@@ -37,28 +37,33 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
             
-            viewController?.imageView.asSwiftUIView()
-                .gesture(
-                    DragGesture()
-                        .onChanged { value in
-                            //print(value.translation)
-                            SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height), SceneData.cameraOffset.2)
-                            SceneData.sampleCount = -1
-                            viewController?.SceneData = self.SceneData
-                            //print("image view is being dragged")
-                        }
-                )
-                .gesture(
-                    MagnifyGesture()
-                        .onChanged{ value in
-                            SceneData.cameraOffset = (SceneData.cameraOffset.0, SceneData.cameraOffset.1, Float(value.magnification))
-                            SceneData.sampleCount = -1
-                            
-                            print(value.magnification)
-                        }
+            ZStack {
                 
                 
-                )
+                viewController?.imageView.asSwiftUIView()
+                    .gesture(
+                        DragGesture()
+                            .onChanged { value in
+                                //print(value.translation)
+                                SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height), SceneData.cameraOffset.2)
+                                SceneData.sampleCount = -1
+                                viewController?.SceneData = self.SceneData
+                                //print("image view is being dragged")
+                            }
+                    )
+                    .gesture(
+                        MagnifyGesture()
+                            .onChanged{ value in
+                                SceneData.cameraOffset = (SceneData.cameraOffset.0, SceneData.cameraOffset.1, Float(value.magnification))
+                                SceneData.sampleCount = -1
+                                
+                                print(value.magnification)
+                            }
+                        
+                        
+                    )
+                ColorPicker("Sphere Material", selection: $Col)
+            }
             
             Button(action: {
                 print("hello")

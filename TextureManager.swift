@@ -66,7 +66,8 @@ final class TextureManager{
         return matchingTexture
     }
     
-    
+    //great HDR creation reference
+    //https://github.com/Hi-Rez/Satin/blob/70f576550ecb7a8df8f3121a6a1a4c8939e9c4d8/Source/Utilities/Textures.swift#L114
     //create a CGImage from a metal texture
     func cgImage(from texture: MTLTexture) throws -> CGImage {
         let bytesPerRow = texture.width * 4 * 4 //rgba
