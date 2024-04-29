@@ -34,7 +34,7 @@ struct Sphere {
     var emission : float3 = float3(0, 0, 0);
     var refractiveColor : float3 = float3(1, 1, 1);
     var smoothness : Float = 3;
-    var IOR : Float = 1;
+    var IOR : Float = 1.8;
     var internalSmoothness : Float = 1;
     var transmissionChance : Float = 1;
 }

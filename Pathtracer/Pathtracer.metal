@@ -40,6 +40,7 @@ struct RayHit {
     float smoothness;
     float IOR;
     float refractionChance;
+    float refractionSmoothness;
     bool inside;
 };
 
@@ -87,6 +88,7 @@ RayHit CreateRayHit(){
     hit.refractionColor = float3(0.f, 0.f, 0.f);
     hit.IOR = 1.f;
     hit.refractionChance = 0.f;
+    hit.refractionSmoothness = 0.f;
     hit.smoothness = 0.f;
     hit.emission = 0.f;
     hit.inside = false;
@@ -258,6 +260,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
         hit->smoothness = sphere.smoothness;
         hit->refractionChance = sphere.refractionChance;
         hit->refractionColor = sphere.refractionColor;
+        hit->refractionSmoothness = sphere.refractionRoughness;
         hit->IOR = sphere.refractiveIndex;
     }
     
@@ -299,7 +302,7 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     return true;
 }
 
-RayHit Trace(Ray ray)
+RayHit Trace(Ray ray, Sphere s3)
 {
     
     
@@ -316,9 +319,9 @@ RayHit Trace(Ray ray)
     s.point = float4(0, 0.4f, 0.f, 0.3f);
     
     Sphere s1;
-    s1.albedo = float3(0.2f, 0.2f, 1.f);
+    s1.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
     s1.specular = float3(0.2f, 0.2f, 1.f);
-    s1.emission = float3(1.f, 4.f, 20.f);
+    s1.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
     s1.smoothness = 0.3f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 0.f;
@@ -336,8 +339,8 @@ RayHit Trace(Ray ray)
     s2.point = float4(0.f, 0.5f, 1.2f, 0.10f);
     
     IntersectGroundPlane(ray, &hit);
-    
-    IntersectSphere(ray, &hit, s);
+    s3.emission = 0.f;
+    IntersectSphere(ray, &hit, s3);
     IntersectSphere(ray, &hit, s1);
     //IntersectSphere(ray, &hit, s2);
     
@@ -362,6 +365,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
         float specularChance = energy(hit.specular);
         float diffuseChance = energy(hit.albedo);
         float refractChance = hit.refractionChance;
+        refractChance = energy(hit.refractionColor);
         
         if (specularChance > 0.f)
         {
@@ -391,7 +395,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, _seed, jitter)), 0.1f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, _seed, jitter)), hit.refractionSmoothness * 0.05f));
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
@@ -414,7 +418,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)
@@ -453,7 +457,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     
     for (int a=0; a<64; a++)
     {
-        hit = Trace(ray);
+        hit = Trace(ray, spheres[0]);
         
         if (hit.distance !=INFINITY){
             float3 n = ray.energy;
@@ -486,6 +490,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     */
     float avgFactor = (1.f / (sampleCount + 1.f));
     auto result = float4( col * avgFactor + (colInit.rgb * (1.f - avgFactor)), 1.f);
+    //auto result = float4(spheres[0].albedo, 1);   //testing buffer allocation
     //auto result = float4(channelSwap(col), avgFactor) + float4(colInit.rgb, (1.f - avgFactor));
     //auto result = float4(channelSwap(col), 1.f);
     //auto result = float4(12.f, 0.f, 0.f, 1.f);

@@ -90,7 +90,7 @@ struct MaterialMenu: View {
                             
                             if (_name == "Specular" || _name ==  "Transmission" || _name == "Emission"){
                                 HStack{
-                                    Slider(value: $MaterialOptions[index].aux1, onEditingChanged: { _ in
+                                    Slider(value: $MaterialOptions[index].aux1, in: 0 ... 10, onEditingChanged: { _ in
                                         updateProperties(var: index)
                                     })
                                         .tint(.black)

@@ -52,7 +52,7 @@ final class PipelineEncoder{
         var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(5.0 * sin(viewX * 0) * translation, 0.2, 5.0 * cos(viewX * 0) * translation), dummy: Float.random(in: 0..<1))
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
-        
+        var spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride, options: [])
         
         
         encoder.label = "Pathtracer"
@@ -62,6 +62,7 @@ final class PipelineEncoder{
         encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
         encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
         encoder.setBuffer(camBuffer, offset: 0, index: 1)
+        encoder.setBuffer(spheresBuffer, offset: 0, index: 2)
         //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
         //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)
         
