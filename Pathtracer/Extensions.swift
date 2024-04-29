@@ -16,16 +16,27 @@ struct CameraParams{
     var dummy: Float;
 }
 
+/*
+ s.specular = 0.1f;
+ s.emission = 0.f;
+ s.smoothness = 3.f;
+ s.refractionColor = 1.f;
+ s.refractiveIndex = 1.8f;
+ s.refractionChance = 1.f;
+ s.point = float4(0, 0.4f, 0.f, 0.3f);
+ s.albedo = float3(0.1f, 0.42f, 0.93f);
+ */
+
 struct Sphere {
-    var point : float4; //position, size
-    var albedo : float3;
-    var specular : float3;
-    var emission : float3;
-    var refractiveColor : float3;
-    var smoothness : Float;
-    var IOR : Float;
-    var internalSmoothness : Float;
-    var transmissionChance : Float;
+    var point : float4 = float4(0, 0.4, 0, 0.3); //position, size
+    var albedo : float3 = float3(0.1, 0.42, 0.93);
+    var specular : float3 = float3(0.1, 0.1, 0.1);
+    var emission : float3 = float3(0, 0, 0);
+    var refractiveColor : float3 = float3(1, 1, 1);
+    var smoothness : Float = 3;
+    var IOR : Float = 1;
+    var internalSmoothness : Float = 1;
+    var transmissionChance : Float = 1;
 }
 
 extension UIImageView {

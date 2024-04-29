@@ -11,7 +11,13 @@ class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
     @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
-    
+    @Published var Spheres : [Sphere] = [Sphere(), Sphere()] {
+        didSet{
+            print("hi, there was a change to the spheres")
+            sampleCount = -2
+            //print(Spheres)
+        }
+    }
 }
 
 struct ContentView: View {
@@ -37,7 +43,7 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             Text("Hello, world!")
             
-            ZStack {
+            ZStack(alignment: .bottomLeading) {
                 
                 
                 viewController?.imageView.asSwiftUIView()
@@ -62,8 +68,14 @@ struct ContentView: View {
                         
                         
                     )
-                ColorPicker("Sphere Material", selection: $Col)
+                MaterialMenu(obj: $SceneData.Spheres[0])
+                    
+                    .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
+                    //.padding([.leading, .bottom])
+                    //.frame(alignment: .trailing)
             }
+            .frame(alignment: .leading)
+            
             
             Button(action: {
                 print("hello")
