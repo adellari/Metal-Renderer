@@ -35,7 +35,7 @@ struct MaterialMenu: View {
     let buttonsCount = 4 // The total number of secondary buttons
     let radius: CGFloat = 50 // The radius of the circular pattern
     @State var focus = 0
-    @State var MaterialOptions : [MaterialProp] = [MaterialProp(id: 0, icon: "moonphase.first.quarter.inverse", name: "Transmission", expanded: true), MaterialProp(id: 1, icon: "moon.circle.fill", name: "Specular"), MaterialProp(id: 2, icon: "moonphase.full.moon", name: "Diffuse"), MaterialProp(id: 3, icon: "microbe.circle.fill", name: "Emission")]
+    @State var MaterialOptions : [MaterialProp] = [MaterialProp(id: 0, icon: "moonphase.first.quarter.inverse", name: "Transmission", expanded: false), MaterialProp(id: 1, icon: "moon.circle.fill", name: "Specular"), MaterialProp(id: 2, icon: "moonphase.full.moon", name: "Diffuse"), MaterialProp(id: 3, icon: "microbe.circle.fill", name: "Emission")]
     
     var body: some View {
         VStack {

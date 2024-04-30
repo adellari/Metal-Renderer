@@ -18,6 +18,8 @@ struct CameraParams {
     float4x4 worldToCamera;
     float4x4 projectionInv;
     float3 cameraPosition;
+    float focalLength;
+    float aperture;
     float dummy;
 };
 
@@ -198,10 +200,12 @@ Ray CreateSecondaryRay(float2 screenPos, constant CameraParams* cam, float3 fPoi
 {
     Ray ray;
     float3 origin = (float4(cam->cameraPosition, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
-    float3 dir = (float4(( (apertureOffset*0.01f) + screenPos), 0, 1) * cam->projectionInv).xyz;
+    float3 dir = (float4(( (apertureOffset) + screenPos), 0, 1) * cam->projectionInv).xyz;
     //float3 dir = fPoint - offsetPos;
     
-    dir = normalize(normalize((float4(dir, 0) * cam->worldToCamera).xyz) - normalize(fPoint));
+    dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
+    
+    dir = normalize(fPoint - (origin + dir));
     ray = CreateRay(origin, dir, screenPos, cam->dummy);
     
     return ray;
@@ -336,11 +340,32 @@ RayHit Trace(Ray ray, Sphere s3)
     s1.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
     s1.specular = float3(0.2f, 0.2f, 1.f);
     s1.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
-    s1.smoothness = 0.3f;
+    s1.smoothness = 0.9f;
     s1.refractionColor = 0.f;
     s1.refractiveIndex = 0.f;
     s1.refractionChance = 0.f;
-    s1.point = float4(0.f, .8f, 0.8f, 0.10f);
+    s1.point = float4(-0.7f, .4f, 2.2f, 0.15f);
+    
+    Sphere s4;
+    s4.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
+    s4.specular = float3(0.2f, 0.2f, 1.f);
+    s4.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
+    s4.smoothness = 0.9f;
+    s4.refractionColor = 0.f;
+    s4.refractiveIndex = 0.f;
+    s4.refractionChance = 0.f;
+    s4.point = float4(0.2f, .4f, 1.2f, 0.15f);
+    
+    
+    Sphere s5;
+    s5.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
+    s5.specular = float3(0.2f, 0.2f, 1.f);
+    s5.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
+    s5.smoothness = 0.9f;
+    s5.refractionColor = 0.f;
+    s5.refractiveIndex = 0.f;
+    s5.refractionChance = 0.f;
+    s5.point = float4(0.5f, .4f, 0.3f, 0.15f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -350,12 +375,16 @@ RayHit Trace(Ray ray, Sphere s3)
     s2.refractionColor = 0.f;
     s2.refractiveIndex = 0.f;
     s2.refractionChance = 0.f;
-    s2.point = float4(0.f, 0.5f, 1.2f, 0.10f);
+    s2.point = float4(0.f, 0.5f, 2.2f, 0.40f);
+    
+    
     
     IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
     IntersectSphere(ray, &hit, s3);
     IntersectSphere(ray, &hit, s1);
+    IntersectSphere(ray, &hit, s4);
+    IntersectSphere(ray, &hit, s5);
     //IntersectSphere(ray, &hit, s2);
     
     return hit;
@@ -464,10 +493,10 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     s.refractionChance = 0.f;
     s.point = float4(0, 0.5f, 2.f, 0.8f);
     */
-    float aperture = 10.f; //4 pixel wide aperture
+    float aperture = cam->aperture; //4 pixel wide aperture
     
     ray = CreateCameraRay(uv, cam); //primary ray
-    float3 focalPoint = ray.origin + ray.direction * .5f; // the focal point is 3 units from the aperture
+    float3 focalPoint = ray.origin + ray.direction * cam->focalLength; // the focal point is 3 units from the aperture
     
     //float3 ray2 =
     
@@ -501,7 +530,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     {
         float _apertureRadius = rand(_s, _jitter) * aperture;
         _s += 1.f;
-        float _randAngle = rand(_s, _jitter) * 2 * PI;
+        float _randAngle = rand(_s, _jitter) * PI * 2;
         float2 apertureOffset = float2(cos(_randAngle), sin(_randAngle)) * _apertureRadius;
         Ray secondaryRay = CreateSecondaryRay(uv, cam, focalPoint, apertureOffset);
         

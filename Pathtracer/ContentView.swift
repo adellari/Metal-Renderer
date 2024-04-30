@@ -12,6 +12,7 @@ class SceneDataModel: ObservableObject {
     @Published var sampleCount : Int = 0
     @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
     @Published var focalLength: Double = 4
+    @Published var aperture: Double = 1
     @Published var Spheres : [Sphere] = [Sphere(), Sphere()] {
         didSet{
             //print("hi, there was a change to the spheres")
@@ -68,9 +69,19 @@ struct ContentView: View {
                             }
                     )
                 
-                Slider(value: $SceneData.focalLength, in: 0.1 ... 20, onEditingChanged: {_ in
-                    //viewController?.SceneData = self.SceneData
-                print("changed focalLength")})
+                Slider(value: $SceneData.focalLength, in: 1 ... 100, onEditingChanged: {_ in
+                    viewController?.SceneData.sampleCount = -1
+                    print(SceneData.focalLength)
+                })
+                .offset(x: UIScreen.main.bounds.width * 0.2, y: UIScreen.main.bounds.height * -0.5)
+                .scaleEffect(0.7)
+                
+                Slider(value: $SceneData.aperture, in: 0.1 ... 5, onEditingChanged: {_ in
+                    viewController?.SceneData.sampleCount = -1
+                    print(SceneData.aperture)
+                })
+                .offset(x: UIScreen.main.bounds.width * 0.2, y: UIScreen.main.bounds.height * -0.5)
+                .scaleEffect(0.5)
                 
                 MaterialMenu(obj: $SceneData.Spheres[0])
                     

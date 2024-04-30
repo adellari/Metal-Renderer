@@ -13,6 +13,8 @@ struct CameraParams{
     var WorldToCamera : float4x4;
     var ProjectionInv: float4x4;
     var cameraPosition: float3;
+    var focalLength: Float;
+    var aperture: Float;
     var dummy: Float;
 }
 
@@ -28,7 +30,7 @@ struct CameraParams{
  */
 
 struct Sphere {
-    var point : float4 = float4(0, 0.4, 0, 0.3); //position, size
+    var point : float4 = float4(0, 2, 0, 1.3); //position, size
     var albedo : float3 = float3(0.1, 0.42, 0.93);
     var specular : float3 = float3(0.1, 0.1, 0.1);
     var emission : float3 = float3(0, 0, 0);
