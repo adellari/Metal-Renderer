@@ -56,45 +56,6 @@ struct Sphere {
     float refractionChance;
 };
 
-Ray CreateRay(float3 origin, float3 direction, float2 clipPos, float seed){
-    Ray ray;
-    ray.origin = origin;
-    ray.direction = direction;
-    ray.energy = float3(1.f, 1.f, 1.f);
-    ray.seed = seed;
-    ray.jitter = (clipPos + 1.f) / 2.f;
-    return ray;
-}
-
-Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
-{
-    Ray ray;
-    float3 origin = (float4(cam->cameraPosition, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
-    float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
-    
-    dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
-    ray = CreateRay(origin, dir, screenPos, cam->dummy);
-    
-    return ray;
-}
-
-RayHit CreateRayHit(){
-    RayHit hit;
-    hit.distance = INFINITY;
-    hit.position = float3(0.f, 0.f, 0.f);
-    hit.albedo = float3(0.f, 0.f, 0.f);
-    hit.specular = float3(1.f, 1.f, 1.f);
-    hit.normal = float3(0.f, 0.f, 0.f);
-    hit.refractionColor = float3(0.f, 0.f, 0.f);
-    hit.IOR = 1.f;
-    hit.refractionChance = 0.f;
-    hit.refractionSmoothness = 0.f;
-    hit.smoothness = 0.f;
-    hit.emission = 0.f;
-    hit.inside = false;
-    return hit;
-};
-
 bool any(float3 val)
 {
     return (val.x * val.y * val.z) > 0.001f;
@@ -209,6 +170,59 @@ float3 SampleHemisphere(float3 normal, float alpha, int3 randSeeds)
     float3 cartesianSpace = float3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
     return GetTangentSpace(normal) * cartesianSpace;    //MATRIX MULTIPLICATION ORDER   MATTERS
 }
+
+
+Ray CreateRay(float3 origin, float3 direction, float2 clipPos, float seed){
+    Ray ray;
+    ray.origin = origin;
+    ray.direction = direction;
+    ray.energy = float3(1.f, 1.f, 1.f);
+    ray.seed = seed;
+    ray.jitter = (clipPos + 1.f) / 2.f;
+    return ray;
+}
+
+Ray CreateCameraRay(float2 screenPos, constant CameraParams* cam)
+{
+    Ray ray;
+    float3 origin = (float4(cam->cameraPosition, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
+    float3 dir = (float4(screenPos, 0, 1) * cam->projectionInv).xyz;
+    
+    dir = normalize((float4(dir, 0) * cam->worldToCamera).xyz);
+    ray = CreateRay(origin, dir, screenPos, cam->dummy);
+    
+    return ray;
+}
+
+Ray CreateSecondaryRay(float2 screenPos, constant CameraParams* cam, float3 fPoint, float2 apertureOffset)
+{
+    Ray ray;
+    float3 origin = (float4(cam->cameraPosition, 1) * cam->worldToCamera).xyz; //z axis and x axis are reversed here?
+    float3 dir = (float4(( (apertureOffset*0.01f) + screenPos), 0, 1) * cam->projectionInv).xyz;
+    //float3 dir = fPoint - offsetPos;
+    
+    dir = normalize(normalize((float4(dir, 0) * cam->worldToCamera).xyz) - normalize(fPoint));
+    ray = CreateRay(origin, dir, screenPos, cam->dummy);
+    
+    return ray;
+}
+
+RayHit CreateRayHit(){
+    RayHit hit;
+    hit.distance = INFINITY;
+    hit.position = float3(0.f, 0.f, 0.f);
+    hit.albedo = float3(0.f, 0.f, 0.f);
+    hit.specular = float3(1.f, 1.f, 1.f);
+    hit.normal = float3(0.f, 0.f, 0.f);
+    hit.refractionColor = float3(0.f, 0.f, 0.f);
+    hit.IOR = 1.f;
+    hit.refractionChance = 0.f;
+    hit.refractionSmoothness = 0.f;
+    hit.smoothness = 0.f;
+    hit.emission = 0.f;
+    hit.inside = false;
+    return hit;
+};
 
 void IntersectGroundPlane(Ray ray, thread RayHit* hit)
 {
@@ -450,13 +464,17 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     s.refractionChance = 0.f;
     s.point = float4(0, 0.5f, 2.f, 0.8f);
     */
-
+    float aperture = 10.f; //4 pixel wide aperture
     
-    ray = CreateCameraRay(uv, cam);
+    ray = CreateCameraRay(uv, cam); //primary ray
+    float3 focalPoint = ray.origin + ray.direction * .5f; // the focal point is 3 units from the aperture
+    
+    //float3 ray2 =
     
     
-    for (int a=0; a<64; a++)
-    {
+    //for the primary ray
+    for(int a=0; a<8; a++){
+        
         hit = Trace(ray, spheres[0]);
         
         if (hit.distance !=INFINITY){
@@ -475,6 +493,42 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         if(!any(ray.energy))
             break;
     }
+    float _s = ray.seed;
+    float2 _jitter = ray.jitter;
+    
+    //the secondary rays (8 of them)
+    for (int b=0; b<8; b++)
+    {
+        float _apertureRadius = rand(_s, _jitter) * aperture;
+        _s += 1.f;
+        float _randAngle = rand(_s, _jitter) * 2 * PI;
+        float2 apertureOffset = float2(cos(_randAngle), sin(_randAngle)) * _apertureRadius;
+        Ray secondaryRay = CreateSecondaryRay(uv, cam, focalPoint, apertureOffset);
+        
+        for(int c=0; c<8; c++){
+            
+            hit = Trace(secondaryRay, spheres[0]);
+            
+            if (hit.distance !=INFINITY){
+                col += (Shade(&secondaryRay, hit) * secondaryRay.energy);
+                ray.seed += 4.f;
+            }
+            else
+            {
+                float2 sph = CartesianToSpherical(secondaryRay.direction);
+                col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * secondaryRay.energy;
+                secondaryRay.energy = 0.f;
+                break;
+            }
+            
+            if(!any(secondaryRay.energy))
+                break;
+        }
+    }
+    
+    col /= 8.f;
+    
+    
     
     /*
     IntersectGroundPlane(ray, &hit);

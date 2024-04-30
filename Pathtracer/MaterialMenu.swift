@@ -76,24 +76,24 @@ struct MaterialMenu: View {
                             Slider(value: $MaterialOptions[index].red, onEditingChanged: { _ in
                                 updateProperties(var: index)
                             })
-                                .tint(.red)
-                               
+                            .tint(.red)
+                            
                             Slider(value: $MaterialOptions[index].green, onEditingChanged: { _ in
                                 updateProperties(var: index)
                             })
-                                .tint(.green)
+                            .tint(.green)
                             
                             Slider(value: $MaterialOptions[index].blue, onEditingChanged: { _ in
                                 updateProperties(var: index)
                             })
-                                .tint(.blue)
+                            .tint(.blue)
                             
                             if (_name == "Specular" || _name ==  "Transmission" || _name == "Emission"){
                                 HStack{
                                     Slider(value: $MaterialOptions[index].aux1, in: 0 ... 10, onEditingChanged: { _ in
                                         updateProperties(var: index)
                                     })
-                                        .tint(.black)
+                                    .tint(.black)
                                     Text( (_name == "Specular" || _name == "Transmission") ? "Smoothness" : "Intensity")
                                         .font(.system(size: 12))
                                         .fontWeight(.light)
@@ -104,7 +104,7 @@ struct MaterialMenu: View {
                                         Slider(value: $MaterialOptions[index].aux2, in: 0 ... 2, onEditingChanged: { _ in
                                             updateProperties(var: index)
                                         })
-                                            .tint(.black)
+                                        .tint(.black)
                                         Text("IOR")
                                             .fontWeight(.ultraLight)
                                     }
@@ -203,7 +203,7 @@ struct MaterialMenu: View {
             
         }
         
-        print("values supposedly updated")
+        //print("values supposedly updated")
     }
     
     func toggle() {
