@@ -17,6 +17,8 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - Bounding Volume Heirarchy acceleration
 
+- RGB Channel Sampling -> Spectral Sampling
+
 ## Progress Captures
 
 ### Object Editing (Added 04/29/24)
