@@ -13,6 +13,8 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - ~~Pinhole -> Real lens with Depth of field~~
 
+- Implement Intel Open Image denoiser (Ongoing)
+
 - Multiple Importance Sampling
 
 - Bounding Volume Heirarchy acceleration
