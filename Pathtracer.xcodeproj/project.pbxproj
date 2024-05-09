@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E04C64562BEA031F00C413B2 /* oidnDenoise in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64442BE9D53000C413B2 /* oidnDenoise */; };
+		E04C64972BEC62DB00C413B2 /* libOpenImageDenoise.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64942BEC62DB00C413B2 /* libOpenImageDenoise.2.2.2.dylib */; };
+		E04C64982BEC62DB00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64952BEC62DB00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */; };
+		E04C64992BEC62DB00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64962BEC62DB00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; };
+		E04C649D2BEC630100C413B2 /* libOpenImageDenoise.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */; };
+		E04C649E2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */; };
+		E04C649F2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; };
 		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B20C2BBD2533006F2DB0 /* Extensions.swift */; };
 		E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */; };
@@ -21,17 +26,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E04C643C2BE9CDD100C413B2 /* OIDNBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OIDNBridge.h; sourceTree = "<group>"; };
-		E04C643E2BE9D4DD00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
-		E04C64402BE9D4F500C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_device_metal.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_device_metal.2.2.2.dylib; sourceTree = "<group>"; };
-		E04C64422BE9D50C00C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.2.2.2.dylib; sourceTree = "<group>"; };
-		E04C64442BE9D53000C413B2 /* oidnDenoise */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = oidnDenoise; path = ../../../Denoiser/oidn/build/oidnDenoise; sourceTree = "<group>"; };
-		E04C644A2BEA021900C413B2 /* libOpenImageDenoise_device_cpu.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_device_cpu.2.2.2.dylib; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/lib/libOpenImageDenoise_device_cpu.2.2.2.dylib"; sourceTree = "<group>"; };
-		E04C644B2BEA021900C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.2.2.2.dylib; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/lib/libOpenImageDenoise.2.2.2.dylib"; sourceTree = "<group>"; };
-		E04C644C2BEA021900C413B2 /* libtbb.12.11.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libtbb.12.11.dylib; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/lib/libtbb.12.11.dylib"; sourceTree = "<group>"; };
-		E04C644D2BEA021900C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.2.2.2.dylib; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/lib/libOpenImageDenoise_core.2.2.2.dylib"; sourceTree = "<group>"; };
-		E04C644E2BEA021900C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_device_metal.2.2.2.dylib; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/lib/libOpenImageDenoise_device_metal.2.2.2.dylib"; sourceTree = "<group>"; };
-		E04C64542BEA023D00C413B2 /* oidnDenoise */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = oidnDenoise; path = "../../../../Downloads/oidn-2.2.2.arm64.macos/bin/oidnDenoise"; sourceTree = "<group>"; };
+		E04C64642BEA7DB900C413B2 /* OIDN-Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OIDN-Bridge.h"; sourceTree = "<group>"; };
+		E04C64942BEC62DB00C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64952BEC62DB00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64962BEC62DB00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_device_metal.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_device_metal.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise_device_metal.2.2.2.dylib; sourceTree = "<group>"; };
 		E068B2052BB4E41E006F2DB0 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		E068B20C2BBD2533006F2DB0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialMenu.swift; path = Pathtracer/MaterialMenu.swift; sourceTree = "<group>"; };
@@ -51,7 +52,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E04C64562BEA031F00C413B2 /* oidnDenoise in Frameworks */,
+				E04C64972BEC62DB00C413B2 /* libOpenImageDenoise.2.2.2.dylib in Frameworks */,
+				E04C64982BEC62DB00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Frameworks */,
+				E04C64992BEC62DB00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,16 +64,9 @@
 		E04C643D2BE9D4DD00C413B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				E04C64542BEA023D00C413B2 /* oidnDenoise */,
-				E04C644D2BEA021900C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
-				E04C644A2BEA021900C413B2 /* libOpenImageDenoise_device_cpu.2.2.2.dylib */,
-				E04C644E2BEA021900C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
-				E04C644B2BEA021900C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
-				E04C644C2BEA021900C413B2 /* libtbb.12.11.dylib */,
-				E04C64442BE9D53000C413B2 /* oidnDenoise */,
-				E04C64422BE9D50C00C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
-				E04C64402BE9D4F500C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
-				E04C643E2BE9D4DD00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
+				E04C64952BEC62DB00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
+				E04C64962BEC62DB00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
+				E04C64942BEC62DB00C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -78,7 +74,10 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
-				E04C643C2BE9CDD100C413B2 /* OIDNBridge.h */,
+				E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
+				E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
+				E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
+				E04C64642BEA7DB900C413B2 /* OIDN-Bridge.h */,
 				E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */,
 				E068B2052BB4E41E006F2DB0 /* TextureManager.swift */,
 				E098C2E32BB32A6600C3D3BA /* Encoder.swift */,
@@ -177,6 +176,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E04C649D2BEC630100C413B2 /* libOpenImageDenoise.2.2.2.dylib in Resources */,
+				E04C649E2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Resources */,
+				E04C649F2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Resources */,
 				E098C2D92BB3173400C3D3BA /* Preview Assets.xcassets in Resources */,
 				E098C2D52BB3173400C3D3BA /* Assets.xcassets in Resources */,
 			);
@@ -330,6 +332,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = /Users/addyi/Documents/Denoiser/oidn/include/OpenImageDenoise;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -351,6 +354,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "OIDN-Bridge.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -369,6 +373,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = /Users/addyi/Documents/Denoiser/oidn/include/OpenImageDenoise;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -390,6 +395,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "OIDN-Bridge.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
