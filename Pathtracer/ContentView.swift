@@ -24,6 +24,7 @@ class SceneDataModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
+    var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
         init() {
@@ -94,7 +95,8 @@ struct ContentView: View {
             
             Button(action: {
                 print("hello")
-                initializeDevice()
+                OIDNHandle.initializeDevice()
+                //OIDNHandle.setImages()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()
