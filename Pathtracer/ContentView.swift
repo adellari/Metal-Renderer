@@ -94,7 +94,7 @@ struct ContentView: View {
             
             Button(action: {
                 print("hello")
-                //initializeDevice()
+                initializeDevice()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()

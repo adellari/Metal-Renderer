@@ -13,6 +13,7 @@
 		E04C649D2BEC630100C413B2 /* libOpenImageDenoise.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */; };
 		E04C649E2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */; };
 		E04C649F2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; };
+		E04C64A12BEC6B9700C413B2 /* OIDNHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */; };
 		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B20C2BBD2533006F2DB0 /* Extensions.swift */; };
 		E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */; };
@@ -33,6 +34,8 @@
 		E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise.2.2.2.dylib; sourceTree = "<group>"; };
 		E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
 		E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libOpenImageDenoise_device_metal.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OIDNHandler.m; sourceTree = "<group>"; };
+		E04C64A22BEC7BA700C413B2 /* OIDNHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OIDNHandler.h; sourceTree = "<group>"; };
 		E068B2052BB4E41E006F2DB0 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		E068B20C2BBD2533006F2DB0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialMenu.swift; path = Pathtracer/MaterialMenu.swift; sourceTree = "<group>"; };
@@ -74,6 +77,8 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E04C64A22BEC7BA700C413B2 /* OIDNHandler.h */,
+				E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */,
 				E04C649B2BEC630100C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
 				E04C649C2BEC630100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
 				E04C649A2BEC630000C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
@@ -199,6 +204,7 @@
 				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,
 				E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */,
 				E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */,
+				E04C64A12BEC6B9700C413B2 /* OIDNHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

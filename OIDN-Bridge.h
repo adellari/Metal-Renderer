@@ -8,11 +8,9 @@
 #ifndef OIDN_Bridge_h
 #define OIDN_Bridge_h
 
-//#import <OpenImageDenoise>
-#import "OpenImageDenoise/oidn.h"
-/*
-#import "oidn.h"
+#import "OIDNHandler.h"
 
+/*
 OIDNDevice device;
 
 void initializeDevice()
@@ -20,6 +18,6 @@ void initializeDevice()
     device = oidnNewDevice(OIDN_DEVICE_TYPE_METAL);
     oidnCommitDevice(device);
 }
-
 */
+
 #endif /* OIDN_Bridge_h */
