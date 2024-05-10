@@ -9,9 +9,9 @@
 
 @interface OIDNHandler : NSObject
 
-- (void) initializeDevice;
+- (void) InitDevice;
 - (void) Release;
-- (void) setImages;
+- (float*) Denoise:(const float*)inputColor;
 
 
 

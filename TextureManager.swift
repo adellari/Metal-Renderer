@@ -70,7 +70,7 @@ final class TextureManager{
     //https://github.com/Hi-Rez/Satin/blob/70f576550ecb7a8df8f3121a6a1a4c8939e9c4d8/Source/Utilities/Textures.swift#L114
     //create a CGImage from a metal texture
     func cgImage(from texture: MTLTexture) throws -> CGImage {
-        let bytesPerRow = texture.width * 4 * 4 //rgba
+        let bytesPerRow = texture.width * 4 * 4 //rgba, with each being 4 bytes long
         let length = bytesPerRow * texture.height
         
         let pixelBytes = UnsafeMutableRawPointer.allocate(byteCount: length, alignment: MemoryLayout<Float32>.alignment)
@@ -90,6 +90,40 @@ final class TextureManager{
                 
         else {throw Error.cgImageCreationFailed}
         return cgImage
+    }
+    
+    func colorValues(from texture: MTLTexture) throws -> [Float] {
+        let count = texture.width * texture.height * 4
+        //var colValues = [Float](repeating: 0, count: count)
+        
+        let region = MTLRegion(origin: .init(x: 0, y: 0, z: 0), size: .init(width: texture.width, height: texture.height, depth: texture.depth))
+        let bytesPerRow = texture.width * MemoryLayout<Float>.stride * 4
+        
+        let pixelBytes = UnsafeMutableRawPointer.allocate(byteCount: bytesPerRow * texture.height, alignment: MemoryLayout<Float32>.alignment)
+        
+        defer { pixelBytes.deallocate() }
+        
+        texture.getBytes(pixelBytes, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
+        
+        let colBufferPointer = pixelBytes.bindMemory(to: Float.self, capacity: count)
+        let colBuffer = Array(UnsafeBufferPointer(start: colBufferPointer, count: count))
+        
+        return colBuffer
+    }
+    
+    func CGFromRGB(fromFloatValues floatValues: [Float], width: Int, height: Int) -> CGImage? {
+        guard floatValues.count == width * height * 3 else {
+            print("Incorrect number of float values provided.")
+            return nil
+        }
+
+        let dataSize = width * height * 3 * MemoryLayout<Float>.size
+        let data = floatValues.withUnsafeBytes { Data($0) }
+        let provider = CGDataProvider(data: data as CFData)!
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo: CGBitmapInfo = [.byteOrder32Little, CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)]
+        
+        return CGImage(width: width, height: height, bitsPerComponent: 32, bitsPerPixel: 96, bytesPerRow: width * 3 * MemoryLayout<Float>.size, space: colorSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
     }
     
 }

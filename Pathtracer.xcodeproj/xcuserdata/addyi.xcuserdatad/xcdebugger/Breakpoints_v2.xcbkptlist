@@ -32,7 +32,71 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "36"
             endingLineNumber = "36"
-            landmarkName = "-initializeDevice"
+            landmarkName = "-InitDevice"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0F9FFD35-99C6-4351-B7B5-EDE6046F1A96"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "OIDNHandler.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "-Denoise:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0F9FFD35-99C6-4351-B7B5-EDE6046F1A96 - 777d436e82823d70"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[OIDNHandler Denoise:]"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/OIDNHandler.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "81"
+                  endingLineNumber = "81"
+                  offsetFromSymbolStart = "508">
+               </Location>
+               <Location
+                  uuid = "0F9FFD35-99C6-4351-B7B5-EDE6046F1A96 - 777d436e82823d17"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[OIDNHandler Denoise:]"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/OIDNHandler.m"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "564">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B97D20A1-569D-4CB2-9689-E30E5A4908BD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "redraw()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

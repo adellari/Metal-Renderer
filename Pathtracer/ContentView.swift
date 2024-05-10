@@ -11,8 +11,9 @@ class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
     @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
-    @Published var focalLength: Double = 4
-    @Published var aperture: Double = 1
+    @Published var focalLength: Double = 70
+    @Published var aperture: Double = 0.1
+    @Published var Denoiser: OIDNHandler = OIDNHandler()
     @Published var Spheres : [Sphere] = [Sphere(), Sphere()] {
         didSet{
             //print("hi, there was a change to the spheres")
@@ -24,7 +25,7 @@ class SceneDataModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
-    var OIDNHandle = OIDNHandler()
+    //var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
         init() {
@@ -89,14 +90,16 @@ struct ContentView: View {
                     .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
                     //.padding([.leading, .bottom])
                     //.frame(alignment: .trailing)
+                
+                viewController?.denoisedView.asSwiftUIView()
             }
             .frame(alignment: .leading)
             
             
             Button(action: {
                 print("hello")
-                OIDNHandle.initializeDevice()
-                OIDNHandle.setImages()
+                self.SceneData.Denoiser.initDevice()
+                //OIDNHandle.denoise()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()

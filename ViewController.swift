@@ -17,6 +17,7 @@ class ViewController {
     private let device: MTLDevice
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
+    public let denoisedView : UIImageView
     private let commandQueue: MTLCommandQueue
     private let textureManager: TextureManager
     private var texturePair: (source: MTLTexture, destination: MTLTexture)?
@@ -33,6 +34,7 @@ class ViewController {
         self.textureManager = .init(device: device)
         self.SceneData = sceneData
         self.imageView = .init()
+        self.denoisedView = .init()
         //super.init(nibName: nil, bundle: nil)
         
         sceneData.objectWillChange.sink {   [weak self] _ in
@@ -96,9 +98,34 @@ class ViewController {
                 return
             }
             
-            DispatchQueue.main.async {
-                self.imageView.image = .init(cgImage: cgImage)
+            if (self.SceneData.sampleCount == 200)
+            {
+                guard let pixArray = try? self.textureManager.colorValues(from: destination)
+                        
+                else {
+                    print("could not get the color values in flat array")
+                    return
+                }
+                print("got a color values array")
+                
+                let resultArray = self.SceneData.Denoiser.denoise(pixArray)
+                
+                let floatArray = Array(UnsafeBufferPointer(start: resultArray, count: 1024 * 512 * 3))
+                
+                DispatchQueue.main.async {
+                    self.denoisedView.image = .init(cgImage: self.textureManager.CGFromRGB(fromFloatValues: floatArray, width: 512, height: 1024)!)
+                    
+                }
             }
+            else {
+                DispatchQueue.main.async {
+                    self.imageView.image = .init(cgImage: cgImage)
+                }
+            }
+            
+            
+            
+            
         }
         commandBuffer.commit()
         
