@@ -120,10 +120,10 @@ final class TextureManager{
         let dataSize = width * height * 3 * MemoryLayout<Float>.size
         let data = floatValues.withUnsafeBytes { Data($0) }
         let provider = CGDataProvider(data: data as CFData)!
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo: CGBitmapInfo = [.byteOrder32Little, CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)]
+        let colorSpace = CGColorSpace(name: CGColorSpace.extendedLinearSRGB)
+        let bitmapInfo = CGBitmapInfo(rawValue: CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.none.rawValue | CGBitmapInfo.floatComponents.rawValue)
         
-        return CGImage(width: width, height: height, bitsPerComponent: 32, bitsPerPixel: 96, bytesPerRow: width * 3 * MemoryLayout<Float>.size, space: colorSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+        return CGImage(width: width, height: height, bitsPerComponent: 32, bitsPerPixel: 96, bytesPerRow: width * 3 * MemoryLayout<Float>.size, space: colorSpace!, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
     }
     
 }
