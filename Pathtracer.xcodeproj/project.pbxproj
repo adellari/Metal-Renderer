@@ -20,6 +20,13 @@
 		E04C64C32BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64C22BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; };
 		E04C64C42BED5E6C00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C64C22BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; };
 		E04C64C52BED5E7100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64C22BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E04C64C72BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64C62BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib */; };
+		E04C64C82BED627B00C413B2 /* libOpenImageDenoise.2.2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = E04C64C62BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib */; };
+		E04C64C92BED628000C413B2 /* libOpenImageDenoise.2.2.2.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64C62BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E04C64CC2BED638500C413B2 /* libOpenImageDenoise_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */; };
+		E04C64CE2BED639100C413B2 /* libOpenImageDenoise.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; };
+		E04C64CF2BED639D00C413B2 /* libOpenImageDenoise_core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B20C2BBD2533006F2DB0 /* Extensions.swift */; };
 		E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */; };
@@ -39,9 +46,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E04C64CF2BED639D00C413B2 /* libOpenImageDenoise_core.dylib in Embed Libraries */,
+				E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */,
+				E04C64BF2BED509E00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Embed Libraries */,
+				E04C64C92BED628000C413B2 /* libOpenImageDenoise.2.2.2.dylib in Embed Libraries */,
 				E04C64C52BED5E7100C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Embed Libraries */,
 				E04C64C02BED509F00C413B2 /* libOpenImageDenoise_device_metal.dylib in Embed Libraries */,
-				E04C64BF2BED509E00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Embed Libraries */,
 				E04C64C12BED50A100C413B2 /* libOpenImageDenoise.2.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
@@ -57,6 +67,10 @@
 		E04C64B72BED508800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
 		E04C64B82BED508800C413B2 /* libOpenImageDenoise.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.2.dylib; sourceTree = "<group>"; };
 		E04C64C22BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_device_metal.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_device_metal.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64C62BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64CA2BED634800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.2.2.2.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_core.2.2.2.dylib; sourceTree = "<group>"; };
+		E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise_core.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise_core.dylib; sourceTree = "<group>"; };
+		E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.dylib; sourceTree = "<group>"; };
 		E068B2052BB4E41E006F2DB0 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		E068B20C2BBD2533006F2DB0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialMenu.swift; path = Pathtracer/MaterialMenu.swift; sourceTree = "<group>"; };
@@ -76,9 +90,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E04C64C32BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */,
-				E04C64B92BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib in Frameworks */,
+				E04C64CE2BED639100C413B2 /* libOpenImageDenoise.dylib in Frameworks */,
 				E04C64BA2BED508800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Frameworks */,
+				E04C64C72BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib in Frameworks */,
+				E04C64C32BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */,
+				E04C64CC2BED638500C413B2 /* libOpenImageDenoise_core.dylib in Frameworks */,
+				E04C64B92BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib in Frameworks */,
 				E04C64BB2BED508800C413B2 /* libOpenImageDenoise.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,10 +106,13 @@
 		E04C643D2BE9D4DD00C413B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E04C64C62BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib */,
 				E04C64C22BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib */,
 				E04C64B72BED508800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
 				E04C64B62BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib */,
 				E04C64B82BED508800C413B2 /* libOpenImageDenoise.2.dylib */,
+				E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */,
+				E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -100,6 +120,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E04C64CA2BED634800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
 				E04C64A22BEC7BA700C413B2 /* OIDNHandler.h */,
 				E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */,
 				E04C64642BEA7DB900C413B2 /* Pathtracer-Bridging-Header.h */,
@@ -202,6 +223,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E04C64C82BED627B00C413B2 /* libOpenImageDenoise.2.2.2.dylib in Resources */,
 				E04C64C42BED5E6C00C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Resources */,
 				E04C64BC2BED509600C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Resources */,
 				E04C64BD2BED509600C413B2 /* libOpenImageDenoise_device_metal.dylib in Resources */,

@@ -96,7 +96,7 @@ struct ContentView: View {
             Button(action: {
                 print("hello")
                 OIDNHandle.initializeDevice()
-                //OIDNHandle.setImages()
+                OIDNHandle.setImages()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()

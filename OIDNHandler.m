@@ -23,7 +23,7 @@ OIDNFilter filter;
     NSLog(@"something being called here");
     const char* errorMessage;
     
-    device = oidnNewDevice(OIDN_DEVICE_TYPE_METAL);
+    device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
     
     if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
         NSLog(@"Error: %s\n", errorMessage);
@@ -51,6 +51,8 @@ OIDNFilter filter;
     colorBuf = oidnNewBuffer(device, buffSize);
     
     oidnSetFilterImage(filter, "color", colorBuf, OIDN_FORMAT_FLOAT3, 1024, 1024, 0, 0, 0);
+    oidnSetFilterImage(filter, "output", colorBuf, OIDN_FORMAT_FLOAT3, 1024, 1024, 0, 0, 0);
+    
     oidnSetFilterBool(filter, "hdr", true);
     oidnCommitFilter(filter);
     
