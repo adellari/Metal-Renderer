@@ -13,7 +13,7 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - ~~Pinhole -> Real lens with Depth of field~~
 
-- Implement Intel Open Image denoiser (Ongoing)
+- Implement Intel Open Image denoiser (Initial Implementation done, iOS version available at https://github.com/adellari/oidn)
 
 - Multiple Importance Sampling
 
@@ -25,7 +25,7 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 ### Object Editing (Added 04/29/24)
 
-https://github.com/adellari/oidn
+
 https://github.com/adellari/Metal-Renderer/assets/13017691/c1e97881-7f86-4392-be75-7e3bf8a989b2
 
 | | | |
