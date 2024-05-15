@@ -13,7 +13,7 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - ~~Pinhole -> Real lens with Depth of field~~
 
-- ~~Implement Intel Open Image denoiser~~ (IODN build for iOS in PR at https://github.com/adellari/oidn)
+- ~~Implement Intel Open Image denoiser~~ (IODN build for iOS in PR at https://github.com/RenderKit/oidn/pull/220)
 
 - Bounding Volume Heirarchy acceleration
 
