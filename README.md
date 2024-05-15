@@ -13,11 +13,11 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - ~~Pinhole -> Real lens with Depth of field~~
 
-- Implement Intel Open Image denoiser (Initial Implementation done, iOS version available at https://github.com/adellari/oidn)
-
-- Multiple Importance Sampling
+- ~~Implement Intel Open Image denoiser~~ (IODN build for iOS in PR at https://github.com/adellari/oidn)
 
 - Bounding Volume Heirarchy acceleration
+
+- Multiple Importance Sampling
 
 - RGB Channel Sampling -> Spectral Sampling
 
