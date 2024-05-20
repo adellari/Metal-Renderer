@@ -14,6 +14,7 @@ import Swift
 class ViewController {
     
     public var SceneData: SceneDataModel
+    public var reloadTextures: Bool = false
     private let device: MTLDevice
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
@@ -69,13 +70,13 @@ class ViewController {
         //self.texturePair?.destination = device.makeTexture(descriptor: desc)!
         //var src : MTLTexture = device.makeTexture(descriptor: desc)!
         
-        if self.texturePair == nil{
-            var src : MTLTexture = textureManager.loadTexture(path: "desert-sky")!
+        if (self.texturePair == nil || reloadTextures){
+            var src : MTLTexture = textureManager.loadTexture(path: SceneData.skybox)!
             var dst : MTLTexture = device.makeTexture(descriptor: desc)!
             print("sourcePair is not initialized")
             
             self.texturePair = (src, dst)
-            
+            reloadTextures = false
         }
         
         guard let source = self.texturePair?.source,

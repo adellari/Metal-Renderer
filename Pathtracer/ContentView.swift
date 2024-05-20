@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import PhotosUI
 
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
@@ -14,6 +13,7 @@ class SceneDataModel: ObservableObject {
     @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
     @Published var focalLength: Double = 70
     @Published var aperture: Double = 0.1
+    @Published var skybox: String = "desert-sky"
     @Published var Denoiser: OIDNHandler = OIDNHandler()
     @Published var Spheres : [Sphere] = [Sphere(), Sphere()] {
         didSet{
@@ -26,7 +26,8 @@ class SceneDataModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
-    @State var selectedImages : [PhotosPickerItem] = []
+    @State var isSkyboxSelect : Bool = false
+    @State var skyboxImage : String?
     //var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
@@ -40,6 +41,10 @@ struct ContentView: View {
                 fatalError("Failed to create ViewController: \(error)")
             }
         }
+    
+    var skyboxPreview : Image {
+        skyboxImage != nil ? Image(uiImage: UIImage(named: skyboxImage!)!) : Image(systemName: "mountain.2.circle")
+    }
     
     var body: some View {
         
@@ -87,16 +92,33 @@ struct ContentView: View {
                 .offset(x: UIScreen.main.bounds.width * 0.2, y: UIScreen.main.bounds.height * -0.5)
                 .scaleEffect(0.5)
                 
-                MaterialMenu(obj: $SceneData.Spheres[0])
+                
+                VStack {
+                    MaterialMenu(obj: $SceneData.Spheres[0])
                     
-                    .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
-                    //.padding([.leading, .bottom])
-                    //.frame(alignment: .trailing)
-                
-                PhotosPicker(selection: $selectedImages){
-                    Text("Select a skybox")
+                    Button(action: {
+                        isSkyboxSelect = true
+                    }) {
+                        skyboxPreview
+                            .resizable()
+                            .clipShape(Circle())
+                            .frame(width: 45, height: 45)
+                        }
+                            .sheet(isPresented: $isSkyboxSelect) 
+                            {
+                                CustomImagePicker(selectedImage: $skyboxImage)
+                            }
+                            .onChange(of: skyboxImage) { newImgName in
+                                
+                                print("changed skybox")
+                                SceneData.skybox = newImgName!
+                                viewController?.reloadTextures = true
+                                SceneData.sampleCount = -1
+                            }
                 }
-                
+                .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
+                //.padding([.leading, .bottom])
+                //.frame(alignment: .trailing)    
             }
             .frame(alignment: .leading)
             
@@ -104,7 +126,6 @@ struct ContentView: View {
             Button(action: {
                 print("hello")
                 self.SceneData.Denoiser.initDevice()
-                //OIDNHandle.denoise()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
                     viewController?.redraw()

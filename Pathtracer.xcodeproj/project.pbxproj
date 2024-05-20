@@ -37,6 +37,7 @@
 		E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */ = {isa = PBXBuildFile; fileRef = E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */; };
 		E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E12BB3252100C3D3BA /* ViewController.swift */; };
 		E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E32BB32A6600C3D3BA /* Encoder.swift */; };
+		E0FCE4BB2BFADDB60029DB92 /* SkyboxPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -83,6 +84,7 @@
 		E098C2DF2BB31A2B00C3D3BA /* Pathtracer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Pathtracer.metal; sourceTree = "<group>"; };
 		E098C2E12BB3252100C3D3BA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E098C2E32BB32A6600C3D3BA /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
+		E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyboxPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */,
 				E04C64CA2BED634800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
 				E04C64A22BEC7BA700C413B2 /* OIDNHandler.h */,
 				E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */,
@@ -247,6 +250,7 @@
 				E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */,
 				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,
 				E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */,
+				E0FCE4BB2BFADDB60029DB92 /* SkyboxPicker.swift in Sources */,
 				E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */,
 				E04C64A12BEC6B9700C413B2 /* OIDNHandler.m in Sources */,
 			);
