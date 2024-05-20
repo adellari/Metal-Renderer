@@ -91,6 +91,7 @@ struct MaterialMenu: View {
                             if (_name == "Specular" || _name ==  "Transmission" || _name == "Emission"){
                                 HStack{
                                     Slider(value: $MaterialOptions[index].aux1, in: 0 ... 10, onEditingChanged: { _ in
+                                        print("updating internal roughness: ", MaterialOptions[index].aux1)
                                         updateProperties(var: index)
                                     })
                                     .tint(.black)
@@ -177,14 +178,14 @@ struct MaterialMenu: View {
     
     func updateProperties(var id : Int){
         var prop : float3 = float3(Float(MaterialOptions[id].red), Float(MaterialOptions[id].green), Float(MaterialOptions[id].blue))
-        var aux : float2 = float2(Float(MaterialOptions[id].aux1), Float(MaterialOptions[id].aux1))
+        var aux : float2 = float2(Float(MaterialOptions[id].aux1), Float(MaterialOptions[id].aux2))
         
         
         switch(id)
         {
         case 0:
             obj.refractiveColor = prop
-            print("changing the transmission, such as internal roughness")
+            //print("changing the transmission, such as internal roughness")
             obj.internalSmoothness = aux.x
             obj.IOR = aux.y
             break
