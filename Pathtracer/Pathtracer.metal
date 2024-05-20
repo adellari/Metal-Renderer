@@ -58,6 +58,12 @@ struct Sphere {
     float refractionChance;
 };
 
+struct Triangle {
+    float3 v0;
+    float3 v1;
+    float3 v2;
+};
+
 bool any(float3 val)
 {
     return (val.x * val.y * val.z) > 0.001f;
@@ -320,9 +326,8 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     return true;
 }
 
-RayHit Trace(Ray ray, Sphere s3)
+RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
 {
-    
     
     RayHit hit = CreateRayHit();
     Sphere s;
@@ -385,6 +390,31 @@ RayHit Trace(Ray ray, Sphere s3)
     IntersectSphere(ray, &hit, s1);
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
+    
+    for (int a = 0; a < 2; a++)
+    {
+        Triangle tri = triangles[a];
+        float3 v0 = tri.v0;
+        float3 v1 = tri.v1;
+        float3 v2 = tri.v2;
+        float t, u, v;
+        
+        if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
+        {
+            if (t > 0 && t < hit.distance)
+            {
+                hit.distance = t;
+                hit.position = ray.origin + ray.direction * t;
+                hit.normal = normalize(cross(v1 - v0, v2 - v0));
+                hit.albedo = 0.1f;
+                hit.specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+                hit.emission = 0.f;
+                hit.smoothness = 0.99f;
+            }
+        }
+    }
+    
+    
     //IntersectSphere(ray, &hit, s2);
     
     return hit;
@@ -399,7 +429,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     if(hit.distance < INFINITY)
     {
         if(hit.inside)
-            ray->energy *= exp(-hit.refractionColor * hit.distance);
+            ray->energy *= exp(-hit.refractionColor * hit.distance);    //be absorb the inverse of the transmission color
         
         float3 reflected = reflect(ray->direction, hit.normal);
         
@@ -413,7 +443,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
         if (specularChance > 0.f)
         {
             specularChance = FresnelReflectAmount(hit.inside? hit.IOR : 1.f, hit.inside? 1.f : hit.IOR, ray->direction, hit.normal, specularChance, 1.f);
-            refractChance *= (1.f - specularChance) / (1.f - energy(hit.specular));
+            //refractChance *= (1.f - specularChance) / (1.f - energy(hit.specular));
         }
         
         //float roulette = rand(ray->energy);
@@ -438,7 +468,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
             float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, _seed, jitter)), hit.refractionSmoothness * 0.05f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, f, _seed, jitter)), hit.refractionSmoothness * 0.1f));
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
@@ -461,7 +491,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant float& tint [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)
@@ -504,7 +534,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     //for the primary ray
     for(int a=0; a<8; a++){
         
-        hit = Trace(ray, spheres[0]);
+        hit = Trace(ray, spheres[0], triangles);
         
         if (hit.distance !=INFINITY){
             float3 n = ray.energy;
@@ -536,7 +566,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         
         for(int c=0; c<8; c++){
             
-            hit = Trace(secondaryRay, spheres[0]);
+            hit = Trace(secondaryRay, spheres[0], triangles);
             
             if (hit.distance !=INFINITY){
                 col += (Shade(&secondaryRay, hit) * secondaryRay.energy);
@@ -577,10 +607,10 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     //auto result = float4(channelSwap(col), avgFactor) + float4(colInit.rgb, (1.f - avgFactor));
     //auto result = float4(channelSwap(col), 1.f);
     //auto result = float4(12.f, 0.f, 0.f, 1.f);
-    //result *= tint;
     //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
     //auto result = float4(ray.direction.z, ray.direction.g, ray.direction.x, 1.f) * cam->dummy;
     
     destination.write(result, position);
 }
 
+ 

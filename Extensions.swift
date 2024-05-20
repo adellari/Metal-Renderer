@@ -41,6 +41,12 @@ struct Sphere {
     var transmissionChance : Float = 1;
 }
 
+struct Triangle {
+    var v0 : float3 = float3(-4.5, 5, -3);
+    var v1 : float3 = float3(3, 0, -3);
+    var v2 : float3 = float3(3, 5, -3);
+}
+
 extension UIImageView {
     func asSwiftUIView() -> some View {
         return ImageViewWrapper(uiImageView: self)

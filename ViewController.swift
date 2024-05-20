@@ -99,7 +99,7 @@ class ViewController {
                 return
             }
             
-            if (self.SceneData.sampleCount == 200)
+            if (self.SceneData.sampleCount == 800)
             {
                 guard let pixArray = try? self.textureManager.colorValues(from: destination)
                         

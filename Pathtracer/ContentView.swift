@@ -7,23 +7,6 @@
 
 import SwiftUI
 
-class SceneDataModel: ObservableObject {
-    @Published var cameraView: Double = 0.0
-    @Published var sampleCount : Int = 0
-    @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
-    @Published var focalLength: Double = 70
-    @Published var aperture: Double = 0.1
-    @Published var skybox: String = "desert-sky"
-    @Published var Denoiser: OIDNHandler = OIDNHandler()
-    @Published var Spheres : [Sphere] = [Sphere(), Sphere()] {
-        didSet{
-            //print("hi, there was a change to the spheres")
-            sampleCount = -2
-            //print(Spheres)
-        }
-    }
-}
-
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
     @State var isSkyboxSelect : Bool = false
@@ -31,16 +14,16 @@ struct ContentView: View {
     //var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
-        init() {
-            do {
-                guard let device = MTLCreateSystemDefaultDevice() else {
-                    fatalError("Metal is not supported on this device")
-                }
-                viewController = try ViewController(device: device, sceneData: SceneData)
-            } catch {
-                fatalError("Failed to create ViewController: \(error)")
+    init() {
+        do {
+            guard let device = MTLCreateSystemDefaultDevice() else {
+                fatalError("Metal is not supported on this device")
             }
+            viewController = try ViewController(device: device, sceneData: SceneData)
+        } catch {
+            fatalError("Failed to create ViewController: \(error)")
         }
+    }
     
     var skyboxPreview : Image {
         skyboxImage != nil ? Image(uiImage: UIImage(named: skyboxImage!)!) : Image(systemName: "mountain.2.circle")
@@ -103,22 +86,22 @@ struct ContentView: View {
                             .resizable()
                             .clipShape(Circle())
                             .frame(width: 45, height: 45)
-                        }
-                            .sheet(isPresented: $isSkyboxSelect) 
-                            {
-                                CustomImagePicker(selectedImage: $skyboxImage)
-                            }
-                            .onChange(of: skyboxImage) { newImgName in
-                                
-                                print("changed skybox")
-                                SceneData.skybox = newImgName!
-                                viewController?.reloadTextures = true
-                                SceneData.sampleCount = -1
-                            }
+                    }
+                    .sheet(isPresented: $isSkyboxSelect)
+                    {
+                        CustomImagePicker(selectedImage: $skyboxImage)
+                    }
+                    .onChange(of: skyboxImage) { newImgName in
+                        
+                        print("changed skybox")
+                        SceneData.skybox = newImgName!
+                        viewController?.reloadTextures = true
+                        SceneData.sampleCount = -1
+                    }
                 }
                 .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
                 //.padding([.leading, .bottom])
-                //.frame(alignment: .trailing)    
+                //.frame(alignment: .trailing)
             }
             .frame(alignment: .leading)
             
@@ -127,7 +110,7 @@ struct ContentView: View {
                 print("hello")
                 self.SceneData.Denoiser.initDevice()
                 var counter = 0
-                let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in 
+                let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
                     viewController?.redraw()
                     SceneData.sampleCount += 1
                     viewController?.SceneData = self.SceneData
@@ -152,14 +135,14 @@ struct ContentView: View {
                 //print(viewController?.imageView)
             }) {
                 Image(systemName: "eye.fill")
-                    //.resizable()
+                //.resizable()
             }
             /*
-            Slider(value: $SceneData.cameraView, in: -90.0 ... 90.0, onEditingChanged: {_ in
-                viewController?.SceneData = self.SceneData
-            print("changed slider")})
-            
-            */
+             Slider(value: $SceneData.cameraView, in: -90.0 ... 90.0, onEditingChanged: {_ in
+             viewController?.SceneData = self.SceneData
+             print("changed slider")})
+             
+             */
         }
         .ignoresSafeArea()
         .onAppear(perform: {
@@ -171,13 +154,13 @@ struct ContentView: View {
     }
     
     func binding(for value: Double) -> Binding<Double> {
-            Binding<Double>(
-                get: { SceneData.cameraView },
-                set: { newValue in
-                    SceneData.cameraView = newValue
-                }
-            )
-        }
+        Binding<Double>(
+            get: { SceneData.cameraView },
+            set: { newValue in
+                SceneData.cameraView = newValue
+            }
+        )
+    }
     
     
 }
@@ -185,8 +168,8 @@ struct ContentView: View {
 
 
 #Preview {
-         //var device = MTLCreateSystemDefaultDevice()!
-         //var vc = ViewController(device: device)
-          //ContentView(viewController: vc)
-        ContentView()
+    //var device = MTLCreateSystemDefaultDevice()!
+    //var vc = ViewController(device: device)
+    //ContentView(viewController: vc)
+    ContentView()
 }

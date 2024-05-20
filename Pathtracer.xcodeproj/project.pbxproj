@@ -38,6 +38,7 @@
 		E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E12BB3252100C3D3BA /* ViewController.swift */; };
 		E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2E32BB32A6600C3D3BA /* Encoder.swift */; };
 		E0FCE4BB2BFADDB60029DB92 /* SkyboxPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */; };
+		E0FCE4BD2BFAFA160029DB92 /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,6 +86,7 @@
 		E098C2E12BB3252100C3D3BA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		E098C2E32BB32A6600C3D3BA /* Encoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encoder.swift; sourceTree = "<group>"; };
 		E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyboxPicker.swift; sourceTree = "<group>"; };
+		E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */,
 				E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */,
 				E04C64CA2BED634800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */,
 				E04C64A22BEC7BA700C413B2 /* OIDNHandler.h */,
@@ -245,6 +248,7 @@
 			files = (
 				E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */,
 				E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */,
+				E0FCE4BD2BFAFA160029DB92 /* DataModels.swift in Sources */,
 				E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */,
 				E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */,
 				E098C2E42BB32A6600C3D3BA /* Encoder.swift in Sources */,

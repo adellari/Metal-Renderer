@@ -184,6 +184,7 @@ struct MaterialMenu: View {
         {
         case 0:
             obj.refractiveColor = prop
+            print("changing the transmission, such as internal roughness")
             obj.internalSmoothness = aux.x
             obj.IOR = aux.y
             break

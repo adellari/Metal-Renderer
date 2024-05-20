@@ -52,17 +52,18 @@ final class PipelineEncoder{
         var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(5.0 * sin(viewX * 0) * translation, 0.4, 5.0 * cos(viewX * 0) * translation), focalLength: Float(sceneParams.focalLength), aperture: Float(sceneParams.aperture), dummy: Float.random(in: 0..<1))
         var camBuffer = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
-        var spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride, options: [])
-        
+        var spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
+        var trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
         
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
         encoder.setTexture(destination, index: 1)
-        encoder.setBytes(&viewAsFloat, length: MemoryLayout<Float>.stride, index: 0)
-        encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
-        encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
+        //encoder.setBytes(&viewAsFloat, length: MemoryLayout<Float>.stride, index: 0)
+        encoder.setBuffer(trisBuffer, offset: 0, index: 0)
         encoder.setBuffer(camBuffer, offset: 0, index: 1)
         encoder.setBuffer(spheresBuffer, offset: 0, index: 2)
+        encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
+        encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
         //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
         //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)
         
