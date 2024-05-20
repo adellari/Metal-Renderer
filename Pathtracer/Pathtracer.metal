@@ -429,7 +429,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     if(hit.distance < INFINITY)
     {
         if(hit.inside)
-            ray->energy *= exp(-hit.refractionColor * hit.distance);    //be absorb the inverse of the transmission color
+            ray->energy *= exp(hit.refractionColor * hit.distance);    //when negative this is absorb, the inverse of the transmission color
         
         float3 reflected = reflect(ray->direction, hit.normal);
         
