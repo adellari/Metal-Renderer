@@ -70,7 +70,7 @@ class ViewController {
         //var src : MTLTexture = device.makeTexture(descriptor: desc)!
         
         if self.texturePair == nil{
-            var src : MTLTexture = textureManager.loadTexture(path: "cliffs")!
+            var src : MTLTexture = textureManager.loadTexture(path: "desert-sky")!
             var dst : MTLTexture = device.makeTexture(descriptor: desc)!
             print("sourcePair is not initialized")
             

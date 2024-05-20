@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
@@ -25,6 +26,7 @@ class SceneDataModel: ObservableObject {
 
 struct ContentView: View {
     @StateObject var SceneData =  SceneDataModel()
+    @State var selectedImages : [PhotosPickerItem] = []
     //var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
@@ -91,7 +93,10 @@ struct ContentView: View {
                     //.padding([.leading, .bottom])
                     //.frame(alignment: .trailing)
                 
-                viewController?.denoisedView.asSwiftUIView()
+                PhotosPicker(selection: $selectedImages){
+                    Text("Select a skybox")
+                }
+                
             }
             .frame(alignment: .leading)
             

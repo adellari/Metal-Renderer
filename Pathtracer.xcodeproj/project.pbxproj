@@ -26,7 +26,7 @@
 		E04C64CC2BED638500C413B2 /* libOpenImageDenoise_core.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */; };
 		E04C64CE2BED639100C413B2 /* libOpenImageDenoise.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; };
 		E04C64CF2BED639D00C413B2 /* libOpenImageDenoise_core.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; };
 		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B20C2BBD2533006F2DB0 /* Extensions.swift */; };
 		E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */; };

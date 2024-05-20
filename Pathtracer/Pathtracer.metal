@@ -379,7 +379,7 @@ RayHit Trace(Ray ray, Sphere s3)
     
     
     
-    IntersectGroundPlane(ray, &hit);
+    //IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
     IntersectSphere(ray, &hit, s3);
     IntersectSphere(ray, &hit, s1);
