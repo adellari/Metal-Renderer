@@ -34,7 +34,7 @@ struct Sphere {
     var albedo : float3 = float3(0.1, 0.42, 0.93);
     var specular : float3 = float3(0.1, 0.1, 0.1);
     var emission : float3 = float3(0, 0, 0);
-    var refractiveColor : float3 = float3(1, 1, 1);
+    var refractiveColor : float3 = float3(0.3, 0.3, 0.3);
     var smoothness : Float = 3;
     var IOR : Float = 1.8;
     var internalSmoothness : Float = 1;

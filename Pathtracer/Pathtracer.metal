@@ -465,10 +465,10 @@ float3 Shade(thread Ray* ray, RayHit hit)
         else if(refractChance > 0.f && roulette < specularChance + refractChance)
         {
             float alpha = SmoothnessToAlpha(hit.refractionSmoothness);
-            //float f = (alpha + 2) / (alpha + 1);
+            float f = (alpha + 2) / (alpha + 1);
             
             float3 refractedDir = refract(ray->direction, hit.normal, hit.inside? hit.IOR : 1.f / hit.IOR);
-            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, alpha, _seed, jitter)), 0.09f));
+            refractedDir = normalize(mix(refractedDir, normalize(-hit.normal + SampleHemisphere(refractedDir, alpha, _seed, jitter)), 0.09f)); //the t (lerp) value affects the magnification of the translucency
             
             ray->direction = refractedDir;
             ray->origin = hit.position - hit.normal * 0.001f;
