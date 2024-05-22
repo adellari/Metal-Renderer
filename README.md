@@ -15,7 +15,7 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - ~~Implement Intel Open Image denoiser~~ (IODN build for iOS in PR at https://github.com/RenderKit/oidn/pull/220)
 
-- Bounding Volume Heirarchy acceleration
+- Bounding Volume Heirarchy acceleration (In-progress)
 
 - Multiple Importance Sampling
 
