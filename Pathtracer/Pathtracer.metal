@@ -62,6 +62,7 @@ struct Triangle {
     float3 v0;
     float3 v1;
     float3 v2;
+    float3 centroid; //centroid
 };
 
 bool any(float3 val)
