@@ -42,9 +42,9 @@ struct Sphere {
 }
 
 struct Triangle {
-    var v0 : float3 = float3(-4.5, 5, -3);
+    var v0 : float3 = float3(-4.5, 7, -3);
     var v1 : float3 = float3(3, 0, -3);
-    var v2 : float3 = float3(3, 5, -3);
+    var v2 : float3 = float3(3, 7, -3);
     var centroid : float3 = float3();
 }
 

@@ -16,7 +16,9 @@ let assetImages = [
     AssetImage(name: "greenhouse-sky"),
     AssetImage(name: "desert-sky"),
     AssetImage(name: "desert1-sky"),
-    AssetImage(name: "cliffs-sky")
+    AssetImage(name: "cliffs-sky"),
+    AssetImage(name: "lionking-sky"),
+    AssetImage(name: "auroras-sky")
 ]
 
 struct CustomImagePicker: View {

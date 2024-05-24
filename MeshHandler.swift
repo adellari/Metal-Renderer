@@ -14,8 +14,8 @@ struct BVHNode
     var aabbMin : float3 = float3();
     var aabbMax : float3 = float3();      //position of bounding box corners
     var lChild : UInt8 = 0;
-    var rChild : UInt8 = 0;         //indices of left and right child nodes
-    var isLeaf : Bool = false;                  //is this node a leaf
+    //var rChild : UInt8 = 0;         //indices of left and right child nodes
+    //var isLeaf : Bool = false;                  //is this node a leaf
     var firstPrim : UInt8 = 0;
     var primCount : UInt8 = 0;   //index of first enclosed triangle in tris array, and how many triangles in bvh
 }
@@ -124,7 +124,11 @@ class BVHBuilder
         BVHTree[rChildId].primCount = node.primCount - UInt8(leftCount);
         node.primCount = 0;
         
-    
+        UpdateNodeBounds(nodeid: lChildId);
+        UpdateNodeBounds(nodeid: rChildId);
+        
+        Subdivide(nodeid: lChildId);
+        Subdivide(nodeid: rChildId);
     }
 }
 
