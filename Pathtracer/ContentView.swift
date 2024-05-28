@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var Col = Color.blue.opacity(0.5)
     init() {
         do {
+            SceneData.Meshloader = MeshLoader("scene")
+            //SceneData.Meshloader!.loadModel()
             guard let device = MTLCreateSystemDefaultDevice() else {
                 fatalError("Metal is not supported on this device")
             }

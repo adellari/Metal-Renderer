@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E011FC322C04F77500B7CA5A /* GLTFKit2.framework in Resources */ = {isa = PBXBuildFile; fileRef = E0FCE4D32C04EFC20029DB92 /* GLTFKit2.framework */; };
+		E011FC332C04F7CB00B7CA5A /* GLTFKit2.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E0FCE4D32C04EFC20029DB92 /* GLTFKit2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E04C64A12BEC6B9700C413B2 /* OIDNHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = E04C64A02BEC6B9700C413B2 /* OIDNHandler.m */; };
 		E04C64B92BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64B62BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib */; };
 		E04C64BA2BED508800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E04C64B72BED508800C413B2 /* libOpenImageDenoise_core.2.2.2.dylib */; };
@@ -40,6 +42,8 @@
 		E0FCE4BB2BFADDB60029DB92 /* SkyboxPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */; };
 		E0FCE4BD2BFAFA160029DB92 /* DataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */; };
 		E0FCE4BF2BFD1F280029DB92 /* MeshHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FCE4BE2BFD1F280029DB92 /* MeshHandler.swift */; };
+		E0FCE4C82C01B8110029DB92 /* models in Resources */ = {isa = PBXBuildFile; fileRef = E0FCE4C72C01B8110029DB92 /* models */; };
+		E0FCE4D42C04EFC20029DB92 /* GLTFKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0FCE4D32C04EFC20029DB92 /* GLTFKit2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,6 +53,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				E011FC332C04F7CB00B7CA5A /* GLTFKit2.framework in Embed Libraries */,
 				E04C64CF2BED639D00C413B2 /* libOpenImageDenoise_core.dylib in Embed Libraries */,
 				E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */,
 				E04C64BF2BED509E00C413B2 /* libOpenImageDenoise_core.2.2.2.dylib in Embed Libraries */,
@@ -89,6 +94,8 @@
 		E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkyboxPicker.swift; sourceTree = "<group>"; };
 		E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModels.swift; sourceTree = "<group>"; };
 		E0FCE4BE2BFD1F280029DB92 /* MeshHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshHandler.swift; sourceTree = "<group>"; };
+		E0FCE4C72C01B8110029DB92 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = models; sourceTree = "<group>"; };
+		E0FCE4D32C04EFC20029DB92 /* GLTFKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GLTFKit2.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +108,7 @@
 				E04C64C72BED626300C413B2 /* libOpenImageDenoise.2.2.2.dylib in Frameworks */,
 				E04C64C32BED5E6600C413B2 /* libOpenImageDenoise_device_metal.2.2.2.dylib in Frameworks */,
 				E04C64CC2BED638500C413B2 /* libOpenImageDenoise_core.dylib in Frameworks */,
+				E0FCE4D42C04EFC20029DB92 /* GLTFKit2.framework in Frameworks */,
 				E04C64B92BED508800C413B2 /* libOpenImageDenoise_device_metal.dylib in Frameworks */,
 				E04C64BB2BED508800C413B2 /* libOpenImageDenoise.2.dylib in Frameworks */,
 			);
@@ -119,6 +127,7 @@
 				E04C64B82BED508800C413B2 /* libOpenImageDenoise.2.dylib */,
 				E04C64CB2BED638500C413B2 /* libOpenImageDenoise_core.dylib */,
 				E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */,
+				E0FCE4D32C04EFC20029DB92 /* GLTFKit2.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -126,6 +135,7 @@
 		E098C2C42BB3173400C3D3BA = {
 			isa = PBXGroup;
 			children = (
+				E0FCE4C72C01B8110029DB92 /* models */,
 				E0FCE4BE2BFD1F280029DB92 /* MeshHandler.swift */,
 				E0FCE4BC2BFAFA160029DB92 /* DataModels.swift */,
 				E0FCE4BA2BFADDB60029DB92 /* SkyboxPicker.swift */,
@@ -190,6 +200,8 @@
 			dependencies = (
 			);
 			name = Pathtracer;
+			packageProductDependencies = (
+			);
 			productName = Pathtracer;
 			productReference = E098C2CD2BB3173400C3D3BA /* Pathtracer.app */;
 			productType = "com.apple.product-type.application";
@@ -218,6 +230,8 @@
 				Base,
 			);
 			mainGroup = E098C2C42BB3173400C3D3BA;
+			packageReferences = (
+			);
 			productRefGroup = E098C2CE2BB3173400C3D3BA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -239,6 +253,8 @@
 				E04C64BE2BED509600C413B2 /* libOpenImageDenoise.2.dylib in Resources */,
 				E098C2D92BB3173400C3D3BA /* Preview Assets.xcassets in Resources */,
 				E098C2D52BB3173400C3D3BA /* Assets.xcassets in Resources */,
+				E011FC322C04F77500B7CA5A /* GLTFKit2.framework in Resources */,
+				E0FCE4C82C01B8110029DB92 /* models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +409,10 @@
 				DEVELOPMENT_TEAM = RXJF5NALU5;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /Users/addyi/Documents/Denoiser/oidn/include/OpenImageDenoise;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -434,6 +454,10 @@
 				DEVELOPMENT_TEAM = RXJF5NALU5;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /Users/addyi/Documents/Denoiser/oidn/include/OpenImageDenoise;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;

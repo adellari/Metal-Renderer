@@ -8,6 +8,7 @@
 import Foundation
 import simd
 import GLKit
+import GLTFKit2
 
 struct BVHNode
 {
@@ -40,11 +41,11 @@ class BVHBuilder
     func BuildBVH(tris : inout [Triangle])
     {
         /*
-        let N = tris.count;
-        var rootNodeIdx : Int = 0
-        var nodesUsed : Int = 1
-        var BVHTree : [BVHNode] = Array(repeating: BVHNode(), count: (2 * N) - 1)
-        */
+         let N = tris.count;
+         var rootNodeIdx : Int = 0
+         var nodesUsed : Int = 1
+         var BVHTree : [BVHNode] = Array(repeating: BVHNode(), count: (2 * N) - 1)
+         */
         
         for i in 0..<N {
             tris[i].centroid = (tris[i].v0 + tris[i].v1 + tris[i].v2) * 0.3333;
@@ -57,8 +58,8 @@ class BVHBuilder
         
         Subdivide(nodeid: rootNodeIdx)
     }
-
-
+    
+    
     func UpdateNodeBounds(nodeid : Int)
     {
         var node = BVHTree[nodeid]
@@ -77,7 +78,7 @@ class BVHBuilder
             node.aabbMax = fmax(node.aabbMax, leafTri.v2);
         }
     }
-
+    
     func Subdivide(nodeid: Int)
     {
         var node = BVHTree[nodeid];
@@ -95,11 +96,11 @@ class BVHBuilder
         
         while i <= j
         {
-            if (tris[i].centroid[axis] < splitPos) 
+            if (tris[i].centroid[axis] < splitPos)
             {
                 i+=1;
             }
-            else 
+            else
             {
                 swap(&tris[i], &tris[j]);
                 j -= 1;
@@ -131,5 +132,43 @@ class BVHBuilder
         Subdivide(nodeid: rChildId);
     }
 }
+
+class MeshLoader
+{
+    var meshName : String?;
+    var triangles : [Triangle]?;
+    var asset : GLTFAsset?;
+    
+    init(_ name: String)
+    {
+        meshName = name
+        loadModel()
+    }
+    
+    func loadModel()
+    {
+        guard let assetURL = Bundle.main.url(forResource: "models/scene", withExtension: "gltf")
+        else {
+            print("Failed to find the 3D asset in bundle")
+            return
+        }
+        
+        GLTFAsset.load(with: assetURL, options: [:]) { (progress, status, maybeAsset, maybeError, _) in
+            DispatchQueue.main.async {
+                
+                if status == .complete {
+                    self.asset = maybeAsset; //.meshes[0].primitives[0].attributes;
+                    //print(vertices!.count);
+                } else if let error = maybeError {
+                    print("Failed to load glTF asset: \(error)")
+                }
+            }
+            
+        }
+    }
+    
+}
+
+
 
 
