@@ -136,7 +136,6 @@ class BVHBuilder
 class MeshLoader
 {
     var meshName : String?;
-    var triangles : [Triangle]?;
     var asset : GLTFAsset?;
     
     init(_ name: String)
@@ -165,6 +164,35 @@ class MeshLoader
             }
             
         }
+    }
+    
+    public func getModelTris() -> [Triangle] {
+        var tris: [Triangle] = []
+        var positions : [float3] = []
+        let primitive = self.asset!.meshes[0].primitives[0]
+        if let vertexPositions = primitive.copyPackedVertexPositions() {
+            vertexPositions.withUnsafeBytes { positionPtr in
+                print(vertexPositions.count)
+                for i in 0...vertexPositions.count / MemoryLayout<Float>.stride {
+                    let position = positionPtr.baseAddress!
+                        .advanced(by: MemoryLayout<Float>.stride * 3 * i)
+                        .assumingMemoryBound(to: Float.self)
+
+                    let x = position[0]
+                    let y = position[1]
+                    let z = position[2]
+                    positions.append(float3(x, y, z))
+                    //let tri = Triangle(v0: x, v1: y, v2: z)
+                    print("\(x) \(y) \(z)")
+                }
+            }
+        }
+        
+        for i in stride(from: 0, to: positions.count, by: 3) {
+            tris.append(Triangle(v0: positions[i], v1: positions[i+1], v2: positions[i+2]))
+        }
+        
+        return tris
     }
     
 }
