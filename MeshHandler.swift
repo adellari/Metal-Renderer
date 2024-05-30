@@ -180,7 +180,7 @@ class MeshLoader
         let primitive = self.asset!.meshes[0].primitives[0]
         if let vertexPositions = primitive.copyPackedVertexPositions() {
             vertexPositions.withUnsafeBytes { positionPtr in
-                print(vertexPositions.count)
+                print(primitive.indices!.count)
                 for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
                     let position = positionPtr.baseAddress!
                         .advanced(by: MemoryLayout<Float>.stride * 3 * i)
@@ -195,10 +195,28 @@ class MeshLoader
                 }
             }
         }
-        
-        for i in stride(from: 0, to: positions.count, by: 3) {
-            tris.append(Triangle(v0: positions[i], v1: positions[i+1], v2: positions[i+2]))
+        if let indices = primitive.indices {
+            var readIndices : [Int] = []
+            print(indices.bufferView!.buffer.data)
+            
+            let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self)
+                
+            }
+            
+            for i in stride(from: 0, to: indices.count * 2, by: MemoryLayout<UInt16>.stride) {
+                var index = Int(uint16Data[i])
+                print(index)
+                readIndices.append(index)
+            }
+            
+            for i in 0..<readIndices.count / 3 {
+                var x = positions[readIndices[i * 3]]
+                var y = positions[readIndices[i * 3 + 1]]
+                var z = positions[readIndices[i * 3 + 2]]
+                tris.append(Triangle(v0: x, v1: y, v2: z))
+            }
         }
+        
         print("loaded \(tris.count) triangle primitives")
         return tris
     }

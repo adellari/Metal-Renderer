@@ -39,8 +39,8 @@ class ViewController {
         //super.init(nibName: nil, bundle: nil)
         
         sceneData.objectWillChange.sink {   [weak self] _ in
-            print("value changed")
-            self?.sceneUpdated()
+            //print("value changed")
+            //self?.sceneUpdated()
         }
         .store(in: &cancellables)
         
