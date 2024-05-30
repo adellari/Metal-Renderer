@@ -138,17 +138,21 @@ class MeshLoader
     var meshName : String?;
     var asset : GLTFAsset?;
     
+    /*
     init(_ name: String)
     {
         meshName = name
         loadModel()
     }
+    */
     
-    func loadModel()
+    func loadModel(_ name: String, completion: @escaping (Bool) -> Void)
     {
-        guard let assetURL = Bundle.main.url(forResource: "models/scene", withExtension: "gltf")
+        meshName = "models/"+name;
+        guard let assetURL = Bundle.main.url(forResource: meshName, withExtension: "gltf")
         else {
             print("Failed to find the 3D asset in bundle")
+            completion(false)
             return
         }
         
@@ -157,23 +161,27 @@ class MeshLoader
                 
                 if status == .complete {
                     self.asset = maybeAsset; //.meshes[0].primitives[0].attributes;
-                    //print(vertices!.count);
+                    print("loaded 3d model");
+                    completion(true)
+                    return
                 } else if let error = maybeError {
                     print("Failed to load glTF asset: \(error)")
                 }
+                completion(false)
+                return
             }
             
         }
     }
     
-    public func getModelTris() -> [Triangle] {
+    public func loadTriangles() -> [Triangle] {
         var tris: [Triangle] = []
-        var positions : [float3] = []
+        var positions : [SIMD3<Float>] = []
         let primitive = self.asset!.meshes[0].primitives[0]
         if let vertexPositions = primitive.copyPackedVertexPositions() {
             vertexPositions.withUnsafeBytes { positionPtr in
                 print(vertexPositions.count)
-                for i in 0...vertexPositions.count / MemoryLayout<Float>.stride {
+                for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
                     let position = positionPtr.baseAddress!
                         .advanced(by: MemoryLayout<Float>.stride * 3 * i)
                         .assumingMemoryBound(to: Float.self)
@@ -181,7 +189,7 @@ class MeshLoader
                     let x = position[0]
                     let y = position[1]
                     let z = position[2]
-                    positions.append(float3(x, y, z))
+                    positions.append(SIMD3<Float>(x, y, z))
                     //let tri = Triangle(v0: x, v1: y, v2: z)
                     print("\(x) \(y) \(z)")
                 }
@@ -191,7 +199,7 @@ class MeshLoader
         for i in stride(from: 0, to: positions.count, by: 3) {
             tris.append(Triangle(v0: positions[i], v1: positions[i+1], v2: positions[i+2]))
         }
-        
+        print("loaded \(tris.count) triangle primitives")
         return tris
     }
     

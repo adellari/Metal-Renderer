@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var SceneData =  SceneDataModel()
+    @StateObject private var SceneData : SceneDataModel
     @State var isSkyboxSelect : Bool = false
     @State var skyboxImage : String?
     //var OIDNHandle = OIDNHandler()
     var viewController: ViewController?
     @State private var Col = Color.blue.opacity(0.5)
+    
     init() {
         do {
-            SceneData.Meshloader = MeshLoader("scene")
-            //SceneData.Meshloader!.loadModel()
+            let sceneModel = SceneDataModel()
+            self._SceneData = StateObject(wrappedValue: sceneModel)
+            loadMeshData()
             guard let device = MTLCreateSystemDefaultDevice() else {
                 fatalError("Metal is not supported on this device")
             }
@@ -165,6 +167,21 @@ struct ContentView: View {
                 SceneData.cameraView = newValue
             }
         )
+    }
+    
+    func loadMeshData() {
+        if let meshLoader = SceneData.Meshloader {
+            meshLoader.loadModel("scene") { success in
+                
+                if success{
+                    SceneData.Triangles = meshLoader.loadTriangles()
+                }
+                else {
+                    print("failed to load the mesh!")
+                }
+                
+            }
+        }
     }
     
     

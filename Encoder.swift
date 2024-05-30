@@ -14,15 +14,16 @@ final class PipelineEncoder{
     var tint: Float = .zero
     private var deviceSupportsNonuniformThreadgroups: Bool
     private let pipelineState: MTLComputePipelineState
-    public var sceneParams: SceneDataModel = SceneDataModel()
+    public var sceneParams: SceneDataModel// = SceneDataModel()
     
     
-    init(library: MTLLibrary) throws{
+    init(library: MTLLibrary, scene: SceneDataModel) throws{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
         let constantValues = MTLFunctionConstantValues()
         constantValues.setConstantValue(&self.deviceSupportsNonuniformThreadgroups, type: .bool, index: 0)
         let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
         self.pipelineState = try library.device.makeComputePipelineState(function: function)
+        self.sceneParams = scene
     }
     
     //encode uniforms,, pipeline state, and execution parameters into the commandbuffer

@@ -30,7 +30,7 @@ class ViewController {
         guard let commandQueue = device.makeCommandQueue()          //make a command queue from the device
         else { throw Error.commandQueuereationFailed}
         self.device = device
-        self.encoder = try .init(library: library)
+        self.encoder = try .init(library: library, scene: sceneData)
         self.commandQueue = commandQueue
         self.textureManager = .init(device: device)
         self.SceneData = sceneData

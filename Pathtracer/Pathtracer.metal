@@ -392,7 +392,7 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
     
-    for (int a = 0; a < 2; a++)
+    for (int a = 0; a < 10; a++)
     {
         Triangle tri = triangles[a];
         float3 v0 = tri.v0;
@@ -409,6 +409,7 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
                 hit.normal = normalize(cross(v1 - v0, v2 - v0));
                 hit.albedo = 0.1f;
                 hit.specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+                hit.refractionColor = float3(0.f, 0.f, 0.f);
                 hit.emission = 0.f;
                 hit.smoothness = 0.99f;
             }

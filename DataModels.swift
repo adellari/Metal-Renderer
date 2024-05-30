@@ -25,5 +25,5 @@ class SceneDataModel: ObservableObject {
         }
     }
     @Published var Triangles : [Triangle] = [Triangle(), Triangle(v0: float3(-4.5, 0, -3), v1: float3(3, 0, -3), v2: float3(-4.5, 5, -3))]
-    @Published var Meshloader : MeshLoader?
+    @Published var Meshloader : MeshLoader? = MeshLoader()
 }
