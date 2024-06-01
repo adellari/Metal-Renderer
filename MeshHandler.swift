@@ -177,6 +177,7 @@ class MeshLoader
     public func loadTriangles() -> [Triangle] {
         var tris: [Triangle] = []
         var positions : [SIMD3<Float>] = []
+        //load the vertex positions
         let primitive = self.asset!.meshes[0].primitives[0]
         if let vertexPositions = primitive.copyPackedVertexPositions() {
             vertexPositions.withUnsafeBytes { positionPtr in
@@ -195,24 +196,22 @@ class MeshLoader
                 }
             }
         }
+        //Get our vertex indices (3x the number of triangles we'll create)
         if let indices = primitive.indices {
             var readIndices : [Int] = []
-            print(indices.bufferView!.buffer.data)
-            
-            let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self)
-                
-            }
+            //print(indices.bufferView!.buffer.data)
+            let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self) }
             
             for i in stride(from: 0, to: indices.count * 2, by: MemoryLayout<UInt16>.stride) {
                 var index = Int(uint16Data[i])
-                print(index)
+                //print(index)
                 readIndices.append(index)
             }
-            
+            //Create triangles based on the vertex and indices
             for i in 0..<readIndices.count / 3 {
-                var x = positions[readIndices[i * 3]]
-                var y = positions[readIndices[i * 3 + 1]]
-                var z = positions[readIndices[i * 3 + 2]]
+                let x = positions[readIndices[i * 3]]
+                let y = positions[readIndices[i * 3 + 1]]
+                let z = positions[readIndices[i * 3 + 2]]
                 tris.append(Triangle(v0: x, v1: y, v2: z))
             }
         }
