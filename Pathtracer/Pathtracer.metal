@@ -558,6 +558,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     float _s = ray.seed;
     float2 _jitter = ray.jitter;
     
+    /*
     //the secondary rays (8 of them)
     for (int b=0; b<8; b++)
     {
@@ -589,7 +590,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     }
     
     col /= 8.f;
-    
+    */
     
     
     /*
