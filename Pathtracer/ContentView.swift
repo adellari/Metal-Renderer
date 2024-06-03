@@ -171,16 +171,28 @@ struct ContentView: View {
     
     func loadMeshData() {
         if let meshLoader = SceneData.Meshloader {
-            meshLoader.loadModel("scene") { success in
+            meshLoader.loadModel("intercom") { success in
                 
                 if success{
                     SceneData.Triangles = meshLoader.loadTriangles()
+                    loadBVH()
                 }
                 else {
                     print("failed to load the mesh!")
                 }
                 
             }
+        }
+    }
+    
+    func loadBVH() {
+        SceneData.BVH = BVHBuilder(_tris: &SceneData.Triangles)
+        if let BVH = SceneData.BVH  {
+            DispatchQueue.main.async {
+                BVH.BuildBVH(tris: &SceneData.Triangles)
+                print("successfully created BVH tree")
+            }
+            
         }
     }
     

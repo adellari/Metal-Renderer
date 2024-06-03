@@ -12,13 +12,13 @@ import GLTFKit2
 
 struct BVHNode
 {
-    var aabbMin : float3 = float3();
-    var aabbMax : float3 = float3();      //position of bounding box corners
-    var lChild : UInt8 = 0;
+    var aabbMin : float3 = float3(Float.infinity);
+    var aabbMax : float3 = float3(-Float.infinity);      //position of bounding box corners
+    var lChild : Int = 0;
     //var rChild : UInt8 = 0;         //indices of left and right child nodes
     //var isLeaf : Bool = false;                  //is this node a leaf
-    var firstPrim : UInt8 = 0;
-    var primCount : UInt8 = 0;   //index of first enclosed triangle in tris array, and how many triangles in bvh
+    var firstPrim : Int = 0;
+    var primCount : Int = 0;   //index of first enclosed triangle in tris array, and how many triangles in bvh
 }
 
 class BVHBuilder
@@ -50,22 +50,25 @@ class BVHBuilder
         for i in 0..<N {
             tris[i].centroid = (tris[i].v0 + tris[i].v1 + tris[i].v2) * 0.3333;
         }
-        
+        self.tris = tris;
         var Root : BVHNode = BVHTree[rootNodeIdx]
         Root.firstPrim = 0
-        Root.primCount = UInt8(N)
-        UpdateNodeBounds(nodeid: rootNodeIdx)
+        Root.primCount = N
+        self.BVHTree[rootNodeIdx] = Root
         
-        Subdivide(nodeid: rootNodeIdx)
+        UpdateNodeBounds(nodeid: rootNodeIdx, node: &BVHTree[rootNodeIdx])
+        
+        Subdivide(nodeid: rootNodeIdx, node: &BVHTree[rootNodeIdx])
     }
     
     
-    func UpdateNodeBounds(nodeid : Int)
+    func UpdateNodeBounds(nodeid : Int, node: inout BVHNode)
     {
-        var node = BVHTree[nodeid]
+        //var node = BVHTree[nodeid]
         node.aabbMin = float3(Float.infinity, Float.infinity, Float.infinity);
         node.aabbMax = float3(-Float.infinity, -Float.infinity, -Float.infinity);
         
+        //print("node primitive count \(node.primCount)")
         for i in node.firstPrim..<node.primCount
         {
             var leafTri = tris[Int(i)]
@@ -79,58 +82,65 @@ class BVHBuilder
         }
     }
     
-    func Subdivide(nodeid: Int)
-    {
-        var node = BVHTree[nodeid];
-        let extent : float3 = node.aabbMax - node.aabbMin;
-        var axis : Int = 0;
-        
-        //determine which axis of triangles is the longest and set the plane to cut along that
-        if (extent.y > extent.x) { axis = 1; }
-        if (extent.z > extent[axis]) { axis = 2; }
-        
-        var splitPos : Float = node.aabbMin[axis] + extent[axis] * 0.5;
-        
-        var i = Int(node.firstPrim);
-        var j = i + Int( node.primCount - 1);
-        
-        while i <= j
+    func Subdivide(nodeid: Int, node: inout BVHNode)
         {
-            if (tris[i].centroid[axis] < splitPos)
+            //var node = BVHTree[nodeid];
+            let extent : float3 = node.aabbMax - node.aabbMin;
+            var axis : Int = 0;
+            print(extent)
+            //determine which axis of triangles is the longest and set the plane to cut along that
+            if (extent.y > extent.x) { axis = 1; }
+            if (extent.z > extent[axis]) { axis = 2; }
+            
+            var splitPos : Float = node.aabbMin[axis] + extent[axis] * 0.5;
+            
+            var i = Int(node.firstPrim);
+            var j = i + Int(node.primCount) - 1;
+            //let concurrenceQueue = DispatchQueue(label: "com.pathtracer.swapQueue", attributes: .concurrent)
+            while i <= j
             {
-                i+=1;
+                if (tris[i].centroid[axis] < splitPos)
+                {
+                    i+=1;
+                }
+                else
+                {
+                   // concurrenceQueue.async(flags: .barrier){
+                        tris.swapAt(i, j)
+                        
+                        //swap(&self.tris[i], &self.tris[j]);
+                        j -= 1;
+                   // }
+                    
+                }
             }
-            else
+            
+            let leftCount = i - node.firstPrim;
+            if (leftCount == 0 || leftCount == node.primCount)  // the split's half has no or all the elements
             {
-                swap(&tris[i], &tris[j]);
-                j -= 1;
+                return;
             }
+            
+            let lChildId = nodesUsed+1;
+            let rChildId = nodesUsed+2;
+            
+            nodesUsed = nodesUsed + 2;
+            print(nodesUsed)
+            node.lChild = lChildId;
+            //BVHTree.
+            BVHTree[lChildId].firstPrim = node.firstPrim;
+            BVHTree[lChildId].primCount = leftCount;
+            BVHTree[rChildId].firstPrim = i;
+            BVHTree[rChildId].primCount = node.primCount - leftCount;
+            node.primCount = 0;
+            
+            UpdateNodeBounds(nodeid: lChildId, node: &BVHTree[lChildId]);
+            UpdateNodeBounds(nodeid: rChildId, node: &BVHTree[rChildId]);
+            
+            Subdivide(nodeid: lChildId, node: &BVHTree[lChildId]);
+            Subdivide(nodeid: rChildId, node: &BVHTree[rChildId]);
         }
-        
-        let leftCount = i - Int(node.firstPrim);
-        if (leftCount == 0 || leftCount == node.primCount)  // the split's half has no or all the elements
-        {
-            return;
-        }
-        
-        let lChildId = nodesUsed+1;
-        let rChildId = nodesUsed+2;
-        
-        nodesUsed += 2;
-        
-        node.lChild = UInt8(lChildId);
-        BVHTree[lChildId].firstPrim = node.firstPrim;
-        BVHTree[lChildId].primCount = UInt8(leftCount);
-        BVHTree[rChildId].firstPrim = UInt8(i);
-        BVHTree[rChildId].primCount = node.primCount - UInt8(leftCount);
-        node.primCount = 0;
-        
-        UpdateNodeBounds(nodeid: lChildId);
-        UpdateNodeBounds(nodeid: rChildId);
-        
-        Subdivide(nodeid: lChildId);
-        Subdivide(nodeid: rChildId);
-    }
+
 }
 
 class MeshLoader
@@ -148,10 +158,10 @@ class MeshLoader
     
     func loadModel(_ name: String, completion: @escaping (Bool) -> Void)
     {
-        meshName = "models/"+name;
+        meshName = "models/"+name+"/scene";
         guard let assetURL = Bundle.main.url(forResource: meshName, withExtension: "gltf")
         else {
-            print("Failed to find the 3D asset in bundle")
+            print("Failed to find the 3D asset in bundle, relative path: \(meshName!)")
             completion(false)
             return
         }
@@ -192,7 +202,7 @@ class MeshLoader
                     let z = position[2]
                     positions.append(SIMD3<Float>(x, y, z))
                     //let tri = Triangle(v0: x, v1: y, v2: z)
-                    print("\(x) \(y) \(z)")
+                    //print("\(x) \(y) \(z)")
                 }
             }
         }

@@ -392,7 +392,7 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
     
-    for (int a = 0; a < 12; a++)
+    for (int a = 0; a < 30; a++)
     {
         Triangle tri = triangles[a];
         float3 v0 = tri.v0;
@@ -568,6 +568,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         float2 apertureOffset = float2(cos(_randAngle), sin(_randAngle)) * _apertureRadius;
         Ray secondaryRay = CreateSecondaryRay(uv, cam, focalPoint, apertureOffset);
         
+     //8 bounces
         for(int c=0; c<8; c++){
             
             hit = Trace(secondaryRay, spheres[0], triangles);
