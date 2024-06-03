@@ -107,14 +107,13 @@ struct ContentView: View {
                     }
                 }
                 .offset( x: UIScreen.main.bounds.height * 0.1, y: UIScreen.main.bounds.width * -0.45)
-                //.padding([.leading, .bottom])
-                //.frame(alignment: .trailing)
             }
             .frame(alignment: .leading)
             
             
             Button(action: {
-                print("hello")
+                //print("hello")
+                //print(SceneData.BVH!.BVHTree)
                 self.SceneData.Denoiser.initDevice()
                 var counter = 0
                 let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
@@ -187,13 +186,14 @@ struct ContentView: View {
     
     func loadBVH() {
         SceneData.BVH = BVHBuilder(_tris: &SceneData.Triangles)
+        //SceneData.BVH!.BuildBVH(tris: &SceneData.Triangles)
+        
         if let BVH = SceneData.BVH  {
-            DispatchQueue.main.async {
                 BVH.BuildBVH(tris: &SceneData.Triangles)
                 print("successfully created BVH tree")
-            }
             
         }
+        
     }
     
     
@@ -202,8 +202,5 @@ struct ContentView: View {
 
 
 #Preview {
-    //var device = MTLCreateSystemDefaultDevice()!
-    //var vc = ViewController(device: device)
-    //ContentView(viewController: vc)
     ContentView()
 }

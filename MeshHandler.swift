@@ -40,12 +40,6 @@ class BVHBuilder
     
     func BuildBVH(tris : inout [Triangle])
     {
-        /*
-         let N = tris.count;
-         var rootNodeIdx : Int = 0
-         var nodesUsed : Int = 1
-         var BVHTree : [BVHNode] = Array(repeating: BVHNode(), count: (2 * N) - 1)
-         */
         
         for i in 0..<N {
             tris[i].centroid = (tris[i].v0 + tris[i].v1 + tris[i].v2) * 0.3333;
@@ -54,24 +48,26 @@ class BVHBuilder
         var Root : BVHNode = BVHTree[rootNodeIdx]
         Root.firstPrim = 0
         Root.primCount = N
-        self.BVHTree[rootNodeIdx] = Root
+        BVHTree[rootNodeIdx] = Root
         
-        UpdateNodeBounds(nodeid: rootNodeIdx, node: &BVHTree[rootNodeIdx])
+        UpdateNodeBounds(_nodeid: rootNodeIdx)
         
-        Subdivide(nodeid: rootNodeIdx, node: &BVHTree[rootNodeIdx])
+        Subdivide(nodeid: rootNodeIdx)
+        self.BVHTree.removeSubrange(nodesUsed..<BVHTree.endIndex)
+        //self.BVHTree = BVHTree
     }
     
     
-    func UpdateNodeBounds(nodeid : Int, node: inout BVHNode)
+    func UpdateNodeBounds(_nodeid : Int)
     {
-        //var node = BVHTree[nodeid]
+        var node = BVHTree[_nodeid]
         node.aabbMin = float3(Float.infinity, Float.infinity, Float.infinity);
         node.aabbMax = float3(-Float.infinity, -Float.infinity, -Float.infinity);
         
         //print("node primitive count \(node.primCount)")
-        for i in node.firstPrim..<node.primCount
+        for i in node.firstPrim..<(node.primCount + node.firstPrim)
         {
-            var leafTri = tris[Int(i)]
+            var leafTri = tris[i]
             node.aabbMin = fmin(node.aabbMin, leafTri.v0);
             node.aabbMin = fmin(node.aabbMin, leafTri.v1);
             node.aabbMin = fmin(node.aabbMin, leafTri.v2);
@@ -80,11 +76,12 @@ class BVHBuilder
             node.aabbMax = fmax(node.aabbMax, leafTri.v1);
             node.aabbMax = fmax(node.aabbMax, leafTri.v2);
         }
+        BVHTree[_nodeid] = node
     }
     
-    func Subdivide(nodeid: Int, node: inout BVHNode)
+    func Subdivide(nodeid: Int)
         {
-            //var node = BVHTree[nodeid];
+            var node = BVHTree[nodeid];
             let extent : float3 = node.aabbMax - node.aabbMin;
             var axis : Int = 0;
             print(extent)
@@ -105,12 +102,8 @@ class BVHBuilder
                 }
                 else
                 {
-                   // concurrenceQueue.async(flags: .barrier){
                         tris.swapAt(i, j)
-                        
-                        //swap(&self.tris[i], &self.tris[j]);
                         j -= 1;
-                   // }
                     
                 }
             }
@@ -120,25 +113,29 @@ class BVHBuilder
             {
                 return;
             }
+            else 
+            {
+                let lChildId = nodesUsed;
+                let rChildId = nodesUsed+1;
+                
+                nodesUsed = nodesUsed + 2;
+                print(nodesUsed)
+                node.lChild = lChildId;
+                BVHTree[lChildId].firstPrim = node.firstPrim;
+                BVHTree[lChildId].primCount = leftCount;
+                BVHTree[rChildId].firstPrim = i;
+                BVHTree[rChildId].primCount = node.primCount - leftCount;
+                node.primCount = 0;
+                
+                UpdateNodeBounds(_nodeid: lChildId);
+                UpdateNodeBounds(_nodeid: rChildId);
+                
+                Subdivide(nodeid: lChildId);
+                Subdivide(nodeid: rChildId);
+                BVHTree[nodeid] = node;
+            }
             
-            let lChildId = nodesUsed+1;
-            let rChildId = nodesUsed+2;
             
-            nodesUsed = nodesUsed + 2;
-            print(nodesUsed)
-            node.lChild = lChildId;
-            //BVHTree.
-            BVHTree[lChildId].firstPrim = node.firstPrim;
-            BVHTree[lChildId].primCount = leftCount;
-            BVHTree[rChildId].firstPrim = i;
-            BVHTree[rChildId].primCount = node.primCount - leftCount;
-            node.primCount = 0;
-            
-            UpdateNodeBounds(nodeid: lChildId, node: &BVHTree[lChildId]);
-            UpdateNodeBounds(nodeid: rChildId, node: &BVHTree[rChildId]);
-            
-            Subdivide(nodeid: lChildId, node: &BVHTree[lChildId]);
-            Subdivide(nodeid: rChildId, node: &BVHTree[rChildId]);
         }
 
 }

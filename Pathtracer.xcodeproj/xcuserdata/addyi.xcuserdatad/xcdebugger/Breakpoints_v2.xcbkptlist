@@ -122,8 +122,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "loadModel(_:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -131,16 +131,238 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B1E4D49B-88B6-40D9-9BAE-D1AD34B9C1BF"
+            uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pathtracer/ContentView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "loadBVH()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB - 1f68156332c2235d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.ContentView.loadBVH() -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Pathtracer/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "192"
+                  endingLineNumber = "192"
+                  offsetFromSymbolStart = "748">
+               </Location>
+               <Location
+                  uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB - 1f68156332c224f0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.ContentView.loadBVH() -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Pathtracer/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "197"
+                  endingLineNumber = "197"
+                  offsetFromSymbolStart = "764">
+               </Location>
+               <Location
+                  uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB - 1f68156332c2237c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.ContentView.loadBVH() -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Pathtracer/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "193"
+                  endingLineNumber = "193"
+                  offsetFromSymbolStart = "748">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A8E481AC-F8D2-43E3-B033-2A2083510AFA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "Subdivide(nodeid:node:)"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "BuildBVH(tris:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56"
+            shouldBeEnabled = "No"
+            ignoreCount = "3"
+            continueAfterRunningActions = "No"
+            filePath = "MeshHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "114"
+            endingLineNumber = "114"
+            landmarkName = "Subdivide(nodeid:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56 - 2eb08502fc7fae23"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.BVHBuilder.Subdivide(nodeid: Swift.Int) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/MeshHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "112"
+                  endingLineNumber = "112"
+                  offsetFromSymbolStart = "4308">
+               </Location>
+               <Location
+                  uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56 - 2eb08502fc7fae04"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.BVHBuilder.Subdivide(nodeid: Swift.Int) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/MeshHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "113"
+                  endingLineNumber = "113"
+                  offsetFromSymbolStart = "4308">
+               </Location>
+               <Location
+                  uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56 - 2eb08502fc7faee5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.BVHBuilder.Subdivide(nodeid: Swift.Int) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/MeshHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "114"
+                  endingLineNumber = "114"
+                  offsetFromSymbolStart = "4308">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B6907EB0-399D-462B-84A8-6666BAF8AFD0"
+            shouldBeEnabled = "No"
+            ignoreCount = "1"
+            continueAfterRunningActions = "No"
+            filePath = "MeshHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
+            landmarkName = "Subdivide(nodeid:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CFC6D97E-8B07-459D-B00F-9F07D1BE59B7"
+            shouldBeEnabled = "No"
+            ignoreCount = "1"
+            continueAfterRunningActions = "No"
+            filePath = "MeshHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "Subdivide(nodeid:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F8F7FE83-99CF-461F-9EBE-2F2B90D831A0"
+            shouldBeEnabled = "No"
+            ignoreCount = "2"
+            continueAfterRunningActions = "No"
+            filePath = "MeshHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "UpdateNodeBounds(_nodeid:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "F8F7FE83-99CF-461F-9EBE-2F2B90D831A0 - 4a61f682af7c26e1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.BVHBuilder.UpdateNodeBounds(_nodeid: Swift.Int) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/MeshHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "4232">
+               </Location>
+               <Location
+                  uuid = "F8F7FE83-99CF-461F-9EBE-2F2B90D831A0 - 4a61f682af7c26e1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.BVHBuilder.UpdateNodeBounds(_nodeid: Swift.Int) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/MeshHandler.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "4252">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "108F1A01-3D48-4A84-8235-154DBD7AF71A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Pathtracer/ContentView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "loadMeshData()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
