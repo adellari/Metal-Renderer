@@ -45,7 +45,12 @@ final class PipelineEncoder{
         //sin(5) * radius, 0, cos(5) * radius
         
         let eye = float3(0, 0, 0)
-        let target = float3(sin(Float.pi - viewX), 0, 1 * cos(Float.pi - viewX ));
+        var target = float3(sin(Float.pi - viewX), 0, 1 * cos(Float.pi - viewX ));
+        let upward = float3(0, sin( Float.pi * (Float(self.sceneParams.focalLength) / 50) ), 1 * cos(Float.pi * (Float(self.sceneParams.focalLength) / 50)))
+        
+        target += upward;
+        let magnitude = sqrt((target.x * target.x) + (target.y * target.y) + (target.z * target.z))
+        target /= magnitude
         //let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
         let up = float3(0, 1, 0)
         

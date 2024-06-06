@@ -13,7 +13,7 @@ class SceneDataModel: ObservableObject {
     @Published var cameraView: Double = 0.0
     @Published var sampleCount : Int = 0
     @Published var cameraOffset: (Float, Float, Float) = (0.0, 0.0, 1.0)
-    @Published var focalLength: Double = 70
+    @Published var focalLength: Double = 1
     @Published var aperture: Double = 0.1
     @Published var skybox: String = "desert-sky"
     @Published var Denoiser: OIDNHandler = OIDNHandler()
