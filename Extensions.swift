@@ -103,6 +103,25 @@ extension float4x4{
         return WorldToCamera
     }
     
+    func WorldToCamera(eye: float3, phi: Float, theta: Float) -> float4x4 {
+        
+        let cosTheta = cos(theta);
+        let sinTheta = sin(theta);
+        let cosPhi = cos(phi);
+        let sinPhi = sin(phi);
+        
+        let xAxis = float3(cosPhi, 0, -sinPhi);
+        let yAxis = float3(sinPhi * sinTheta, cosTheta, cosPhi * sinTheta);
+        let zAxis = float3(sinPhi * cosTheta, -sinTheta, cosTheta * cosPhi);
+        
+        let mat = float4x4([float4(xAxis.x, yAxis.x, zAxis.x, 0),
+                                 float4(xAxis.y, yAxis.y, zAxis.y, 0),
+                                 float4(xAxis.z, yAxis.z, zAxis.z, 0),
+                                float4(-dot(xAxis, eye), -dot(yAxis, eye), -dot(zAxis, eye), 1)])
+        
+        return mat;
+    }
+    
     func Projection(fov: Float, aspect: Float, near: Float, far: Float) -> float4x4{
         let tanHalfFov = tan((fov/2.0) * Float.pi/180)
         

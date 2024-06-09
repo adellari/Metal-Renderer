@@ -116,7 +116,7 @@ struct ContentView: View {
                 //print(SceneData.BVH!.BVHTree)
                 self.SceneData.Denoiser.initDevice()
                 var counter = 0
-                let timer = Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
+                let timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { timer in
                     viewController?.redraw()
                     SceneData.sampleCount += 1
                     viewController?.SceneData = self.SceneData

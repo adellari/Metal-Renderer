@@ -43,19 +43,25 @@ final class PipelineEncoder{
         let translation = self.sceneParams.cameraOffset.2;
         
         //sin(5) * radius, 0, cos(5) * radius
+        let theta = -(Float.pi - viewX);
+        //let phi = (Float(self.sceneParams.focalLength) / 50) * Float.pi;
+        let phi = (Float.pi - viewY) * 2;
+        
+        let _x = sin(theta) * cos(phi);
+        let _y = sin(theta) * sin(phi);
+        let _z = cos(theta);
         
         let eye = float3(0, 0, 0)
-        var target = float3(sin(Float.pi - viewX), 0, 1 * cos(Float.pi - viewX ));
-        let upward = float3(0, sin( Float.pi * (Float(self.sceneParams.focalLength) / 50) ), 1 * cos(Float.pi * (Float(self.sceneParams.focalLength) / 50)))
+        let target = normalize(float3(_x, _y, _z));
         
-        target += upward;
-        let magnitude = sqrt((target.x * target.x) + (target.y * target.y) + (target.z * target.z))
-        target /= magnitude
-        //let target = float3(sin(viewX) * 5, 0, cos(viewX) * 5)
-        let up = float3(0, 1, 0)
-        
-        //to take our 3d objects and bring them to camera space
-        let WorldToCamera = float4x4().WorldToCamera(eye: eye, target: target, up: up, fov: 60.0, aspect: 2.0, near: 0.01, far: 100.0, translation: translation)
+        let right = cross(target, float3(0, 1, 0));
+        var up = normalize(cross(right, target));
+        let WorldToCamera = float4x4().WorldToCamera(eye: float3(0, 0, 0), phi: theta, theta: phi)
+        if ( abs(dot(target, up)) > 0.1)
+        {
+            print(dot(target, up));
+        }
+            
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
         var viewAsFloat = Float(self.sceneParams.cameraView)
