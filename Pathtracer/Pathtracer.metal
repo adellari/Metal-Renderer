@@ -65,6 +65,14 @@ struct Triangle {
     float3 centroid; //centroid
 };
 
+struct BVHNode {
+    float3 aabbMin;
+    float3 aabbMax;
+    int lChild;
+    int firstPrim;
+    int primCount;
+};
+
 bool any(float3 val)
 {
     return (val.x * val.y * val.z) > 0.001f;
@@ -291,6 +299,18 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
     
 }
 
+bool IntersectAABB(Ray ray, RayHit hit, float3 bMin, float3 bMax)
+{
+    float tx1 = (bMin.x - ray.origin.x) / ray.direction.x, tx2 = (bMax.x - ray.origin.x) / ray.direction.x;
+    float tmin = min( tx1, tx2 ), tmax = max( tx1, tx2 );
+    float ty1 = (bMin.y - ray.origin.y) / ray.direction.y, ty2 = (bMax.y - ray.origin.y) / ray.direction.y;
+    tmin = max( tmin, min( ty1, ty2 ) ), tmax = min( tmax, max( ty1, ty2 ) );
+    float tz1 = (bMin.z - ray.origin.z) / ray.direction.z, tz2 = (bMax.z - ray.origin.z) / ray.direction.z;
+    tmin = max( tmin, min( tz1, tz2 ) ), tmax = min( tmax, max( tz1, tz2 ) );
+    
+    return tmax >= tmin && tmin < hit.distance && tmax > 0;
+}
+
 //The Tomas Akenine-Moller and Ben Trumbone 1997 fast triangle intersection algorithm
 //https://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/pubs/raytri_tam.pdf
 //out params: t - how far along ray.direction we hit the triangle
@@ -325,6 +345,46 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     
     *t = dot(edge2, qvec) * inv_det;
     return true;
+}
+
+void IntersectBVH(Ray ray, thread RayHit* hit, device BVHNode* BVHTree, device Triangle* tris, const int nodeId)
+{
+    BVHNode node = BVHTree[nodeId];
+    
+    if (!IntersectAABB(ray, *hit, node.aabbMin, node.aabbMax)) return;
+    if (node.primCount == 0)
+    {
+        IntersectBVH(ray, hit, BVHTree, tris, node.lChild);
+        IntersectBVH(ray, hit, BVHTree, tris, node.lChild + 1);
+    }
+    else
+    {
+        for (int a = node.firstPrim; a < node.firstPrim + node.primCount; a++)
+        {
+            Triangle tri = tris[a];
+            float3 v0 = tri.v0;
+            float3 v1 = tri.v1;
+            float3 v2 = tri.v2;
+            float t, u, v;
+            
+            if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
+            {
+                if (t > 0 && t < hit->distance)
+                {
+                    hit->distance = t;
+                    hit->position = ray.origin + ray.direction * t;
+                    hit->normal = normalize(cross(v1 - v0, v2 - v0));
+                    hit->albedo = 0.01f;
+                    hit->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+                    hit->refractionColor = float3(0.f, 0.f, 0.f);
+                    hit->emission = 0.f;
+                    hit->smoothness = 0.1f;
+                    hit->inside = false;
+                }
+            }
+        }
+    }
+    return;
 }
 
 RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
@@ -494,7 +554,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode* BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)

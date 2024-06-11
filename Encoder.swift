@@ -18,6 +18,7 @@ final class PipelineEncoder{
     public var cameraBuffer: MTLBuffer?
     public var spheresBuffer: MTLBuffer?
     public var trisBuffer: MTLBuffer?
+    public var bvhBuffer: MTLBuffer?
     
     init(library: MTLLibrary, scene: SceneDataModel) throws{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
@@ -57,10 +58,6 @@ final class PipelineEncoder{
         let right = cross(target, float3(0, 1, 0));
         var up = normalize(cross(right, target));
         let WorldToCamera = float4x4().WorldToCamera(eye: float3(0, 0, 0), phi: theta, theta: phi)
-        if ( abs(dot(target, up)) > 0.1)
-        {
-            print(dot(target, up));
-        }
             
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
@@ -73,9 +70,8 @@ final class PipelineEncoder{
         {
             cameraBuffer  = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
             spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
-            
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
-            
+            bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
         }
         else 
         {
@@ -88,6 +84,10 @@ final class PipelineEncoder{
             memcpy(trisPointer, &self.sceneParams.Triangles, MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count)
         }
         
+        if (bvhBuffer == nil && self.sceneParams.BVH!.BVHTree.count != 0)
+        {
+            
+        }
         /*
         if trisBuffer!.length != MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count {
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
@@ -101,6 +101,7 @@ final class PipelineEncoder{
         encoder.setBuffer(trisBuffer, offset: 0, index: 0)
         encoder.setBuffer(cameraBuffer, offset: 0, index: 1)
         encoder.setBuffer(spheresBuffer, offset: 0, index: 2)
+        encoder.setBuffer(bvhBuffer, offset: 0, index: 5)
         encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
         encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
         //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
