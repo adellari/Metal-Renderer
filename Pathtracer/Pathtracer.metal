@@ -347,31 +347,40 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     return true;
 }
 
-void IntersectBVH(Ray ray, thread RayHit* hit, device BVHNode* BVHTree, device Triangle* tris, const int nodeId)
+void IntersectBVH(Ray ray, thread RayHit* rh, device BVHNode *BVHTree, device Triangle *tris, int nodeId)
 {
+    if (nodeId > 6)
+        return;
+    
     BVHNode node = BVHTree[nodeId];
     
-    if (!IntersectAABB(ray, *hit, node.aabbMin, node.aabbMax)) return;
+    
+    if (!IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax)) return;
     if (node.primCount == 0)
     {
-        IntersectBVH(ray, hit, BVHTree, tris, node.lChild);
-        IntersectBVH(ray, hit, BVHTree, tris, node.lChild + 1);
+        IntersectBVH(ray, rh, BVHTree, tris, node.lChild);
+        IntersectBVH(ray, rh, BVHTree, tris, node.lChild + 1);
     }
     else
     {
         for (int a = node.firstPrim; a < node.firstPrim + node.primCount; a++)
         {
+            
             Triangle tri = tris[a];
             float3 v0 = tri.v0;
             float3 v1 = tri.v1;
             float3 v2 = tri.v2;
             float t, u, v;
             
+            
             if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
             {
-                if (t > 0 && t < hit->distance)
+                
+                if (t > 0 && t < rh->distance)
                 {
-                    hit->distance = t;
+                    ray.energy = 0.f;
+                    rh->distance = t;
+                    /*
                     hit->position = ray.origin + ray.direction * t;
                     hit->normal = normalize(cross(v1 - v0, v2 - v0));
                     hit->albedo = 0.01f;
@@ -380,14 +389,16 @@ void IntersectBVH(Ray ray, thread RayHit* hit, device BVHNode* BVHTree, device T
                     hit->emission = 0.f;
                     hit->smoothness = 0.1f;
                     hit->inside = false;
+                    */
                 }
+                
             }
         }
     }
-    return;
+    //return;
 }
 
-RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
+RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles, device BVHNode *BVHTree)
 {
     
     RayHit hit = CreateRayHit();
@@ -447,11 +458,15 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
     
     //IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
+    /*
     IntersectSphere(ray, &hit, s3);
     IntersectSphere(ray, &hit, s1);
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
+    */
+    IntersectBVH(ray, &hit, BVHTree, triangles, 0);
     
+    /*
     for (int a = 0; a < 30; a++)
     {
         Triangle tri = triangles[a];
@@ -476,6 +491,8 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles)
             }
         }
     }
+    */
+    
     
     
     //IntersectSphere(ray, &hit, s2);
@@ -554,7 +571,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode* BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], device BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)
@@ -597,7 +614,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     //for the primary ray
     for(int a=0; a<8; a++){
         
-        hit = Trace(ray, spheres[0], triangles);
+        hit = Trace(ray, spheres[0], triangles, BVHTree);
         
         if (hit.distance !=INFINITY){
             float3 n = ray.energy;

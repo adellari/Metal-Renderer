@@ -27,6 +27,7 @@ final class PipelineEncoder{
         let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
         self.pipelineState = try library.device.makeComputePipelineState(function: function)
         self.sceneParams = scene
+        //pipelineState.text
     }
     
     func setReusables(encoder: MTLCommandEncoder)
@@ -71,6 +72,7 @@ final class PipelineEncoder{
             cameraBuffer  = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
             spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
+            print(self.sceneParams.BVH?.BVHTree.count)
             bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
         }
         else 
@@ -97,6 +99,7 @@ final class PipelineEncoder{
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
         encoder.setTexture(destination, index: 1)
+    
         //encoder.setBytes(&viewAsFloat, length: MemoryLayout<Float>.stride, index: 0)
         encoder.setBuffer(trisBuffer, offset: 0, index: 0)
         encoder.setBuffer(cameraBuffer, offset: 0, index: 1)
