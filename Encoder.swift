@@ -72,7 +72,7 @@ final class PipelineEncoder{
             cameraBuffer  = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
             spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
-            print(self.sceneParams.BVH?.BVHTree.count)
+            print(self.sceneParams.Triangles.count)
             bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
         }
         else 

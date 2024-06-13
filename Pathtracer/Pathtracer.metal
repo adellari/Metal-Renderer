@@ -349,52 +349,53 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
 
 void IntersectBVH(Ray ray, thread RayHit* rh, device BVHNode *BVHTree, device Triangle *tris, int nodeId)
 {
-    if (nodeId > 6)
-        return;
     
-    BVHNode node = BVHTree[nodeId];
-    
-    
-    if (!IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax)) return;
-    if (node.primCount == 0)
+    for (int b = 0; b < 6; b++)
     {
-        IntersectBVH(ray, rh, BVHTree, tris, node.lChild);
-        IntersectBVH(ray, rh, BVHTree, tris, node.lChild + 1);
-    }
-    else
-    {
-        for (int a = node.firstPrim; a < node.firstPrim + node.primCount; a++)
+        BVHNode node = BVHTree[b];
+        if (!IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax)) continue;
+        if (node.primCount == 0)
         {
-            
-            Triangle tri = tris[a];
-            float3 v0 = tri.v0;
-            float3 v1 = tri.v1;
-            float3 v2 = tri.v2;
-            float t, u, v;
-            
-            
-            if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
+            //IntersectBVH(ray, rh, BVHTree, tris, node.lChild);
+            //IntersectBVH(ray, rh, BVHTree, tris, node.lChild + 1);
+        }
+        else
+        {
+            for (int a = node.firstPrim; a < (node.firstPrim + node.primCount); a++)
             {
+                if(a > 75) break;
+                Triangle tri = tris[a];
+                float3 v0 = tri.v0;
+                float3 v1 = tri.v1;
+                float3 v2 = tri.v2;
+                float t, u, v;
                 
-                if (t > 0 && t < rh->distance)
+                
+                if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
                 {
-                    ray.energy = 0.f;
-                    rh->distance = t;
-                    /*
-                    hit->position = ray.origin + ray.direction * t;
-                    hit->normal = normalize(cross(v1 - v0, v2 - v0));
-                    hit->albedo = 0.01f;
-                    hit->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
-                    hit->refractionColor = float3(0.f, 0.f, 0.f);
-                    hit->emission = 0.f;
-                    hit->smoothness = 0.1f;
-                    hit->inside = false;
-                    */
+                    
+                    if (t > 0 && t < rh->distance)
+                    {
+                        //ray.energy = 0.f;
+                        rh->distance = t;
+                        
+                        rh->position = ray.origin + ray.direction * t;
+                        rh->normal = normalize(cross(v1 - v0, v2 - v0));
+                        rh->albedo = 0.01f;
+                        rh->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+                        rh->refractionColor = float3(0.f, 0.f, 0.f);
+                        rh->emission = 0.f;
+                        rh->smoothness = 0.1f;
+                        rh->inside = false;
+                        
+                    }
+                    
                 }
-                
             }
         }
     }
+    
+    
     //return;
 }
 
@@ -458,12 +459,12 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles, device BVHNode *BVH
     
     //IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
-    /*
+    
     IntersectSphere(ray, &hit, s3);
     IntersectSphere(ray, &hit, s1);
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
-    */
+    
     IntersectBVH(ray, &hit, BVHTree, triangles, 0);
     
     /*
