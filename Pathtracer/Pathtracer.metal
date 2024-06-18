@@ -68,9 +68,9 @@ struct Triangle {
 struct BVHNode {
     float3 aabbMin;
     float3 aabbMax;
-    int lChild;
-    int firstPrim;
-    int primCount;
+    long lChild;
+    long firstPrim;
+    long primCount;
 };
 
 bool any(float3 val)
@@ -347,23 +347,34 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     return true;
 }
 
-void IntersectBVH(Ray ray, thread RayHit* rh, device BVHNode *BVHTree, device Triangle *tris, int nodeId)
+void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
-    
-    for (int b = 0; b < 6; b++)
+    int traverseStack[8];
+
+    int stackId = 0;
+    traverseStack[stackId] = 0;
+    stackId++;
+     
+    while (stackId > 0)
     {
-        BVHNode node = BVHTree[b];
+        stackId--;
+        nodeId = traverseStack[stackId];
+        BVHNode node = BVHTree[nodeId];
         if (!IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax)) continue;
+        
         if (node.primCount == 0)
         {
-            //IntersectBVH(ray, rh, BVHTree, tris, node.lChild);
-            //IntersectBVH(ray, rh, BVHTree, tris, node.lChild + 1);
+            traverseStack[stackId] = node.lChild;
+            stackId++;
+            traverseStack[stackId] = node.lChild + 1;
+            stackId++;
+            continue;
         }
         else
         {
-            for (int a = node.firstPrim; a < (node.firstPrim + node.primCount); a++)
+            
+            for (int a = node.firstPrim; a < (node.firstPrim + node.primCount) - 1; a++)
             {
-                if(a > 75) break;
                 Triangle tri = tris[a];
                 float3 v0 = tri.v0;
                 float3 v1 = tri.v1;
@@ -376,9 +387,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, device BVHNode *BVHTree, device Tr
                     
                     if (t > 0 && t < rh->distance)
                     {
-                        //ray.energy = 0.f;
                         rh->distance = t;
-                        
                         rh->position = ray.origin + ray.direction * t;
                         rh->normal = normalize(cross(v1 - v0, v2 - v0));
                         rh->albedo = 0.01f;
@@ -392,14 +401,15 @@ void IntersectBVH(Ray ray, thread RayHit* rh, device BVHNode *BVHTree, device Tr
                     
                 }
             }
+            continue;
         }
+        
     }
     
     
-    //return;
 }
 
-RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles, device BVHNode *BVHTree)
+RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode *BVHTree)
 {
     
     RayHit hit = CreateRayHit();
@@ -492,7 +502,8 @@ RayHit Trace(Ray ray, Sphere s3, device Triangle *triangles, device BVHNode *BVH
             }
         }
     }
-    */
+     */
+    
     
     
     
@@ -572,7 +583,7 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], device Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], device BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)

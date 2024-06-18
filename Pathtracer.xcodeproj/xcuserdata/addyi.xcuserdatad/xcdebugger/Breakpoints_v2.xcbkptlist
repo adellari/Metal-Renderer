@@ -366,5 +366,84 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Encoder.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "encode(source:destination:in:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649 - e46a33d91f638bba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.PipelineEncoder.encode(source: __C.MTLTexture, destination: __C.MTLTexture, in: __C.MTLCommandBuffer) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Encoder.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "18020">
+               </Location>
+               <Location
+                  uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649 - e46a33d91f638bba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.PipelineEncoder.encode(source: __C.MTLTexture, destination: __C.MTLTexture, in: __C.MTLCommandBuffer) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Encoder.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "17292">
+               </Location>
+               <Location
+                  uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649 - e46a33d91f638bba"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Pathtracer.PipelineEncoder.encode(source: __C.MTLTexture, destination: __C.MTLTexture, in: __C.MTLCommandBuffer) -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/Encoder.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "89"
+                  endingLineNumber = "89"
+                  offsetFromSymbolStart = "17260">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F6C6A8A2-5CE6-4E28-B909-2B62B6F748AD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Encoder.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
+            landmarkName = "encode(source:destination:in:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

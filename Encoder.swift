@@ -73,6 +73,7 @@ final class PipelineEncoder{
             spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
             print(self.sceneParams.Triangles.count)
+            print( MemoryLayout<Int>.stride)
             bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
         }
         else 
@@ -80,16 +81,14 @@ final class PipelineEncoder{
             let cameraPointer = cameraBuffer!.contents()
             let spheresPointer = spheresBuffer!.contents()
             let trisPointer = trisBuffer!.contents()
+            let bvhPointer = bvhBuffer!.contents()
             
             memcpy(cameraPointer, &camStruct, MemoryLayout<CameraParams>.stride)
             memcpy(spheresPointer, &self.sceneParams.Spheres, MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count)
             memcpy(trisPointer, &self.sceneParams.Triangles, MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count)
+            memcpy(bvhPointer, &self.sceneParams.BVH!.BVHTree, MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count)
         }
         
-        if (bvhBuffer == nil && self.sceneParams.BVH!.BVHTree.count != 0)
-        {
-            
-        }
         /*
         if trisBuffer!.length != MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count {
             trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
