@@ -68,9 +68,9 @@ struct Triangle {
 struct BVHNode {
     float3 aabbMin;
     float3 aabbMax;
-    long lChild;
-    long firstPrim;
-    long primCount;
+    short lChild;
+    short firstPrim;
+    short primCount;
 };
 
 bool any(float3 val)
@@ -299,7 +299,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
     
 }
 
-bool IntersectAABB(Ray ray, RayHit hit, float3 bMin, float3 bMax)
+float IntersectAABB(Ray ray, RayHit hit, float3 bMin, float3 bMax)
 {
     float tx1 = (bMin.x - ray.origin.x) / ray.direction.x, tx2 = (bMax.x - ray.origin.x) / ray.direction.x;
     float tmin = min( tx1, tx2 ), tmax = max( tx1, tx2 );
@@ -308,7 +308,7 @@ bool IntersectAABB(Ray ray, RayHit hit, float3 bMin, float3 bMax)
     float tz1 = (bMin.z - ray.origin.z) / ray.direction.z, tz2 = (bMax.z - ray.origin.z) / ray.direction.z;
     tmin = max( tmin, min( tz1, tz2 ) ), tmax = min( tmax, max( tz1, tz2 ) );
     
-    return tmax >= tmin && tmin < hit.distance && tmax > 0;
+    if (tmax >= tmin && tmin < hit.distance && tmax > 0) return tmin; else return INFINITY;
 }
 
 //The Tomas Akenine-Moller and Ben Trumbone 1997 fast triangle intersection algorithm
@@ -360,14 +360,36 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
         stackId--;
         nodeId = traverseStack[stackId];
         BVHNode node = BVHTree[nodeId];
-        if (!IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax)) continue;
+        float hitDist = IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax);
+        if ( hitDist == INFINITY || hitDist > rh->distance ) continue;
         
         if (node.primCount == 0)
         {
+            
+            float dist1 = IntersectAABB(ray, *rh, BVHTree[node.lChild].aabbMin, BVHTree[node.lChild].aabbMax);
+            float dist2 = IntersectAABB(ray, *rh, BVHTree[node.lChild + 1].aabbMin, BVHTree[node.lChild + 1].aabbMax);
+            
+            if (dist1 < dist2)
+            {
+                if (dist2 < rh->distance)
+                    traverseStack[stackId++] = node.lChild + 1;
+                if (dist1 < rh->distance)
+                    traverseStack[stackId++] = node.lChild ;
+            }
+            else
+            {
+                if (dist1 < rh->distance)
+                    traverseStack[stackId++] = node.lChild;
+                if (dist2 < rh->distance)
+                    traverseStack[stackId++] = node.lChild + 1;
+            }
+            
+            /*
             traverseStack[stackId] = node.lChild;
             stackId++;
             traverseStack[stackId] = node.lChild + 1;
             stackId++;
+             */
             continue;
         }
         else
@@ -466,7 +488,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     s2.point = float4(0.f, 0.5f, 2.2f, 0.40f);
     
     
-    
+    /*
     //IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
     
@@ -474,6 +496,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     IntersectSphere(ray, &hit, s1);
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
+    */
     
     IntersectBVH(ray, &hit, BVHTree, triangles, 0);
     

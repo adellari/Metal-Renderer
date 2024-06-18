@@ -14,11 +14,11 @@ struct BVHNode
 {
     var aabbMin : float3 = float3(Float.infinity);
     var aabbMax : float3 = float3(-Float.infinity);      //position of bounding box corners
-    var lChild : Int = 0;
+    var lChild : Int16 = 0;
     //var rChild : UInt8 = 0;         //indices of left and right child nodes
     //var isLeaf : Bool = false;                  //is this node a leaf
-    var firstPrim : Int = 0;
-    var primCount : Int = 0;   //index of first enclosed triangle in tris array, and how many triangles in bvh
+    var firstPrim : Int16 = 0;
+    var primCount : Int16 = 0;   //index of first enclosed triangle in tris array, and how many triangles in bvh
 }
 
 class BVHBuilder
@@ -47,7 +47,7 @@ class BVHBuilder
         self.tris = tris;
         var Root : BVHNode = BVHTree[rootNodeIdx]
         Root.firstPrim = 0
-        Root.primCount = N
+        Root.primCount = Int16(N)
         BVHTree[rootNodeIdx] = Root
         
         UpdateNodeBounds(_nodeid: rootNodeIdx)
@@ -67,7 +67,7 @@ class BVHBuilder
         //print("node primitive count \(node.primCount)")
         for i in node.firstPrim..<(node.primCount + node.firstPrim)
         {
-            var leafTri = tris[i]
+            var leafTri = tris[Int(i)]
             node.aabbMin = fmin(node.aabbMin, leafTri.v0);
             node.aabbMin = fmin(node.aabbMin, leafTri.v1);
             node.aabbMin = fmin(node.aabbMin, leafTri.v2);
@@ -108,7 +108,7 @@ class BVHBuilder
                 }
             }
             
-            let leftCount = i - node.firstPrim;
+            let leftCount = i - Int(node.firstPrim);
             if (leftCount == 0 || leftCount == node.primCount)  // the split's half has no or all the elements
             {
                 return;
@@ -120,11 +120,11 @@ class BVHBuilder
                 
                 nodesUsed = nodesUsed + 2;
                 print(nodesUsed)
-                node.lChild = lChildId;
+                node.lChild = Int16(lChildId);
                 BVHTree[lChildId].firstPrim = node.firstPrim;
-                BVHTree[lChildId].primCount = leftCount;
-                BVHTree[rChildId].firstPrim = i;
-                BVHTree[rChildId].primCount = node.primCount - leftCount;
+                BVHTree[lChildId].primCount = Int16(leftCount);
+                BVHTree[rChildId].firstPrim = Int16(i);
+                BVHTree[rChildId].primCount = node.primCount - Int16(leftCount);
                 node.primCount = 0;
                 
                 UpdateNodeBounds(_nodeid: lChildId);
