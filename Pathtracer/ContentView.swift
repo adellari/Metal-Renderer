@@ -170,7 +170,7 @@ struct ContentView: View {
     
     func loadMeshData() {
         if let meshLoader = SceneData.Meshloader {
-            meshLoader.loadModel("intercom") { success in
+            meshLoader.loadModel("gear") { success in
                 
                 if success{
                     SceneData.Triangles = meshLoader.loadTriangles()

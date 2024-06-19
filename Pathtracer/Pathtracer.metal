@@ -349,7 +349,7 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
 
 void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
-    int traverseStack[8];
+    int traverseStack[20];
 
     int stackId = 0;
     traverseStack[stackId] = 0;
@@ -372,16 +372,16 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
             if (dist1 < dist2)
             {
                 if (dist2 < rh->distance)
-                    traverseStack[stackId++] = node.lChild + 1;
+                    traverseStack[stackId++] = node.lChild + 1; //far
                 if (dist1 < rh->distance)
-                    traverseStack[stackId++] = node.lChild ;
+                    traverseStack[stackId++] = node.lChild ;    //near
             }
             else
             {
                 if (dist1 < rh->distance)
-                    traverseStack[stackId++] = node.lChild;
+                    traverseStack[stackId++] = node.lChild; //far
                 if (dist2 < rh->distance)
-                    traverseStack[stackId++] = node.lChild + 1;
+                    traverseStack[stackId++] = node.lChild + 1; //near
             }
             
             /*
@@ -395,7 +395,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
         else
         {
             
-            for (int a = node.firstPrim; a < (node.firstPrim + node.primCount) - 1; a++)
+            for (int a = node.firstPrim; a < (node.firstPrim + node.primCount); a++)
             {
                 Triangle tri = tris[a];
                 float3 v0 = tri.v0;
@@ -435,6 +435,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
 {
     
     RayHit hit = CreateRayHit();
+    /*
     Sphere s;
     s.albedo = float3(0.1f, 0.42f, 0.93f);
     //s.specular = float3(0.3f, 1.f, 1.f);
@@ -488,7 +489,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     s2.point = float4(0.f, 0.5f, 2.2f, 0.40f);
     
     
-    /*
+    
     //IntersectGroundPlane(ray, &hit);
     s3.emission = 0.f;
     
@@ -620,24 +621,11 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     float4 colInit = destination.read(position).rgba;
     float3 col = float3(0.f, 0.f, 0.f);
     
-    //auto result = source.sample(textureSampler, uv);
     uv = uv * 2.f - 1.f;
-    
-    //const auto pixVal = source.read(position);
-    //const auto result = float4(1.f, 0.f, 0.f, 1.f);       //brg
     Ray ray;
     RayHit hit = CreateRayHit();
     ray.jitter = float2(position.x, position.y);
-    /*
-    Sphere s;
-    s.albedo = 0.f;
-    s.specular = 0.f;
-    s.smoothness = 0.f;
-    s.refractionColor = 0.f;
-    s.refractiveIndex = 1.f;
-    s.refractionChance = 0.f;
-    s.point = float4(0, 0.5f, 2.f, 0.8f);
-    */
+
     float aperture = cam->aperture; //4 pixel wide aperture
     
     ray = CreateCameraRay(uv, cam); //primary ray
@@ -647,7 +635,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     
     
     //for the primary ray
-    for(int a=0; a<8; a++){
+    for(int a=0; a<2; a++){
         
         hit = Trace(ray, spheres[0], triangles, BVHTree);
         
@@ -705,28 +693,8 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     col /= 8.f;
     */
     
-    
-    /*
-    IntersectGroundPlane(ray, &hit);
-    IntersectSphere(ray, &hit, s);
-    
-    if (hit.distance == INFINITY){
-        float2 sph = CartesianToSpherical(ray.direction);
-        col = source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb;
-    }
-    else {
-        col = hit.normal;
-    }
-    */
     float avgFactor = (1.f / (sampleCount + 1.f));
     auto result = float4( col * avgFactor + (colInit.rgb * (1.f - avgFactor)), 1.f);
-    //auto result = float4(spheres[0].albedo, 1);   //testing buffer allocation
-    //auto result = float4(channelSwap(col), avgFactor) + float4(colInit.rgb, (1.f - avgFactor));
-    //auto result = float4(channelSwap(col), 1.f);
-    //auto result = float4(12.f, 0.f, 0.f, 1.f);
-    //const auto result = float4(abs(uv), 0.f, 1.f) * cam->dummy;
-    //auto result = float4(ray.direction.z, ray.direction.g, ray.direction.x, 1.f) * cam->dummy;
-    
     destination.write(result, position);
 }
 

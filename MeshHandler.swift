@@ -84,7 +84,7 @@ class BVHBuilder
             var node = BVHTree[nodeid];
             let extent : float3 = node.aabbMax - node.aabbMin;
             var axis : Int = 0;
-            print(extent)
+            //print(extent)
             //determine which axis of triangles is the longest and set the plane to cut along that
             if (extent.y > extent.x) { axis = 1; }
             if (extent.z > extent[axis]) { axis = 2; }
@@ -119,8 +119,8 @@ class BVHBuilder
                 let rChildId = nodesUsed+1;
                 
                 nodesUsed = nodesUsed + 2;
-                print(nodesUsed)
-                node.lChild = Int16(lChildId);
+                //print(nodesUsed)
+                //node.lChild = Int16(lChildId);
                 BVHTree[lChildId].firstPrim = node.firstPrim;
                 BVHTree[lChildId].primCount = Int16(leftCount);
                 BVHTree[rChildId].firstPrim = Int16(i);
@@ -203,6 +203,7 @@ class MeshLoader
                 }
             }
         }
+        print(primitive.indices!.count / 3)
         //Get our vertex indices (3x the number of triangles we'll create)
         if let indices = primitive.indices {
             var readIndices : [Int] = []
