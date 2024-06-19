@@ -183,12 +183,14 @@ class MeshLoader
     
     public func loadTriangles() -> [Triangle] {
         var tris: [Triangle] = []
-        var positions : [SIMD3<Float>] = []
-        var readIndices : [Int] = []
+        
         //load the vertex positions
         //print(self.asset!.meshes.count)
-        //print(self.asset!.meshes[0].primitives.count)
+        print(self.asset!.meshes[0].primitives.indices.count)
+        print(self.asset!.meshes[1].primitives.indices.count)
         for p in 0..<self.asset!.meshes.count {
+            var positions : [SIMD3<Float>] = []
+            var readIndices : [Int] = []
             let primitive = self.asset!.meshes[p].primitives[0]
             if let vertexPositions = primitive.copyPackedVertexPositions() {
                 vertexPositions.withUnsafeBytes { positionPtr in

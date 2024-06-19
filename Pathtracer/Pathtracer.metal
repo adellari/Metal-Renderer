@@ -384,6 +384,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                     traverseStack[stackId++] = node.lChild + 1; //near
             }
             
+            
             /*
             traverseStack[stackId] = node.lChild;
             stackId++;
