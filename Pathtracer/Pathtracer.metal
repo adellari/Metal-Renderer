@@ -349,7 +349,7 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
 
 void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
-    int traverseStack[20];
+    int traverseStack[100];
 
     int stackId = 0;
     traverseStack[stackId] = 0;

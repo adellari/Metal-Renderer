@@ -120,7 +120,7 @@ class BVHBuilder
                 
                 nodesUsed = nodesUsed + 2;
                 //print(nodesUsed)
-                //node.lChild = Int16(lChildId);
+                node.lChild = Int16(lChildId);
                 BVHTree[lChildId].firstPrim = node.firstPrim;
                 BVHTree[lChildId].primCount = Int16(leftCount);
                 BVHTree[rChildId].firstPrim = Int16(i);
@@ -184,45 +184,51 @@ class MeshLoader
     public func loadTriangles() -> [Triangle] {
         var tris: [Triangle] = []
         var positions : [SIMD3<Float>] = []
+        var readIndices : [Int] = []
         //load the vertex positions
-        let primitive = self.asset!.meshes[0].primitives[0]
-        if let vertexPositions = primitive.copyPackedVertexPositions() {
-            vertexPositions.withUnsafeBytes { positionPtr in
-                print(primitive.indices!.count)
-                for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
-                    let position = positionPtr.baseAddress!
-                        .advanced(by: MemoryLayout<Float>.stride * 3 * i)
-                        .assumingMemoryBound(to: Float.self)
+        //print(self.asset!.meshes.count)
+        //print(self.asset!.meshes[0].primitives.count)
+        for p in 0..<self.asset!.meshes.count {
+            let primitive = self.asset!.meshes[p].primitives[0]
+            if let vertexPositions = primitive.copyPackedVertexPositions() {
+                vertexPositions.withUnsafeBytes { positionPtr in
+                    //print(primitive.indices!.count)
+                    for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
+                        let position = positionPtr.baseAddress!
+                            .advanced(by: MemoryLayout<Float>.stride * 3 * i)
+                            .assumingMemoryBound(to: Float.self)
 
-                    let x = position[0]
-                    let y = position[1]
-                    let z = position[2]
-                    positions.append(SIMD3<Float>(x, y, z))
-                    //let tri = Triangle(v0: x, v1: y, v2: z)
-                    //print("\(x) \(y) \(z)")
+                        let x = position[0]
+                        let y = position[1]
+                        let z = position[2]
+                        positions.append(SIMD3<Float>(x, y, z))
+                        //let tri = Triangle(v0: x, v1: y, v2: z)
+                        //print("\(x) \(y) \(z)")
+                    }
+                }
+            }
+            print(primitive.indices!.count / 3)
+            //Get our vertex indices (3x the number of triangles we'll create)
+            if let indices = primitive.indices {
+                
+                //print(indices.bufferView!.buffer.data)
+                let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self) }
+                
+                for i in stride(from: 0, to: indices.count * 2, by: MemoryLayout<UInt16>.stride) {
+                    var index = Int(uint16Data[i])
+                    //print(index)
+                    readIndices.append(index)
+                }
+                //Create triangles based on the vertex and indices
+                for i in 0..<readIndices.count / 3 {
+                    let x = positions[readIndices[i * 3]]
+                    let y = positions[readIndices[i * 3 + 1]]
+                    let z = positions[readIndices[i * 3 + 2]]
+                    tris.append(Triangle(v0: x, v1: y, v2: z))
                 }
             }
         }
-        print(primitive.indices!.count / 3)
-        //Get our vertex indices (3x the number of triangles we'll create)
-        if let indices = primitive.indices {
-            var readIndices : [Int] = []
-            //print(indices.bufferView!.buffer.data)
-            let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self) }
-            
-            for i in stride(from: 0, to: indices.count * 2, by: MemoryLayout<UInt16>.stride) {
-                var index = Int(uint16Data[i])
-                //print(index)
-                readIndices.append(index)
-            }
-            //Create triangles based on the vertex and indices
-            for i in 0..<readIndices.count / 3 {
-                let x = positions[readIndices[i * 3]]
-                let y = positions[readIndices[i * 3 + 1]]
-                let z = positions[readIndices[i * 3 + 2]]
-                tris.append(Triangle(v0: x, v1: y, v2: z))
-            }
-        }
+        
         
         print("loaded \(tris.count) triangle primitives")
         return tris
