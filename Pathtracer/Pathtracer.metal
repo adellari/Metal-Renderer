@@ -327,13 +327,15 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     
     float det = dot(edge1, pvec);
     
+    
     if(det < EPSILON)
         return false;
+    
     
     float inv_det = 1.f / det;
     
     float3 tvec = ray.origin - v0;
-    *u = dot(tvec, pvec) * inv_det;
+    *u = dot(tvec, pvec);
     if(*u < 0.f || *u > 1.f)
         return false;
     
@@ -344,6 +346,7 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
         return false;
     
     *t = dot(edge2, qvec) * inv_det;
+    *u *= inv_det;
     return true;
 }
 
@@ -361,7 +364,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
         nodeId = traverseStack[stackId];
         BVHNode node = BVHTree[nodeId];
         float hitDist = IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax);
-        if ( hitDist == INFINITY || hitDist > rh->distance ) continue;
+        if ( hitDist > 100000 || hitDist > rh->distance ) continue;
         
         if (node.primCount == 0)
         {
@@ -391,7 +394,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
             traverseStack[stackId] = node.lChild + 1;
             stackId++;
              */
-            continue;
+            //continue;
         }
         else
         {

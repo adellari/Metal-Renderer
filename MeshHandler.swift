@@ -54,7 +54,16 @@ class BVHBuilder
         
         Subdivide(nodeid: rootNodeIdx)
         self.BVHTree.removeSubrange(nodesUsed..<BVHTree.endIndex)
-        //self.BVHTree = BVHTree
+        
+        /*
+        var accountedTris = 0
+        for i in 0..<BVHTree.count
+        {
+            var n = BVHTree[i]
+            accountedTris += Int(n.primCount)
+        }
+        print(accountedTris)
+        */
     }
     
     
@@ -118,7 +127,7 @@ class BVHBuilder
                 let lChildId = nodesUsed;
                 let rChildId = nodesUsed+1;
                 
-                nodesUsed = nodesUsed + 2;
+                nodesUsed += 2;
                 //print(nodesUsed)
                 node.lChild = Int16(lChildId);
                 BVHTree[lChildId].firstPrim = node.firstPrim;
@@ -189,12 +198,13 @@ class MeshLoader
         print(self.asset!.meshes[0].primitives.indices.count)
         print(self.asset!.meshes[1].primitives.indices.count)
         for p in 0..<self.asset!.meshes.count {
+            
+            //read sequential vertex positions in
             var positions : [SIMD3<Float>] = []
             var readIndices : [Int] = []
             let primitive = self.asset!.meshes[p].primitives[0]
             if let vertexPositions = primitive.copyPackedVertexPositions() {
                 vertexPositions.withUnsafeBytes { positionPtr in
-                    //print(primitive.indices!.count)
                     for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
                         let position = positionPtr.baseAddress!
                             .advanced(by: MemoryLayout<Float>.stride * 3 * i)
@@ -204,8 +214,6 @@ class MeshLoader
                         let y = position[1]
                         let z = position[2]
                         positions.append(SIMD3<Float>(x, y, z))
-                        //let tri = Triangle(v0: x, v1: y, v2: z)
-                        //print("\(x) \(y) \(z)")
                     }
                 }
             }
@@ -213,25 +221,44 @@ class MeshLoader
             //Get our vertex indices (3x the number of triangles we'll create)
             if let indices = primitive.indices {
                 
-                //print(indices.bufferView!.buffer.data)
+                //Read our uint16 index set from the bufferview
                 let uint16Data = indices.bufferView!.buffer.data!.withUnsafeBytes { $0.bindMemory(to: UInt16.self) }
-                
                 for i in stride(from: 0, to: indices.count * 2, by: MemoryLayout<UInt16>.stride) {
                     var index = Int(uint16Data[i])
-                    //print(index)
                     readIndices.append(index)
                 }
-                //Create triangles based on the vertex and indices
+                
+                
+                //Create triangles based on our indices array
                 for i in 0..<readIndices.count / 3 {
-                    let x = positions[readIndices[i * 3]]
-                    let y = positions[readIndices[i * 3 + 1]]
-                    let z = positions[readIndices[i * 3 + 2]]
-                    tris.append(Triangle(v0: x, v1: y, v2: z))
+                    let _v0 = positions[readIndices[i * 3]]
+                    let _v1 = positions[readIndices[i * 3 + 1]]
+                    let _v2 = positions[readIndices[i * 3 + 2]]
+                    let tri = Triangle(v0: _v0, v1: _v1, v2: _v2)
+                    tris.append(tri)
+                    
+                    /*
+                    var contained = false
+                    for triangle in tris {
+                        if (triangle.v0 == _v0 && triangle.v1 == _v1 && triangle.v2 == _v2)
+                        {
+                            contained = true
+                            break;
+                        }
+                        
+                    }
+                    if (!contained)
+                    {
+                        tris.append(tri)
+                    }
+                    */
+                   
+                    
+                    
                 }
             }
         }
-        
-        
+
         print("loaded \(tris.count) triangle primitives")
         return tris
     }
