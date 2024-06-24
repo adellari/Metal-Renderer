@@ -196,7 +196,7 @@ class MeshLoader
         //load the vertex positions
         //print(self.asset!.meshes.count)
         print(self.asset!.meshes[0].primitives.indices.count)
-        print(self.asset!.meshes[1].primitives.indices.count)
+        //print(self.asset!.meshes[1].primitives.indices.count)
         for p in 0..<self.asset!.meshes.count {
             
             //read sequential vertex positions in
