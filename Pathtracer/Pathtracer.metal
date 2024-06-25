@@ -501,9 +501,31 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     */
     
     IntersectBVH(ray, &hit, BVHTree, triangles, 0);
-    
     /*
-    for (int a = 0; a < 30; a++)
+    float3 v0 = float3(-0.694, 0.)//float3(2.145, 0.0, 0.0);
+    float3 v1 = float3(-0.712, 0.374, 0.0);//float3(2.084, 0.354, 0.0);
+    float3 v2 = float3(-0.723, 0.331, 0.0);//float3(2.084, 0.354, 3.858);
+    float t, u, v;
+    
+    
+    if(IntersectTriangle(ray, v0, v1, v2, &t, &u, &v))
+    {
+        if (t > 0 && t < hit.distance)
+        {
+            hit.distance = t;
+            hit.position = ray.origin + ray.direction * t;
+            hit.normal = normalize(cross(v1 - v0, v2 - v0));
+            hit.albedo = 0.01f;
+            hit.specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+            hit.refractionColor = float3(0.f, 0.f, 0.f);
+            hit.emission = 0.f;
+            hit.smoothness = 0.1f;
+            hit.inside = false;
+        }
+    }
+    
+    
+    for (int a = 0; a < 300; a++)
     {
         Triangle tri = triangles[a];
         float3 v0 = tri.v0;
@@ -527,7 +549,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
             }
         }
     }
-     */
+    */
     
     
     
