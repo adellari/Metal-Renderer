@@ -24,7 +24,7 @@ final class PipelineEncoder{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
         let constantValues = MTLFunctionConstantValues()
         constantValues.setConstantValue(&self.deviceSupportsNonuniformThreadgroups, type: .bool, index: 0)
-        let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
+        let function = try library.makeFunction(name: "DebugTracer", constantValues: constantValues)
         self.pipelineState = try library.device.makeComputePipelineState(function: function)
         self.sceneParams = scene
         //pipelineState.text

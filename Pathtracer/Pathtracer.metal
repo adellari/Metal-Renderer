@@ -447,6 +447,45 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
     
 }
 
+void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
+{
+    int traverseStack[400];
+
+    int stackId = 0;
+    traverseStack[stackId] = 0;
+    stackId++;
+     
+    while (stackId > 0)
+    {
+        stackId--;
+        nodeId = traverseStack[stackId];
+        BVHNode node = BVHTree[nodeId];
+        float hitDist = IntersectBB(ray, *rh, node.aabbMin, node.aabbMax);
+        if ( hitDist == INFINITY) continue;
+        
+        if (node.primCount == 0)
+        {
+            
+            traverseStack[stackId++] = node.lChild + 1;
+            traverseStack[stackId++] = node.lChild;
+        }
+        else
+        {
+            
+            rh->distance = 0.0;
+            rh->albedo = 0.01f;
+            rh->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+            rh->refractionColor = float3(0.f, 0.f, 0.f);
+            rh->emission = 0.f;
+            rh->smoothness = 0.1f;
+            rh->inside = false;
+        }
+        
+    }
+    
+    
+}
+
 RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode *BVHTree)
 {
     
@@ -515,7 +554,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     IntersectSphere(ray, &hit, s5);
     */
     
-    IntersectBVH(ray, &hit, BVHTree, triangles, 0);
+    IntersectBVHDebug(ray, &hit, BVHTree, triangles, 0);
     /*
     float3 v0 = float3(-0.694, 0.)//float3(2.145, 0.0, 0.0);
     float3 v1 = float3(-0.712, 0.374, 0.0);//float3(2.084, 0.354, 0.0);
@@ -643,6 +682,51 @@ float3 Shade(thread Ray* ray, RayHit hit)
     }
     
     return col;
+}
+
+kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+    
+    //this is a reset frame
+    if (sampleCount < 0)
+    {
+        destination.write(float4(0, 0, 0, 0), position);
+        return;
+    }
+    
+    const auto textureSize = ushort2(destination.get_width(), destination.get_height());
+    float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
+    float4 colInit = destination.read(position).rgba;
+    float3 col = float3(0.f, 0.f, 0.f);
+    
+    uv = uv * 2.f - 1.f;
+    Ray ray;
+    RayHit hit = CreateRayHit();
+    ray.jitter = float2(position.x, position.y);
+
+    float aperture = cam->aperture; //4 pixel wide aperture
+    
+    ray = CreateCameraRay(uv, cam); //primary ray
+    float3 focalPoint = ray.origin + ray.direction * cam->focalLength; // the focal point is 3 units from the aperture
+    
+
+        
+    hit = Trace(ray, spheres[0], triangles, BVHTree);
+    
+    if (hit.distance != INFINITY){
+        col += float3(0, 0, 1);
+    }
+    else
+    {
+        float2 sph = CartesianToSpherical(ray.direction);
+        col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+        ray.energy = 0.f;
+    }
+    
+    
+    float avgFactor = (1.f / (sampleCount + 1.f));
+    auto result = float4( col * avgFactor + (colInit.rgb * (1.f - avgFactor)), 1.f);
+    destination.write(result, position);
+    
 }
 
 kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
