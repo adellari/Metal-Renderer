@@ -308,7 +308,24 @@ float IntersectAABB(Ray ray, RayHit hit, float3 bMin, float3 bMax)
     float tz1 = (bMin.z - ray.origin.z) / ray.direction.z, tz2 = (bMax.z - ray.origin.z) / ray.direction.z;
     tmin = max( tmin, min( tz1, tz2 ) ), tmax = min( tmax, max( tz1, tz2 ) );
     
-    if (tmax >= tmin && tmin < hit.distance && tmax > 0) return tmin; else return INFINITY;
+    if (tmax >= tmin && tmax > 0 && tmin < hit.distance)
+        return tmin;
+    else return INFINITY;
+}
+
+float IntersectBB(Ray ray, RayHit hit, float3 bbMin, float3 bbMax)
+{
+    float3 invDir = 1. / ray.direction;
+    float3 tMin = (bbMin - ray.origin) * invDir;
+    float3 tMax = (bbMax - ray.origin) * invDir;
+    float3 t1 = min(tMin, tMax);
+    float3 t2 = max(tMin, tMax);
+    
+    float distFar = min(min(t2.x, t2.y), t2.z);
+    float distNear = max(max(t1.x, t1.y), t1.z);
+    
+    bool didHit = distNear <= distFar && distFar > 0;
+    return didHit? distNear : INFINITY;
 }
 
 //The Tomas Akenine-Moller and Ben Trumbone 1997 fast triangle intersection algorithm
@@ -349,7 +366,7 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
 
 void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
-    int traverseStack[100];
+    int traverseStack[400];
 
     int stackId = 0;
     traverseStack[stackId] = 0;
@@ -360,12 +377,12 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
         stackId--;
         nodeId = traverseStack[stackId];
         BVHNode node = BVHTree[nodeId];
-        float hitDist = IntersectAABB(ray, *rh, node.aabbMin, node.aabbMax);
-        if ( hitDist > 100000 || hitDist > rh->distance ) continue;
+        float hitDist = IntersectBB(ray, *rh, node.aabbMin, node.aabbMax);
+        if ( hitDist == INFINITY) continue;
         
         if (node.primCount == 0)
         {
-            
+            /*
             float dist1 = IntersectAABB(ray, *rh, BVHTree[node.lChild].aabbMin, BVHTree[node.lChild].aabbMax);
             float dist2 = IntersectAABB(ray, *rh, BVHTree[node.lChild + 1].aabbMin, BVHTree[node.lChild + 1].aabbMax);
             
@@ -383,14 +400,12 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                 if (dist2 < rh->distance)
                     traverseStack[stackId++] = node.lChild + 1; //near
             }
+            */
             
+            traverseStack[stackId++] = node.lChild + 1;
+            traverseStack[stackId++] = node.lChild;
             
-            /*
-            traverseStack[stackId] = node.lChild;
-            stackId++;
-            traverseStack[stackId] = node.lChild + 1;
-            stackId++;
-             */
+             
             //continue;
         }
         else
@@ -654,8 +669,6 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     ray = CreateCameraRay(uv, cam); //primary ray
     float3 focalPoint = ray.origin + ray.direction * cam->focalLength; // the focal point is 3 units from the aperture
     
-    //float3 ray2 =
-    
     
     //for the primary ray
     for(int a=0; a<2; a++){
@@ -716,9 +729,11 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     col /= 8.f;
     */
     
+    
     float avgFactor = (1.f / (sampleCount + 1.f));
     auto result = float4( col * avgFactor + (colInit.rgb * (1.f - avgFactor)), 1.f);
     destination.write(result, position);
+    
 }
 
  

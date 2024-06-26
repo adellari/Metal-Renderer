@@ -105,7 +105,7 @@ class BVHBuilder
             //let concurrenceQueue = DispatchQueue(label: "com.pathtracer.swapQueue", attributes: .concurrent)
             while i <= j
             {
-                if (tris[i].centroid[axis] < splitPos)
+                if (tris[i].centroid[axis] <= splitPos)
                 {
                     i+=1;
                 }
