@@ -28,6 +28,7 @@ class BVHBuilder
     var BVHTree : [BVHNode]
     var rootNodeIdx : Int
     var nodesUsed : Int
+    var maxPackedTris : Int
     
     init(_tris: inout [Triangle])
     {
@@ -36,6 +37,7 @@ class BVHBuilder
         BVHTree = Array(repeating: BVHNode(), count: (2 * N) - 1)
         rootNodeIdx = 0
         nodesUsed = 1
+        maxPackedTris = 0
     }
     
     func BuildBVH(tris : inout [Triangle])
@@ -54,7 +56,7 @@ class BVHBuilder
         
         Subdivide(nodeid: rootNodeIdx)
         self.BVHTree.removeSubrange(nodesUsed..<BVHTree.endIndex)
-        
+        print("maximum packed triangles: \(maxPackedTris)");
         /*
         var accountedTris = 0
         for i in 0..<BVHTree.count
@@ -120,6 +122,7 @@ class BVHBuilder
             let leftCount = i - Int(node.firstPrim);
             if (leftCount == 0 || leftCount == node.primCount)  // the split's half has no or all the elements
             {
+                if leftCount > maxPackedTris { maxPackedTris = leftCount; }
                 return;
             }
             else 

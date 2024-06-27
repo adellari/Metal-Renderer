@@ -67,14 +67,14 @@ struct ContentView: View {
                 
                 
                  //DOF Section
-                
+                /*
                 Slider(value: $SceneData.focalLength, in: 1 ... 100, onEditingChanged: {_ in
                     viewController?.SceneData.sampleCount = -1
                     print(SceneData.focalLength)
                 })
                 .offset(x: UIScreen.main.bounds.width * 0.2, y: UIScreen.main.bounds.height * -0.5)
                 .scaleEffect(0.7)
-                /*
+                
                 Slider(value: $SceneData.aperture, in: 0.1 ... 5, onEditingChanged: {_ in
                     viewController?.SceneData.sampleCount = -1
                     print(SceneData.aperture)

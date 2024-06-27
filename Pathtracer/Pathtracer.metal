@@ -449,7 +449,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
 
 void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
-    int traverseStack[400];
+    int traverseStack[200];
 
     int stackId = 0;
     traverseStack[stackId] = 0;
@@ -461,18 +461,33 @@ void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, co
         nodeId = traverseStack[stackId];
         BVHNode node = BVHTree[nodeId];
         float hitDist = IntersectBB(ray, *rh, node.aabbMin, node.aabbMax);
-        if ( hitDist == INFINITY) continue;
+        if ( hitDist >= rh->distance) continue;
         
         if (node.primCount == 0)
         {
+            float dist1 = IntersectAABB(ray, *rh, BVHTree[node.lChild].aabbMin, BVHTree[node.lChild].aabbMax);
+            float dist2 = IntersectAABB(ray, *rh, BVHTree[node.lChild + 1].aabbMin, BVHTree[node.lChild + 1].aabbMax);
             
-            traverseStack[stackId++] = node.lChild + 1;
-            traverseStack[stackId++] = node.lChild;
+            if (dist1 < dist2)
+            {
+                if (dist2 < rh->distance)
+                    traverseStack[stackId++] = node.lChild + 1; //far
+                if (dist1 < rh->distance)
+                    traverseStack[stackId++] = node.lChild ;    //near
+            }
+            else
+            {
+                if (dist1 < rh->distance)
+                    traverseStack[stackId++] = node.lChild; //far
+                if (dist2 < rh->distance)
+                    traverseStack[stackId++] = node.lChild + 1; //near
+            }
+            
         }
         else
         {
             
-            rh->distance = 0.0;
+            rh->distance = node.primCount / 16.0;
             rh->albedo = 0.01f;
             rh->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
             rh->refractionColor = float3(0.f, 0.f, 0.f);
@@ -713,7 +728,7 @@ kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], 
     hit = Trace(ray, spheres[0], triangles, BVHTree);
     
     if (hit.distance != INFINITY){
-        col += float3(0, 0, 1);
+        col += float3(1, 1, 1) * (hit.distance);
     }
     else
     {
