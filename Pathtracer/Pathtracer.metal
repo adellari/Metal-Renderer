@@ -569,7 +569,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     IntersectSphere(ray, &hit, s5);
     */
     
-    IntersectBVHDebug(ray, &hit, BVHTree, triangles, 0);
+    IntersectBVH(ray, &hit, BVHTree, triangles, 0);
     /*
     float3 v0 = float3(-0.694, 0.)//float3(2.145, 0.0, 0.0);
     float3 v1 = float3(-0.712, 0.374, 0.0);//float3(2.084, 0.354, 0.0);

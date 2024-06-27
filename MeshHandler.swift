@@ -117,6 +117,7 @@ class BVHBuilder
                         j -= 1;
                     
                 }
+                //print("swapping values, i: \(i), j: \(j)")
             }
             
             let leftCount = i - Int(node.firstPrim);

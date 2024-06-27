@@ -24,7 +24,7 @@ final class PipelineEncoder{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
         let constantValues = MTLFunctionConstantValues()
         constantValues.setConstantValue(&self.deviceSupportsNonuniformThreadgroups, type: .bool, index: 0)
-        let function = try library.makeFunction(name: "DebugTracer", constantValues: constantValues)
+        let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
         self.pipelineState = try library.device.makeComputePipelineState(function: function)
         self.sceneParams = scene
         //pipelineState.text
@@ -71,7 +71,7 @@ final class PipelineEncoder{
         {
             cameraBuffer  = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
             spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
-            trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
+            trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.tris, length: MemoryLayout<Triangle>.stride * self.sceneParams.BVH!.tris.count, options: [])
             //print(self.sceneParams.Triangles.count)
             //print( MemoryLayout<Int>.stride)
             bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
@@ -85,7 +85,7 @@ final class PipelineEncoder{
             
             memcpy(cameraPointer, &camStruct, MemoryLayout<CameraParams>.stride)
             memcpy(spheresPointer, &self.sceneParams.Spheres, MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count)
-            memcpy(trisPointer, &self.sceneParams.Triangles, MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count)
+            memcpy(trisPointer, &self.sceneParams.BVH!.tris, MemoryLayout<Triangle>.stride * self.sceneParams.BVH!.tris.count)
             memcpy(bvhPointer, &self.sceneParams.BVH!.BVHTree, MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count)
         }
         
