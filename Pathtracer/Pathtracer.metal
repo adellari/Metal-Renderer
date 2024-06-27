@@ -382,7 +382,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
         
         if (node.primCount == 0)
         {
-            /*
+            
             float dist1 = IntersectAABB(ray, *rh, BVHTree[node.lChild].aabbMin, BVHTree[node.lChild].aabbMax);
             float dist2 = IntersectAABB(ray, *rh, BVHTree[node.lChild + 1].aabbMin, BVHTree[node.lChild + 1].aabbMax);
             
@@ -400,10 +400,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                 if (dist2 < rh->distance)
                     traverseStack[stackId++] = node.lChild + 1; //near
             }
-            */
             
-            traverseStack[stackId++] = node.lChild + 1;
-            traverseStack[stackId++] = node.lChild;
             
              
             //continue;
