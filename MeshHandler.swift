@@ -158,14 +158,6 @@ class MeshLoader
     var meshName : String?;
     var asset : GLTFAsset?;
     
-    /*
-    init(_ name: String)
-    {
-        meshName = name
-        loadModel()
-    }
-    */
-    
     func loadModel(_ name: String, completion: @escaping (Bool) -> Void)
     {
         meshName = "models/"+name+"/scene";
@@ -196,7 +188,7 @@ class MeshLoader
     
     public func loadTriangles() -> [Triangle] {
         var tris: [Triangle] = []
-        
+        var trisOpts : [TriangleOpt] = []
         //load the vertex positions
         //print(self.asset!.meshes.count)
         print(self.asset!.meshes[0].primitives.indices.count)
@@ -205,23 +197,78 @@ class MeshLoader
             
             //read sequential vertex positions in
             var positions : [SIMD3<Float>] = []
+            var normals : [SIMD3<Float>] = []
+            var uvs : [SIMD2<Float>] = []
             var readIndices : [Int] = []
             let primitive = self.asset!.meshes[p].primitives[0]
-            if let vertexPositions = primitive.copyPackedVertexPositions() {
-                vertexPositions.withUnsafeBytes { positionPtr in
-                    for i in 0..<vertexPositions.count / (MemoryLayout<Float>.stride * 3) {
-                        let position = positionPtr.baseAddress!
+            var positionPtr : UnsafeRawBufferPointer?
+            var normalPtr : UnsafeRawBufferPointer?
+            var uvPtr : UnsafeRawBufferPointer?
+            var vertexPositions : Data?
+            
+           if let _positions = primitive.copyPackedVertexPositions() {
+               vertexPositions = _positions
+                positionPtr = _positions.withUnsafeBytes { bytes in
+                    return UnsafeRawBufferPointer(start: bytes.baseAddress, count: bytes.count)
+                }
+            }
+            
+            if let _normals = primitive.copyPackedVertexNormals() {
+                normalPtr = _normals.withUnsafeBytes { bytes in
+                    return UnsafeRawBufferPointer(start: bytes.baseAddress, count: bytes.count)
+                }
+            }
+            
+            if let _uvs = primitive.copyPackedVertexUVs() {
+                uvPtr = _uvs.withUnsafeBytes { bytes in
+                    return UnsafeRawBufferPointer(start: bytes.baseAddress, count: bytes.count)
+                }
+            }
+            
+            for i in 0..<vertexPositions!.count / (MemoryLayout<Float>.stride * 3) {
+                let position = positionPtr!.baseAddress!
+                    .advanced(by: MemoryLayout<Float>.stride * 3 * i)
+                    .assumingMemoryBound(to: Float.self)
+                let normal = normalPtr!.baseAddress!
+                    .advanced(by: MemoryLayout<Float>.stride * 3 * i)
+                    .assumingMemoryBound(to: Float.self)
+                
+                let uv = uvPtr!.baseAddress!
+                    .advanced(by: MemoryLayout<Float>.stride * 2 * i)
+                    .assumingMemoryBound(to: Float.self)
+                
+                let xp = position[0]
+                let yp = position[1]
+                let zp = position[2]
+                
+                let xn = normal[0]
+                let yn = normal[1]
+                let zn = normal[2]
+                
+                positions.append(SIMD3<Float>(xp, yp, zp))
+                normals.append(SIMD3<Float>(xn, yn, zn))
+                uvs.append(SIMD2<Float>(uv[0], uv[1]))
+            }
+            
+            /*
+            if let vertexNormals = primitive.copyPackedVertexNormals() {
+                vertexNormals.withUnsafeBytes { normalsPtr in
+                    for i in 0..<vertexNormals.count / (MemoryLayout<Float>.stride * 3) {
+                        let normal = normalsPtr.baseAddress!
                             .advanced(by: MemoryLayout<Float>.stride * 3 * i)
                             .assumingMemoryBound(to: Float.self)
 
-                        let x = position[0]
-                        let y = position[1]
-                        let z = position[2]
-                        positions.append(SIMD3<Float>(x, y, z))
+                        let x = normal[0]
+                        let y = normal[1]
+                        let z = normal[2]
+                        normals.append(SIMD3<Float>(x, y, z))
                     }
                 }
             }
+            */
+            
             print(primitive.indices!.count / 3)
+            print("vertex positions count: \(positions.count), normals count: \(normals.count), uvs count: \(uvs.count)" )
             //Get our vertex indices (3x the number of triangles we'll create)
             if let indices = primitive.indices {
                 

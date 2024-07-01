@@ -33,7 +33,7 @@ struct Sphere {
     var point : float4 = float4(0, 2, 0, 1.3); //position, size
     var albedo : float3 = float3(0.1, 0.42, 0.93);
     var specular : float3 = float3(0.1, 0.1, 0.1);
-    var emission : float3 = float3(0, 0, 0);
+    var emission : float4 = float4(0, 0, 0, 0);
     var refractiveColor : float3 = float3(0.3, 0.3, 0.3);
     var smoothness : Float = 3;
     var IOR : Float = 1.8;
@@ -46,6 +46,15 @@ struct Triangle {
     var v1 : float3 = float3(3, 0, -3);
     var v2 : float3 = float3(3, 7, -3);
     var centroid : float3 = float3();
+}
+
+struct TriangleOpt {
+    var uv0 : float2 = float2();
+    var uv1 : float2 = float2();
+    var uv2 : float2 = float2();
+    var n0 : float3 = float3();
+    var n1 : float3 = float3();
+    var n2 : float3 = float3();
 }
 
 extension UIImageView {

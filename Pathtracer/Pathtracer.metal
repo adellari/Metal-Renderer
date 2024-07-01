@@ -50,7 +50,7 @@ struct Sphere {
     float4 point;       //position, scale
     float3 albedo;
     float3 specular;
-    float3 emission;
+    float4 emission;
     float3 refractionColor;
     float smoothness;
     float refractiveIndex;
@@ -288,7 +288,7 @@ void IntersectSphere(Ray ray, thread RayHit* hit, Sphere sphere) {
         hit->inside = inside;
         hit->normal = normalize(hit->position - sphere.point.xyz) * (inside ? -1.f : 1.f);
         hit->albedo = sphere.albedo;
-        hit->emission = sphere.emission;
+        hit->emission = sphere.emission.rgb * sphere.emission.a;
         hit->specular = sphere.specular;
         hit->smoothness = sphere.smoothness;
         hit->refractionChance = sphere.refractionChance;
@@ -425,11 +425,11 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                         rh->distance = t;
                         rh->position = ray.origin + ray.direction * t;
                         rh->normal = normalize(cross(v1 - v0, v2 - v0));
-                        rh->albedo = 0.01f;
-                        rh->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
+                        rh->albedo = 0.7f;
+                        rh->specular = 0.3f * float3(1.f, 0.4f, 0.2f);
                         rh->refractionColor = float3(0.f, 0.f, 0.f);
                         rh->emission = 0.f;
-                        rh->smoothness = 0.1f;
+                        rh->smoothness = 3.f;
                         rh->inside = false;
                         
                     }
@@ -444,6 +444,7 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
     
 }
 
+/*
 void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constant Triangle *tris, int nodeId)
 {
     int traverseStack[200];
@@ -485,11 +486,11 @@ void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, co
         {
             
             rh->distance = node.primCount / 16.0;
-            rh->albedo = 0.01f;
+            rh->albedo = 0.1f;
             rh->specular = 0.65f * float3(1.f, 0.4f, 0.2f);
             rh->refractionColor = float3(0.f, 0.f, 0.f);
             rh->emission = 0.f;
-            rh->smoothness = 0.1f;
+            rh->smoothness = 0.9f;
             rh->inside = false;
         }
         
@@ -497,25 +498,48 @@ void IntersectBVHDebug(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, co
     
     
 }
+*/
 
 RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode *BVHTree)
 {
     
     RayHit hit = CreateRayHit();
-    /*
+    
     Sphere s;
+    s.albedo = 0.f;
     s.albedo = float3(0.1f, 0.42f, 0.93f);
-    //s.specular = float3(0.3f, 1.f, 1.f);
-    s.specular = 0.1f;
+    s.specular = float3(0.3f, 1.f, 1.f);
+    //s.specular = 0.1f;
     s.emission = 0.f;
     s.smoothness = 3.f;
-    s.refractionColor = 1.f;
+    s.refractionColor = 0.3f;
     s.refractiveIndex = 1.8f;
-    s.refractionChance = 1.f;
-    s.point = float4(0, 0.4f, 0.f, 0.3f);
+    s.refractionChance = 0.8f;
+    s.point = float4(0, 0.4f, 0.2f, 1.3f);
     
+    Sphere s5;
+    s5.albedo = s3.albedo;//float3(0.2f, 0.2f, 1.f);
+    s5.specular = float3(0.2f, 0.2f, 1.f);
+    s5.emission = s3.emission * 30.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
+    s5.smoothness = 0.9f;
+    s5.refractionColor = 0.f;
+    s5.refractiveIndex = 0.f;
+    s5.refractionChance = 0.f;
+    s5.point = float4(2.2f, 1.3f, 0.2f, 0.15f);
+    
+    Sphere s4;
+    s4.albedo = s3.albedo;//float3(0.2f, 0.2f, 1.f);
+    s4.specular = float3(0.2f, 0.2f, 1.f);
+    s4.emission = s3.emission * 30.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
+    s4.smoothness = 0.9f;
+    s4.refractionColor = 0.f;
+    s4.refractiveIndex = 0.f;
+    s4.refractionChance = 0.f;
+    s4.point = float4(-2.2f, 1.3f, 0.2f, 0.15f);
+    
+    /*
     Sphere s1;
-    s1.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
+    s1.albedo = s3.albedo;//float3(0.2f, 0.2f, 1.f);
     s1.specular = float3(0.2f, 0.2f, 1.f);
     s1.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
     s1.smoothness = 0.9f;
@@ -524,26 +548,7 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     s1.refractionChance = 0.f;
     s1.point = float4(-0.7f, .4f, 2.2f, 0.15f);
     
-    Sphere s4;
-    s4.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
-    s4.specular = float3(0.2f, 0.2f, 1.f);
-    s4.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
-    s4.smoothness = 0.9f;
-    s4.refractionColor = 0.f;
-    s4.refractiveIndex = 0.f;
-    s4.refractionChance = 0.f;
-    s4.point = float4(0.2f, .4f, 1.2f, 0.15f);
     
-    
-    Sphere s5;
-    s5.albedo = s3.emission;//float3(0.2f, 0.2f, 1.f);
-    s5.specular = float3(0.2f, 0.2f, 1.f);
-    s5.emission = s3.emission * 15.f; //float3(1.f, 4.f, 20.f); //float3(1.f, 4.f, 20.f)
-    s5.smoothness = 0.9f;
-    s5.refractionColor = 0.f;
-    s5.refractiveIndex = 0.f;
-    s5.refractionChance = 0.f;
-    s5.point = float4(0.5f, .4f, 0.3f, 0.15f);
     
     Sphere s2;      //stays at origin
     s2.albedo = 1.f;
@@ -561,11 +566,13 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     s3.emission = 0.f;
     
     IntersectSphere(ray, &hit, s3);
-    IntersectSphere(ray, &hit, s1);
+    
     IntersectSphere(ray, &hit, s4);
     IntersectSphere(ray, &hit, s5);
     */
-    
+    IntersectSphere(ray, &hit, s);
+    IntersectSphere(ray, &hit, s5);
+    IntersectSphere(ray, &hit, s4);
     IntersectBVH(ray, &hit, BVHTree, triangles, 0);
     /*
     float3 v0 = float3(-0.694, 0.)//float3(2.145, 0.0, 0.0);
@@ -730,6 +737,7 @@ kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], 
     else
     {
         float2 sph = CartesianToSpherical(ray.direction);
+        col += 0.f;
         col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
         ray.energy = 0.f;
     }
@@ -767,7 +775,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     
     
     //for the primary ray
-    for(int a=0; a<2; a++){
+    for(int a=0; a<8; a++){
         
         hit = Trace(ray, spheres[0], triangles, BVHTree);
         
@@ -779,7 +787,8 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
-            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            col += 0.f;
+            //col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             ray.energy = 0.f;
             break;
         }

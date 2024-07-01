@@ -163,8 +163,8 @@ struct MaterialMenu: View {
             break
             
         default:
-            prop = Sph.emission
-            aux = float2()  //we don't need to set this for the time being
+            prop = float3(Sph.emission.x, Sph.emission.y, Sph.emission.z)
+            aux = float2(Sph.emission.w, Sph.emission.w)  //we don't need to set this for the time being
             
         }
         
@@ -200,7 +200,7 @@ struct MaterialMenu: View {
             break
             
         default:
-            obj.emission = prop
+            obj.emission = float4(prop, aux.x)
             break
             
         }
