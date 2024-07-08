@@ -401,9 +401,6 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                     traverseStack[stackId++] = node.lChild + 1; //near
             }
             
-            
-             
-            //continue;
         }
         else
         {
@@ -425,11 +422,11 @@ void IntersectBVH(Ray ray, thread RayHit* rh, constant BVHNode *BVHTree, constan
                         rh->distance = t;
                         rh->position = ray.origin + ray.direction * t;
                         rh->normal = normalize(cross(v1 - v0, v2 - v0));
-                        rh->albedo = 0.7f;
+                        rh->albedo = float3(1.f, 0.f, 0.f) * 0.1f;
                         rh->specular = 0.3f * float3(1.f, 0.4f, 0.2f);
                         rh->refractionColor = float3(0.f, 0.f, 0.f);
                         rh->emission = 0.f;
-                        rh->smoothness = 3.f;
+                        rh->smoothness = 0.9f;
                         rh->inside = false;
                         
                     }
@@ -506,7 +503,6 @@ RayHit Trace(Ray ray, Sphere s3, constant Triangle *triangles, constant BVHNode 
     RayHit hit = CreateRayHit();
     
     Sphere s;
-    s.albedo = 0.f;
     s.albedo = float3(0.1f, 0.42f, 0.93f);
     s.specular = float3(0.3f, 1.f, 1.f);
     //s.specular = 0.1f;
@@ -749,7 +745,7 @@ kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], 
     
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], texture2d<float, access::write> albedo [[texture(2)]], texture2d<float, access::write> normal [[texture(3)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)
@@ -762,6 +758,8 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     float2 uv = float2( ((float)position.x + jitter.x) / (float)textureSize.x, ((float)position.y + jitter.y) / (float)textureSize.y);
     float4 colInit = destination.read(position).rgba;
     float3 col = float3(0.f, 0.f, 0.f);
+    float3 rayAlbedo = float3();
+    float3 rayNormal = float3();
     
     uv = uv * 2.f - 1.f;
     Ray ray;
@@ -780,6 +778,11 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         hit = Trace(ray, spheres[0], triangles, BVHTree);
         
         if (hit.distance !=INFINITY){
+            if (a == 0)
+            {
+                rayAlbedo = hit.albedo;
+                rayNormal = hit.normal;
+            }
             float3 n = ray.energy;
             col += (Shade(&ray, hit) * ray.energy);
             ray.seed += 4.f;
@@ -787,8 +790,8 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
-            col += 0.f;
-            //col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            //col += 0.f;
+            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             ray.energy = 0.f;
             break;
         }
@@ -798,6 +801,12 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     }
     float _s = ray.seed;
     float2 _jitter = ray.jitter;
+    
+    if (sampleCount <= 20)
+    {
+        albedo.write(float4(rayAlbedo, 1.f), position);
+        normal.write(float4(rayNormal, 1.f), position);
+    }
     
     /*
     //the secondary rays (8 of them)

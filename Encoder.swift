@@ -36,7 +36,7 @@ final class PipelineEncoder{
     }
     
     //encode uniforms,, pipeline state, and execution parameters into the commandbuffer
-    func encode(source: MTLTexture, destination: MTLTexture, in commandBuffer: MTLCommandBuffer){
+    func encode(source: MTLTexture, destination: MTLTexture, albedo: MTLTexture, normal: MTLTexture, in commandBuffer: MTLCommandBuffer){
         guard let encoder = commandBuffer.makeComputeCommandEncoder()
         else{ return}
         
@@ -98,7 +98,9 @@ final class PipelineEncoder{
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
         encoder.setTexture(destination, index: 1)
-    
+        encoder.setTexture(albedo, index: 2)
+        encoder.setTexture(normal, index: 3)
+        
         //encoder.setBytes(&viewAsFloat, length: MemoryLayout<Float>.stride, index: 0)
         encoder.setBuffer(trisBuffer, offset: 0, index: 0)
         encoder.setBuffer(cameraBuffer, offset: 0, index: 1)

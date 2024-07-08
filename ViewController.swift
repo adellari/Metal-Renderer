@@ -18,10 +18,11 @@ class ViewController {
     private let device: MTLDevice
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
-    public let denoisedView : UIImageView
+    public var denoisedView : UIImageView?
     private let commandQueue: MTLCommandQueue
     private let textureManager: TextureManager
     private var texturePair: (source: MTLTexture, destination: MTLTexture)?
+    private var denoiserAuxilaries: (albedo: MTLTexture, normal: MTLTexture)?
     var cancellables: Set<AnyCancellable> = []
     
     
@@ -35,7 +36,7 @@ class ViewController {
         self.textureManager = .init(device: device)
         self.SceneData = sceneData
         self.imageView = .init()
-        self.denoisedView = .init()
+        //self.denoisedView = .init()
         //super.init(nibName: nil, bundle: nil)
         
         sceneData.objectWillChange.sink {   [weak self] _ in
@@ -64,19 +65,28 @@ class ViewController {
     
     
     public func redraw() {
-        let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: 512, height: 1024, mipmapped: false)
-        desc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
-        //self.texturePair?.source = device.makeTexture(descriptor: desc)!
-        //self.texturePair?.destination = device.makeTexture(descriptor: desc)!
-        //var src : MTLTexture = device.makeTexture(descriptor: desc)!
+        let frameBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: 512, height: 1024, mipmapped: false)
+        frameBuffDesc.usage = MTLTextureUsage([.shaderRead, .shaderWrite])
+        
+        //this should be changed to a more suitable rgb format - no need for 4 channels
+        let auxBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: 512, height: 1024, mipmapped: false)
+        auxBuffDesc.usage = MTLTextureUsage([.shaderWrite])
         
         if (self.texturePair == nil || reloadTextures){
             var src : MTLTexture = textureManager.loadTexture(path: SceneData.skybox)!
-            var dst : MTLTexture = device.makeTexture(descriptor: desc)!
+            var dst : MTLTexture = device.makeTexture(descriptor: frameBuffDesc)! //is this actually necessary? the kernel resets the destination texture
             print("sourcePair is not initialized")
             
             self.texturePair = (src, dst)
             reloadTextures = false
+        }
+        
+        if (self.denoiserAuxilaries == nil)
+        {
+            let _albedo : MTLTexture = device.makeTexture(descriptor: auxBuffDesc)!
+            let _normal : MTLTexture = device.makeTexture(descriptor: auxBuffDesc)!
+            
+            denoiserAuxilaries = (_albedo, _normal)
         }
         
         guard let source = self.texturePair?.source,
@@ -89,7 +99,7 @@ class ViewController {
         
             //use the pipeline encoder to define a compute pipeline and fill command buffer
         self.encoder.sceneParams = SceneData
-        self.encoder.encode(source: source, destination: destination, in: commandBuffer)
+        self.encoder.encode(source: source, destination: destination, albedo: denoiserAuxilaries!.albedo, normal: denoiserAuxilaries!.normal, in: commandBuffer)
         
         //what will happen to the result of the compute kernel
         commandBuffer.addCompletedHandler { _ in
@@ -99,7 +109,7 @@ class ViewController {
                 return
             }
             
-            if (self.SceneData.sampleCount == 800)
+            if (self.SceneData.sampleCount == 80)
             {
                 guard let pixArray = try? self.textureManager.colorValues(from: destination)
                         
@@ -114,8 +124,8 @@ class ViewController {
                 let floatArray = Array(UnsafeBufferPointer(start: resultArray, count: 1024 * 512 * 3))
                 
                 DispatchQueue.main.async {
-                    self.denoisedView.image = .init(cgImage: self.textureManager.CGFromRGB(fromFloatValues: floatArray, width: 512, height: 1024)!)
-                    
+                    self.denoisedView = .init()
+                    self.denoisedView?.image = .init(cgImage: self.textureManager.CGFromRGB(fromFloatValues: floatArray, width: 512, height: 1024)!)
                 }
             }
             else {
@@ -132,17 +142,5 @@ class ViewController {
         
         
     }
-    
-    /*
-    @objc func handlePan(_ sender: UITapGestureRecognizer)
-    {
-        let translation = sender.translation(in: self.imageView)
-        
-        
-    }
-    */
-    
-
-    
     
 }

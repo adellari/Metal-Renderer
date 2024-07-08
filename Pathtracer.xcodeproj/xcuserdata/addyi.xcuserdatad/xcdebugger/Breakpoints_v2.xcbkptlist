@@ -85,22 +85,6 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B97D20A1-569D-4CB2-9689-E30E5A4908BD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
-            landmarkName = "redraw()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.RuntimeIssueBreakpoint">
          <BreakpointContent
             uuid = "FED04078-007F-4425-B0DE-63285AB3B2C6"
@@ -138,8 +122,8 @@
             filePath = "Pathtracer/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
+            startingLineNumber = "198"
+            endingLineNumber = "198"
             landmarkName = "loadBVH()"
             landmarkType = "7">
             <Locations>
@@ -360,8 +344,8 @@
             filePath = "Pathtracer/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "188"
+            endingLineNumber = "188"
             landmarkName = "loadMeshData()"
             landmarkType = "7">
          </BreakpointContent>
@@ -378,7 +362,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "89"
             endingLineNumber = "89"
-            landmarkName = "encode(source:destination:in:)"
+            landmarkName = "encode(source:destination:albedo:normal:in:)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -441,8 +425,56 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "77"
             endingLineNumber = "77"
-            landmarkName = "encode(source:destination:in:)"
+            landmarkName = "encode(source:destination:albedo:normal:in:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E3B4DB1A-2E3D-4F2C-9E69-CAFDD8DDD23D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
+            landmarkName = "redraw()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E3B4DB1A-2E3D-4F2C-9E69-CAFDD8DDD23D - a2e950fea0c314a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (__C.MTLCommandBuffer) -&gt; () in Pathtracer.ViewController.redraw() -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "119"
+                  endingLineNumber = "119"
+                  offsetFromSymbolStart = "396">
+               </Location>
+               <Location
+                  uuid = "E3B4DB1A-2E3D-4F2C-9E69-CAFDD8DDD23D - a2e950fea0c314a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Swift.MainActor () -&gt; () in closure #1 (__C.MTLCommandBuffer) -&gt; () in Pathtracer.ViewController.redraw() -&gt; ()"
+                  moduleName = "Pathtracer"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/addyi/Documents/GitHub/Metal%20Pathtracer/Pathtracer/ViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "119"
+                  endingLineNumber = "119"
+                  offsetFromSymbolStart = "424">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

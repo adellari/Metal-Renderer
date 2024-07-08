@@ -288,24 +288,6 @@ class MeshLoader
                     let tri = Triangle(v0: _v0, v1: _v1, v2: _v2)
                     tris.append(tri)
                     
-                    /*
-                    var contained = false
-                    for triangle in tris {
-                        if (triangle.v0 == _v0 && triangle.v1 == _v1 && triangle.v2 == _v2)
-                        {
-                            contained = true
-                            break;
-                        }
-                        
-                    }
-                    if (!contained)
-                    {
-                        tris.append(tri)
-                    }
-                    */
-                   
-                    
-                    
                 }
             }
         }
