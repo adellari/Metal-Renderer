@@ -11,11 +11,12 @@
 @implementation OIDNHandler
 
 OIDNDevice device;
-OIDNBuffer colorBuf;
-OIDNBuffer albedoBuf;
-OIDNBuffer normalBuf;
+OIDNBuffer colorBuff;
+OIDNBuffer albedoBuff;
+OIDNBuffer normalBuff;
 
 OIDNFilter filter;
+size_t bufferSize;
 
 
 - (void) InitDevice {
@@ -45,46 +46,77 @@ OIDNFilter filter;
     */
 }
 
-- (float*) Denoise: (const float*)inputColor {
+- (void) SetBeauty: (const float*)inputBeauty {
     
-    size_t buffSize = 1024 * 512 * 3 * sizeof(float);
-    colorBuf = oidnNewBuffer(device, buffSize);
+    bufferSize = 1024 * 512 * 3 * sizeof(float);
+    colorBuff = oidnNewBuffer(device, bufferSize);
     
-    oidnSetFilterImage(filter, "color", colorBuf, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
-    oidnSetFilterImage(filter, "output", colorBuf, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
-    
+    oidnSetFilterImage(filter, "color", colorBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
+    oidnSetFilterImage(filter, "output", colorBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
     oidnSetFilterBool(filter, "hdr", true);
-    oidnCommitFilter(filter);
     
-    float* colorPtr = (float*)oidnGetBufferData(colorBuf);
-    
+    float* colorPtr = (float*)oidnGetBufferData(colorBuff);
     for (int a=0; a<1024 * 512; a++)
     {
-        //discard the a component by offsetting by 4 in the input array
-        colorPtr[a * 3] = inputColor[a * 4];
-        colorPtr[a * 3 + 1] = inputColor[a * 4 + 1];
-        colorPtr[a * 3 + 2] = inputColor[a * 4 + 2];
+        //discard the alpha component by offsetting by 4 in the input array
+        colorPtr[a * 3] = inputBeauty[a * 4];
+        colorPtr[a * 3 + 1] = inputBeauty[a * 4 + 1];
+        colorPtr[a * 3 + 2] = inputBeauty[a * 4 + 2];
     }
-    //NSLog(@"first bit before: r %e\n", colorPtr[14]);
+    
+}
+
+- (void) SetAlbedo: (const float*)inputAlbedo {
+    
+    albedoBuff = oidnNewBuffer(device, bufferSize);
+    
+    oidnSetFilterImage(filter, "albedo", colorBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
+    
+    float* albedoPtr = (float*)oidnGetBufferData(albedoBuff);
+    for (int a=0; a<1024 * 512; a++)
+    {
+        //discard the alpha component by offsetting by 4 in the input array
+        albedoPtr[a * 3] = inputAlbedo[a * 4];
+        albedoPtr[a * 3 + 1] = inputAlbedo[a * 4 + 1];
+        albedoPtr[a * 3 + 2] = inputAlbedo[a * 4 + 2];
+    }
+    
+}
+
+- (void) SetNormal: (const float*)inputNormal {
+    
+    normalBuff = oidnNewBuffer(device, bufferSize);
+    
+    oidnSetFilterImage(filter, "normal", normalBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
+    
+    float* normalPtr = (float*)oidnGetBufferData(normalBuff);
+    for (int a=0; a<1024 * 512; a++)
+    {
+        //discard the alpha component by offsetting by 4 in the input array
+        normalPtr[a * 3] = inputNormal[a * 4];
+        normalPtr[a * 3 + 1] = inputNormal[a * 4 + 1];
+        normalPtr[a * 3 + 2] = inputNormal[a * 4 + 2];
+    }
+    
+}
+
+
+- (float*) Denoise{
+    
+    oidnCommitFilter(filter);
     oidnExecuteFilter(filter);
+    float* beautyPtr = (float*)oidnGetBufferData(colorBuff);
     
     const char* errorMessage;
     if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
         NSLog(@"Error: %s\n", errorMessage);
     else
         NSLog(@"successfully filtered image \n");
+    oidnReleaseBuffer(colorBuff);
+    oidnReleaseBuffer(normalBuff);
+    oidnReleaseBuffer(albedoBuff);
     
-    //NSLog(@"first bit after: r %e\n", colorPtr[14]);
-    oidnReleaseBuffer(colorBuf);
-    
-    /*
-    NSMutableArray *resultArray = [NSMutableArray array];
-    for (int i = 0; i < 1024 * 512 * 3; i++) {
-        [resultArray addObject:@(colorPtr[i])];
-    }
-    */
-    //printf("completed execution");
-    return colorPtr;
+    return beautyPtr;
 }
 
 @end

@@ -91,15 +91,17 @@ class ViewController {
         
         guard let source = self.texturePair?.source,
               let destination = self.texturePair?.destination,
-              let commandBuffer = self.commandQueue.makeCommandBuffer()
-        else { 
+              let commandBuffer = self.commandQueue.makeCommandBuffer(),
+              let albedo = self.denoiserAuxilaries?.albedo,
+              let normal = self.denoiserAuxilaries?.normal
+        else {
             print("something went wrong when setting uniforms and cmd buffer")
             return
         }
         
             //use the pipeline encoder to define a compute pipeline and fill command buffer
         self.encoder.sceneParams = SceneData
-        self.encoder.encode(source: source, destination: destination, albedo: denoiserAuxilaries!.albedo, normal: denoiserAuxilaries!.normal, in: commandBuffer)
+        self.encoder.encode(source: source, destination: destination, albedo: albedo, normal: normal, in: commandBuffer)
         
         //what will happen to the result of the compute kernel
         commandBuffer.addCompletedHandler { _ in
@@ -111,15 +113,19 @@ class ViewController {
             
             if (self.SceneData.sampleCount == 80)
             {
-                guard let pixArray = try? self.textureManager.colorValues(from: destination)
+                guard let colorArray = try? self.textureManager.colorValues(from: destination),
+                      let normalArray = try? self.textureManager.colorValues(from: normal),
+                      let albedoArray = try? self.textureManager.colorValues(from: albedo)
                         
                 else {
                     print("could not get the color values in flat array")
                     return
                 }
                 print("got a color values array")
-                
-                let resultArray = self.SceneData.Denoiser.denoise(pixArray)
+                self.SceneData.Denoiser.setBeauty(colorArray)
+                self.SceneData.Denoiser.setNormal(normalArray)
+                self.SceneData.Denoiser.setAlbedo(albedoArray)
+                let resultArray = self.SceneData.Denoiser.denoise()
                 
                 let floatArray = Array(UnsafeBufferPointer(start: resultArray, count: 1024 * 512 * 3))
                 

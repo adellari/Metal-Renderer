@@ -11,8 +11,10 @@
 
 - (void) InitDevice;
 - (void) Release;
-- (float*) Denoise:(const float*)inputColor;
-
+- (float*) Denoise;
+- (void) SetBeauty:(const float*)inputBeauty;
+- (void) SetAlbedo:(const float*)inputAlbedo;
+- (void) SetNormal:(const float*)inputNormal;
 
 
 
