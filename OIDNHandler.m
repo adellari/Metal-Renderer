@@ -70,7 +70,7 @@ size_t bufferSize;
     
     albedoBuff = oidnNewBuffer(device, bufferSize);
     
-    oidnSetFilterImage(filter, "albedo", colorBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
+    oidnSetFilterImage(filter, "albedo", albedoBuff, OIDN_FORMAT_FLOAT3, 512, 1024, 0, 0, 0);
     
     float* albedoPtr = (float*)oidnGetBufferData(albedoBuff);
     for (int a=0; a<1024 * 512; a++)

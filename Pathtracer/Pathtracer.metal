@@ -790,8 +790,14 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
         else
         {
             float2 sph = CartesianToSpherical(ray.direction);
+            float3 skyColor = source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            if (a == 0)
+            {
+                rayAlbedo = skyColor;
+                //rayNormal = hit.normal;
+            }
             //col += 0.f;
-            col += source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
+            col += skyColor;
             ray.energy = 0.f;
             break;
         }
