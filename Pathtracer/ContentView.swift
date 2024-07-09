@@ -180,6 +180,7 @@ struct ContentView: View {
                 
                 if success{
                     SceneData.Triangles = meshLoader.loadTriangles()
+                    meshLoader.loadTextures()
                     loadBVH()
                 }
                 else {

@@ -155,8 +155,10 @@ class BVHBuilder
 
 class MeshLoader
 {
-    var meshName : String?;
-    var asset : GLTFAsset?;
+    var meshName : String?
+    var asset : GLTFAsset?
+    var t_albedo : MTLTexture?
+    var t_normal : MTLTexture?
     
     func loadModel(_ name: String, completion: @escaping (Bool) -> Void)
     {
@@ -184,6 +186,14 @@ class MeshLoader
             }
             
         }
+    }
+    
+    public func loadTextures() {
+        print("texture count: \(self.asset!.textures.count)")
+        //self.t_albedo = self.asset!.textures[0].
+        //self.asset!.
+        print(self.asset!.textures[0].name)
+        print("images count: \(self.asset!.textures[0].description)")
     }
     
     public func loadTriangles() -> [Triangle] {
@@ -282,12 +292,27 @@ class MeshLoader
                 
                 //Create triangles based on our indices array
                 for i in 0..<readIndices.count / 3 {
-                    let _v0 = positions[readIndices[i * 3]]
-                    let _v1 = positions[readIndices[i * 3 + 1]]
-                    let _v2 = positions[readIndices[i * 3 + 2]]
-                    let tri = Triangle(v0: _v0, v1: _v1, v2: _v2)
-                    tris.append(tri)
+                    let a = readIndices[i * 3]
+                    let b = readIndices[i * 3 + 1]
+                    let c = readIndices[i * 3 + 2]
                     
+                    let _v0 = positions[a]
+                    let _v1 = positions[b]
+                    let _v2 = positions[c]
+                    
+                    let _uv0 = uvs[a]
+                    let _uv1 = uvs[b]
+                    let _uv2 = uvs[c]
+                    
+                    let _norm0 = normals[a]
+                    let _norm1 = normals[b]
+                    let _norm2 = normals[c]
+                    
+                    let tri = Triangle(v0: _v0, v1: _v1, v2: _v2)
+                    let triOpt = TriangleOpt(uv0: _uv0, uv1: _uv1, uv2: _uv2, n0: _norm0, n1: _norm1, n2: _norm2)
+                    
+                    tris.append(tri)
+                    trisOpts.append(triOpt)
                 }
             }
         }

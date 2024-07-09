@@ -49,12 +49,12 @@ struct Triangle {
 }
 
 struct TriangleOpt {
-    var uv0 : float2 = float2();
-    var uv1 : float2 = float2();
-    var uv2 : float2 = float2();
-    var n0 : float3 = float3();
-    var n1 : float3 = float3();
-    var n2 : float3 = float3();
+    var uv0 : SIMD2<Float> = SIMD2<Float>();
+    var uv1 : SIMD2<Float> = SIMD2<Float>();
+    var uv2 : SIMD2<Float> = SIMD2<Float>();
+    var n0 : SIMD3<Float> = SIMD3<Float>();
+    var n1 : SIMD3<Float> = SIMD3<Float>();
+    var n2 : SIMD3<Float> = SIMD3<Float>();
 }
 
 extension UIImageView {
