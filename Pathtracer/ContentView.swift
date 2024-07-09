@@ -45,31 +45,32 @@ struct ContentView: View {
                 
                 ZStack(){
                     viewController?.imageView.asSwiftUIView()
-                        .gesture(
-                            DragGesture()
-                                .onChanged { value in
-                                    //print(value.translation)
-                                    SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height), SceneData.cameraOffset.2)
-                                    SceneData.sampleCount = -1
-                                    viewController?.SceneData = self.SceneData
-                                    //print("image view is being dragged")
-                                }
-                        )
-                        .gesture(
-                            MagnifyGesture()
-                                .onChanged{ value in
-                                    SceneData.cameraOffset = (SceneData.cameraOffset.0, SceneData.cameraOffset.1, Float(value.magnification))
-                                    SceneData.sampleCount = -1
-                                    
-                                    //print(value.magnification)
-                                }
-                        )
+
                     
-                    if (viewController?.denoisedView != nil)
+                    if (viewController?.denoisedView != nil && SceneData.sampleCount > 90)
                     {
                         viewController!.denoisedView!.asSwiftUIView()
                     }
                 }
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            //print(value.translation)
+                            SceneData.cameraOffset = (Float(value.translation.width), Float(value.translation.height), SceneData.cameraOffset.2)
+                            SceneData.sampleCount = -1
+                            viewController?.SceneData = self.SceneData
+                            //print("image view is being dragged")
+                        }
+                )
+                .gesture(
+                    MagnifyGesture()
+                        .onChanged{ value in
+                            SceneData.cameraOffset = (SceneData.cameraOffset.0, SceneData.cameraOffset.1, Float(value.magnification))
+                            SceneData.sampleCount = -1
+                            
+                            //print(value.magnification)
+                        }
+                )
                 
                  //DOF Section
                 /*

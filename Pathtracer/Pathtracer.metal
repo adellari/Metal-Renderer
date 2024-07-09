@@ -793,7 +793,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
             float3 skyColor = source.sample(textureSampler, float2(-sph.y, -sph.x)).rgb * ray.energy;
             if (a == 0)
             {
-                rayAlbedo = skyColor;
+                //rayAlbedo = skyColor;
                 //rayNormal = hit.normal;
             }
             //col += 0.f;
@@ -808,7 +808,7 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     float _s = ray.seed;
     float2 _jitter = ray.jitter;
     
-    if (sampleCount <= 20)
+    if (sampleCount == 75)
     {
         albedo.write(float4(rayAlbedo, 1.f), position);
         normal.write(float4(rayNormal, 1.f), position);

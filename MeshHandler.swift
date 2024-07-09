@@ -266,7 +266,7 @@ class MeshLoader
                 }
             }
             */
-            
+            //print("length of uvs: \(uvs.count)")
             print(primitive.indices!.count / 3)
             print("vertex positions count: \(positions.count), normals count: \(normals.count), uvs count: \(uvs.count)" )
             //Get our vertex indices (3x the number of triangles we'll create)

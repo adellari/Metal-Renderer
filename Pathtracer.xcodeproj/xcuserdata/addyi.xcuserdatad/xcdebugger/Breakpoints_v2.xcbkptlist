@@ -122,8 +122,8 @@
             filePath = "Pathtracer/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "198"
-            endingLineNumber = "198"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "loadBVH()"
             landmarkType = "7">
             <Locations>
@@ -344,8 +344,8 @@
             filePath = "Pathtracer/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "188"
-            endingLineNumber = "188"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
             landmarkName = "loadMeshData()"
             landmarkType = "7">
          </BreakpointContent>
