@@ -72,6 +72,12 @@ class ViewController {
         let auxBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rgba32Float, width: 512, height: 1024, mipmapped: false)
         auxBuffDesc.usage = MTLTextureUsage([.shaderWrite])
         
+        //pack color into red and normal into green channels
+        let denoiseBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rg8Uint, width: 512, height: 1024, mipmapped: false)
+        denoiseBuffDesc.usage = MTLTextureUsage([.shaderWrite])
+        
+        
+        
         if (self.texturePair == nil || reloadTextures){
             var src : MTLTexture = textureManager.loadTexture(path: SceneData.skybox)!
             var dst : MTLTexture = device.makeTexture(descriptor: frameBuffDesc)! //is this actually necessary? the kernel resets the destination texture
@@ -83,10 +89,11 @@ class ViewController {
         
         if (self.denoiserAuxilaries == nil)
         {
-            let _albedo : MTLTexture = device.makeTexture(descriptor: auxBuffDesc)!
+            //let _albedo : MTLTexture = device.makeTexture(descriptor: auxBuffDesc)!
+            let _albedoNormal : MTLTexture = device.makeTexture(descriptor: denoiseBuffDesc)!
             let _normal : MTLTexture = device.makeTexture(descriptor: auxBuffDesc)!
             
-            denoiserAuxilaries = (_albedo, _normal)
+            denoiserAuxilaries = (_albedoNormal, _normal)
         }
         
         guard let source = self.texturePair?.source,
@@ -113,6 +120,7 @@ class ViewController {
             
             if (self.SceneData.sampleCount == 80)
             {
+                /*
                 guard let colorArray = try? self.textureManager.colorValues(from: destination),
                       let normalArray = try? self.textureManager.colorValues(from: normal),
                       let albedoArray = try? self.textureManager.colorValues(from: albedo)
@@ -133,6 +141,7 @@ class ViewController {
                     self.denoisedView = .init()
                     self.denoisedView?.image = .init(cgImage: self.textureManager.CGFromRGB(fromFloatValues: floatArray, width: 512, height: 1024)!)
                 }
+                */
             }
             else {
                 DispatchQueue.main.async {
