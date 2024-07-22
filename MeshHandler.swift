@@ -159,6 +159,7 @@ class MeshLoader
     var asset : GLTFAsset?
     var t_albedo : MTLTexture?
     var t_normal : MTLTexture?
+    var triangleOptionals : [TriangleOpt]?
     
     func loadModel(_ name: String, completion: @escaping (Bool) -> Void)
     {

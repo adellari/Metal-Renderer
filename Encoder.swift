@@ -18,6 +18,7 @@ final class PipelineEncoder{
     public var cameraBuffer: MTLBuffer?
     public var spheresBuffer: MTLBuffer?
     public var trisBuffer: MTLBuffer?
+    public var trisOptsBuffer: MTLBuffer?
     public var bvhBuffer: MTLBuffer?
     
     init(library: MTLLibrary, scene: SceneDataModel) throws{
@@ -59,22 +60,23 @@ final class PipelineEncoder{
         let right = cross(target, float3(0, 1, 0));
         var up = normalize(cross(right, target));
         let WorldToCamera = float4x4().WorldToCamera(eye: float3(0, 0, 0), phi: theta, theta: phi)
-            
+        let sp = self.sceneParams
+        
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
-        var viewAsFloat = Float(self.sceneParams.cameraView)
-        var sampleCount = self.sceneParams.sampleCount
+        var viewAsFloat = Float(sp.cameraView)
+        var sampleCount = sp.sampleCount
         var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
         var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(5.0 * sin(viewX * 0) * translation, 0.4, 5.0 * cos(viewX * 0) * translation), focalLength: Float(sceneParams.focalLength), aperture: Float(sceneParams.aperture), dummy: Float.random(in: 0..<1))
         
         if cameraBuffer == nil
         {
             cameraBuffer  = encoder.device.makeBuffer(bytes: &camStruct, length: MemoryLayout<CameraParams>.stride, options: [])
-            spheresBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Spheres, length: MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count, options: [])
-            trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.tris, length: MemoryLayout<Triangle>.stride * self.sceneParams.BVH!.tris.count, options: [])
+            spheresBuffer = encoder.device.makeBuffer(bytes: &sp.Spheres, length: MemoryLayout<Sphere>.stride * sp.Spheres.count, options: [])
+            trisBuffer = encoder.device.makeBuffer(bytes: &sp.BVH!.tris, length: MemoryLayout<Triangle>.stride * sp.BVH!.tris.count, options: [])
             //print(self.sceneParams.Triangles.count)
             //print( MemoryLayout<Int>.stride)
-            bvhBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count, options: [])
+            bvhBuffer = encoder.device.makeBuffer(bytes: &sp.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * sp.BVH!.BVHTree.count, options: [])
         }
         else 
         {
@@ -82,11 +84,13 @@ final class PipelineEncoder{
             let spheresPointer = spheresBuffer!.contents()
             let trisPointer = trisBuffer!.contents()
             let bvhPointer = bvhBuffer!.contents()
+            let trisOptsPointer = trisOptsBuffer!.contents()
             
             memcpy(cameraPointer, &camStruct, MemoryLayout<CameraParams>.stride)
-            memcpy(spheresPointer, &self.sceneParams.Spheres, MemoryLayout<Sphere>.stride * self.sceneParams.Spheres.count)
-            memcpy(trisPointer, &self.sceneParams.BVH!.tris, MemoryLayout<Triangle>.stride * self.sceneParams.BVH!.tris.count)
-            memcpy(bvhPointer, &self.sceneParams.BVH!.BVHTree, MemoryLayout<BVHNode>.stride * self.sceneParams.BVH!.BVHTree.count)
+            memcpy(spheresPointer, &sp.Spheres, MemoryLayout<Sphere>.stride * sp.Spheres.count)
+            memcpy(trisPointer, &sp.BVH!.tris, MemoryLayout<Triangle>.stride * sp.BVH!.tris.count)
+            memcpy(trisOptsPointer, &sp.Meshloader!.triangleOptionals!, MemoryLayout<TriangleOpt>.stride * sp.Meshloader!.triangleOptionals!.count)
+            memcpy(bvhPointer, &sp.BVH!.BVHTree, MemoryLayout<BVHNode>.stride * sp.BVH!.BVHTree.count)
         }
         
         /*
