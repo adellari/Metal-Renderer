@@ -73,7 +73,7 @@ class ViewController {
         auxBuffDesc.usage = MTLTextureUsage([.shaderWrite])
         
         //pack color into red and normal into green channels
-        let denoiseBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rg8Uint, width: 512, height: 1024, mipmapped: false)
+        let denoiseBuffDesc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .rg8Sint, width: 512, height: 1024, mipmapped: false)
         denoiseBuffDesc.usage = MTLTextureUsage([.shaderWrite])
         
         

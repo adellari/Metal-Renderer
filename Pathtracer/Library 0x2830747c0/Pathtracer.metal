@@ -107,42 +107,6 @@ inline uint Float3toUInt8(float3 col)
     return (r8 << 16) | (g8 << 8) | b8;
 }
 
-inline int ColtoSInt8(float3 norm)
-{
-    
-    int r8 = int(norm.r * 255.f + 0.5f) - 128;
-    int g8 = int(norm.g * 255.f + 0.5f) - 128;
-    int b8 = int(norm.b * 255.f + 0.5f) - 128;
-    
-    return (r8 << 16) | (g8 << 8) | b8;
-}
-
-inline float3 SInt8toCol(int col)
-{
-    float s = 1.f / 128.f;
-    int r = (col >> 16) & 127;
-    int g = (col >> 8) & 127;
-    int b = col & 127;
-    
-    r *= s;
-    g *= s;
-    g *= s;
-    
-    return float3(r, g, b);
-}
-inline int NormtoSInt8(float3 norm)
-{
-    int signR = norm.r / abs(norm.r);
-    int signG = norm.g / abs(norm.g);
-    int signB = norm.b / abs(norm.b);
-    
-    int r8 = int(norm.r * 127.f + 0.5f * signR);
-    int g8 = int(norm.g * 127.f + 0.5f * signG);
-    int b8 = int(norm.b * 127.f + 0.5f * signB);
-    
-    return (r8 << 16) | (g8 << 8) | b8;
-}
-
 inline float3 RGB8toRGB32F( uint c )
 {
     float s = 1 / 256.0f;
@@ -814,7 +778,7 @@ kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], 
     
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], texture2d<int, access::write> albedoNorm [[texture(2)]], texture2d<float, access::write> normal [[texture(3)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], texture2d<uint, access::write> albedoNorm [[texture(2)]], texture2d<float, access::write> normal [[texture(3)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)
@@ -877,19 +841,16 @@ kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], textu
     float _s = ray.seed;
     float2 _jitter = ray.jitter;
     
-    if (sampleCount == 5)
-    {
+    //if (sampleCount == 5)
+    //{
         uint _albedo = Float3toUInt8(rayAlbedo);
         uint _normal = Float3toUInt8(rayNormal);
-        int _normalS = NormtoSInt8(rayNormal);
-        int _albedoS = ColtoSInt8(rayAlbedo);
         
-        albedoNorm.write(int4(_albedo, _normal, 0, 0), position);
+        albedoNorm.write(uint4(_albedo, _normal, 0, 0), position);
         rayNormal = RGB8toRGB32F(_normal);
         rayAlbedo = RGB8toRGB32F(_albedo);
-        float3 rayAlbedoS = SInt8toCol(_albedoS);
-        normal.write(float4(rayNormal, 1.f), position);
-    }
+        normal.write(float4(rayAlbedo, 1.f), position);
+    //}
     
     /*
     //the secondary rays (8 of them)
