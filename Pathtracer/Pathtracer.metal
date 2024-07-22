@@ -768,6 +768,8 @@ float3 Shade(thread Ray* ray, RayHit hit)
     return col;
 }
 
+//This needs updating, currently the encoder may attempt to bind unnecessary resources
+//the primary Tracer kernel's arguments have changed
 kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
@@ -814,7 +816,7 @@ kernel void DebugTracer(texture2d<float, access::sample> source [[texture(0)]], 
     
 }
 
-kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], texture2d<int, access::write> albedoNorm [[texture(2)]], texture2d<float, access::write> normal [[texture(3)]], constant Triangle *triangles [[buffer(0)]], constant CameraParams *cam [[buffer(1)]], constant Sphere *spheres [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant BVHNode *BVHTree [[buffer(5)]], uint2 position [[thread_position_in_grid]]) {
+kernel void Tracer(texture2d<float, access::sample> source [[texture(0)]], texture2d<float, access::read_write> destination [[texture(1)]], texture2d<int, access::write> albedoNorm [[texture(2)]], texture2d<float, access::write> normal [[texture(3)]], constant CameraParams *cam [[buffer(0)]], constant Sphere *spheres [[buffer(1)]], constant BVHNode *BVHTree [[buffer(2)]], constant int& sampleCount [[buffer(3)]], constant float2& jitter [[buffer(4)]], constant VertexProperties *vertexOptions [[buffer(5)]], constant int& triangleIndices [[buffer(6)]], constant Triangle *triangles [[buffer(7)]], uint2 position [[thread_position_in_grid]]) {
     
     //this is a reset frame
     if (sampleCount < 0)

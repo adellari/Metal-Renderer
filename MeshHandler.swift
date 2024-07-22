@@ -29,12 +29,14 @@ class BVHBuilder
     var rootNodeIdx : Int
     var nodesUsed : Int
     var maxPackedTris : Int
+    var trisIndices : [Int]
     
     init(_tris: inout [Triangle])
     {
         N = _tris.count;
         tris = _tris;
         BVHTree = Array(repeating: BVHNode(), count: (2 * N) - 1)
+        trisIndices = Array(0...tris.count)
         rootNodeIdx = 0
         nodesUsed = 1
         maxPackedTris = 0
@@ -114,6 +116,7 @@ class BVHBuilder
                 else
                 {
                         tris.swapAt(i, j)
+                        trisIndices.swapAt(i, j)
                         j -= 1;
                     
                 }

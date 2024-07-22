@@ -106,8 +106,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "164"
-            endingLineNumber = "164"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "loadModel(_:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -185,8 +185,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
+            startingLineNumber = "56"
+            endingLineNumber = "56"
             landmarkName = "BuildBVH(tris:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -201,8 +201,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "Subdivide(nodeid:)"
             landmarkType = "7">
             <Locations>
@@ -264,8 +264,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
             landmarkName = "Subdivide(nodeid:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -280,8 +280,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
+            startingLineNumber = "148"
+            endingLineNumber = "148"
             landmarkName = "Subdivide(nodeid:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -296,8 +296,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "UpdateNodeBounds(_nodeid:)"
             landmarkType = "7">
             <Locations>
@@ -360,8 +360,8 @@
             filePath = "Encoder.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
             landmarkName = "encode(source:destination:albedo:normal:in:)"
             landmarkType = "7">
             <Locations>
@@ -423,8 +423,8 @@
             filePath = "Encoder.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "79"
-            endingLineNumber = "79"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
             landmarkName = "encode(source:destination:albedo:normal:in:)"
             landmarkType = "7">
          </BreakpointContent>
