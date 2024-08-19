@@ -413,8 +413,11 @@ bool IntersectTriangle(Ray ray, float3 v0, float3 v1, float3 v2, thread float* t
     
     float det = dot(edge1, pvec);
     
-    if(det < EPSILON && det > -EPSILON)
+    if (abs(det) < EPSILON)
         return false;
+    
+    //if(det < EPSILON && det > -EPSILON)
+      //  return false;
     
     float inv_det = 1.f / det;
     
