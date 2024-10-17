@@ -23,6 +23,8 @@ Metal implementation of my first pathtracer https://github.com/adellari/Pathtrac
 
 - RGB Channel Sampling -> Spectral Sampling
 
+- Switch to MTKView
+
 ## Progress Captures
 
 ### Object Editing (Added 04/29/24)
