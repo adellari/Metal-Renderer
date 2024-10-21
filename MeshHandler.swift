@@ -7,7 +7,6 @@
 
 import Foundation
 import simd
-import GLKit
 import GLTFKit2
 
 struct BVHNode

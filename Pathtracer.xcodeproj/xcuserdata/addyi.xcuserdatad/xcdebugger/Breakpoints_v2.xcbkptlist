@@ -63,8 +63,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "81"
-                  endingLineNumber = "81"
-                  offsetFromSymbolStart = "508">
+                  endingLineNumber = "81">
                </Location>
                <Location
                   uuid = "0F9FFD35-99C6-4351-B7B5-EDE6046F1A96 - 777d436e82823d17"
@@ -78,8 +77,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "78"
-                  endingLineNumber = "78"
-                  offsetFromSymbolStart = "564">
+                  endingLineNumber = "78">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -106,8 +104,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "loadModel(_:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -139,8 +137,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "192"
-                  endingLineNumber = "192"
-                  offsetFromSymbolStart = "748">
+                  endingLineNumber = "192">
                </Location>
                <Location
                   uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB - 1f68156332c224f0"
@@ -154,8 +151,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "197"
-                  endingLineNumber = "197"
-                  offsetFromSymbolStart = "764">
+                  endingLineNumber = "197">
                </Location>
                <Location
                   uuid = "E63E8A67-5542-434B-A5BC-1871E43AB9EB - 1f68156332c2237c"
@@ -169,8 +165,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "193"
-                  endingLineNumber = "193"
-                  offsetFromSymbolStart = "748">
+                  endingLineNumber = "193">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -185,8 +180,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "BuildBVH(tris:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -201,8 +196,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "Subdivide(nodeid:)"
             landmarkType = "7">
             <Locations>
@@ -218,8 +213,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "112"
-                  endingLineNumber = "112"
-                  offsetFromSymbolStart = "4308">
+                  endingLineNumber = "112">
                </Location>
                <Location
                   uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56 - 2eb08502fc7fae04"
@@ -233,8 +227,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "113"
-                  endingLineNumber = "113"
-                  offsetFromSymbolStart = "4308">
+                  endingLineNumber = "113">
                </Location>
                <Location
                   uuid = "2493F6F4-0610-4E8D-AF83-FD47AF37FE56 - 2eb08502fc7faee5"
@@ -248,8 +241,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "114"
-                  endingLineNumber = "114"
-                  offsetFromSymbolStart = "4308">
+                  endingLineNumber = "114">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -258,6 +250,22 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "B6907EB0-399D-462B-84A8-6666BAF8AFD0"
+            shouldBeEnabled = "No"
+            ignoreCount = "1"
+            continueAfterRunningActions = "No"
+            filePath = "MeshHandler.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "146"
+            endingLineNumber = "146"
+            landmarkName = "Subdivide(nodeid:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CFC6D97E-8B07-459D-B00F-9F07D1BE59B7"
             shouldBeEnabled = "No"
             ignoreCount = "1"
             continueAfterRunningActions = "No"
@@ -273,22 +281,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CFC6D97E-8B07-459D-B00F-9F07D1BE59B7"
-            shouldBeEnabled = "No"
-            ignoreCount = "1"
-            continueAfterRunningActions = "No"
-            filePath = "MeshHandler.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "Subdivide(nodeid:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "F8F7FE83-99CF-461F-9EBE-2F2B90D831A0"
             shouldBeEnabled = "No"
             ignoreCount = "2"
@@ -296,8 +288,8 @@
             filePath = "MeshHandler.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "91"
+            endingLineNumber = "91"
             landmarkName = "UpdateNodeBounds(_nodeid:)"
             landmarkType = "7">
             <Locations>
@@ -313,8 +305,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "78"
-                  endingLineNumber = "78"
-                  offsetFromSymbolStart = "4232">
+                  endingLineNumber = "78">
                </Location>
                <Location
                   uuid = "F8F7FE83-99CF-461F-9EBE-2F2B90D831A0 - 4a61f682af7c26e1"
@@ -328,8 +319,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "78"
-                  endingLineNumber = "78"
-                  offsetFromSymbolStart = "4252">
+                  endingLineNumber = "78">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -377,8 +367,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "89"
-                  endingLineNumber = "89"
-                  offsetFromSymbolStart = "18020">
+                  endingLineNumber = "89">
                </Location>
                <Location
                   uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649 - e46a33d91f638bba"
@@ -392,8 +381,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "89"
-                  endingLineNumber = "89"
-                  offsetFromSymbolStart = "17292">
+                  endingLineNumber = "89">
                </Location>
                <Location
                   uuid = "A2836D8B-D306-4E0C-9F60-D817D8082649 - e46a33d91f638bba"
@@ -407,8 +395,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "89"
-                  endingLineNumber = "89"
-                  offsetFromSymbolStart = "17260">
+                  endingLineNumber = "89">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -456,8 +443,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "119"
-                  endingLineNumber = "119"
-                  offsetFromSymbolStart = "396">
+                  endingLineNumber = "119">
                </Location>
                <Location
                   uuid = "E3B4DB1A-2E3D-4F2C-9E69-CAFDD8DDD23D - a2e950fea0c314a"
@@ -471,8 +457,7 @@
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "119"
-                  endingLineNumber = "119"
-                  offsetFromSymbolStart = "424">
+                  endingLineNumber = "119">
                </Location>
             </Locations>
          </BreakpointContent>

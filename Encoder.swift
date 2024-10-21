@@ -13,7 +13,8 @@ import simd
 final class PipelineEncoder{
     var tint: Float = .zero
     private var deviceSupportsNonuniformThreadgroups: Bool
-    private let pipelineState: MTLComputePipelineState
+    private let Tracer: MTLComputePipelineState
+    private let DebugTracer: MTLComputePipelineState
     public var sceneParams: SceneDataModel// = SceneDataModel()
     public var cameraBuffer: MTLBuffer?
     public var spheresBuffer: MTLBuffer?
@@ -26,10 +27,11 @@ final class PipelineEncoder{
         self.deviceSupportsNonuniformThreadgroups = library.device.supportsFeatureSet(.iOS_GPUFamily4_v1)
         let constantValues = MTLFunctionConstantValues()
         constantValues.setConstantValue(&self.deviceSupportsNonuniformThreadgroups, type: .bool, index: 0)
-        let function = try library.makeFunction(name: "Tracer", constantValues: constantValues)
-        self.pipelineState = try library.device.makeComputePipelineState(function: function)
+        let Tracefunction = try library.makeFunction(name: "Tracer", constantValues: constantValues)
+        let DebugFunction = try library.makeFunction(name: "DebugTracer", constantValues: constantValues)
+        self.Tracer = try library.device.makeComputePipelineState(function: Tracefunction)
+        self.DebugTracer = try library.device.makeComputePipelineState(function: DebugFunction)
         self.sceneParams = scene
-        //pipelineState.text
     }
     
     func setReusables(encoder: MTLCommandEncoder)
@@ -55,20 +57,20 @@ final class PipelineEncoder{
         let _y = sin(theta) * sin(phi);
         let _z = cos(theta);
         
-        let eye = float3(0, 0, 0)
-        let target = normalize(float3(_x, _y, _z));
+        let eye = SIMD3<Float>(0, 0, 0)
+        let target = normalize(SIMD3<Float>(_x, _y, _z));
         
-        let right = cross(target, float3(0, 1, 0));
+        let right = cross(target, SIMD3<Float>(0, 1, 0));
         var up = normalize(cross(right, target));
-        let WorldToCamera = float4x4().WorldToCamera(eye: float3(0, 0, 0), phi: theta, theta: phi)
+        let WorldToCamera = float4x4().WorldToCamera(eye: SIMD3<Float>(0, 0, 0), phi: theta, theta: phi)
         let sp = self.sceneParams
         
         //to take our screen (clip) coordinates and move them to world space
         let ProjectionInvMatrix = (float4x4().CreateProjection(fov: 60, aspect: 2.0, near: 0.01, far: 100.0))
         var viewAsFloat = Float(sp.cameraView)
         var sampleCount = sp.sampleCount
-        var sampleJitter = float2(Float.random(in: 0..<1), Float.random(in: 0..<1))
-        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: float3(5.0 * sin(viewX * 0) * translation, 0.4, 5.0 * cos(viewX * 0) * translation), focalLength: Float(sceneParams.focalLength), aperture: Float(sceneParams.aperture), dummy: Float.random(in: 0..<1))
+        var sampleJitter = SIMD2<Float>(Float.random(in: 0..<1), Float.random(in: 0..<1))
+        var camStruct = CameraParams(WorldToCamera: WorldToCamera, ProjectionInv: ProjectionInvMatrix, cameraPosition: SIMD3<Float>(5.0 * sin(viewX * 0) * translation, 0.4, 5.0 * cos(viewX * 0) * translation), focalLength: Float(sceneParams.focalLength), aperture: Float(sceneParams.aperture), dummy: Float.random(in: 0..<1))
         
         if cameraBuffer == nil
         {
@@ -77,8 +79,6 @@ final class PipelineEncoder{
             trisBuffer = encoder.device.makeBuffer(bytes: &sp.BVH!.tris, length: MemoryLayout<Triangle>.stride * sp.BVH!.tris.count, options: [])
             trisIndicesBuffer = encoder.device.makeBuffer(bytes: &sp.BVH!.trisIndices, length: MemoryLayout<Int>.stride * sp.BVH!.trisIndices.count, options: [])
             trisOptsBuffer = encoder.device.makeBuffer(bytes: &sp.Meshloader!.triangleOptionals!, length: MemoryLayout<TriangleOpt>.stride * sp.Meshloader!.triangleOptionals!.count, options: [])
-            //print(self.sceneParams.Triangles.count)
-            //print( MemoryLayout<Int>.stride)
             bvhBuffer = encoder.device.makeBuffer(bytes: &sp.BVH!.BVHTree, length: MemoryLayout<BVHNode>.stride * sp.BVH!.BVHTree.count, options: [])
         }
         else 
@@ -97,12 +97,7 @@ final class PipelineEncoder{
             memcpy(trisIndicesPointer, &sp.BVH!.trisIndices, MemoryLayout<Int>.stride * sp.BVH!.trisIndices.count)
             memcpy(bvhPointer, &sp.BVH!.BVHTree, MemoryLayout<BVHNode>.stride * sp.BVH!.BVHTree.count)
         }
-        
-        /*
-        if trisBuffer!.length != MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count {
-            trisBuffer = encoder.device.makeBuffer(bytes: &self.sceneParams.Triangles, length: MemoryLayout<Triangle>.stride * self.sceneParams.Triangles.count, options: [])
-        }
-        */
+    
         
         encoder.label = "Pathtracer"
         encoder.setTexture(source, index: 0)
@@ -119,16 +114,13 @@ final class PipelineEncoder{
         encoder.setBuffer(trisBuffer, offset: 0, index: 7)
         
         encoder.setBytes(&sampleCount, length: MemoryLayout<Int>.stride, index: 3)
-        encoder.setBytes(&sampleJitter, length: MemoryLayout<float2>.stride, index: 4)
-        //encoder.setBytes(&WorldToCamera, length: MemoryLayout<float4x4>.size, index: 1)
-        //encoder.setBytes(&ProjectionInvMatrix, length: MemoryLayout<float4x4>.size, index: 2)
-        
+        encoder.setBytes(&sampleJitter, length: MemoryLayout<SIMD2<Float>>.stride, index: 4)
+
        
         let threadGroupSize = MTLSize(width: 32, height: 32, depth: 1)
         let threadCountPerGroup = MTLSize(width: destination.width / 32, height: destination.height / 32, depth: 1)
         
-        encoder.setComputePipelineState(self.pipelineState)
-        //encoder.dispatchThreadgroups(threadGroupCount, threadsPerThreadgroup: threadGroupSize)
+        encoder.setComputePipelineState(self.Tracer)
         encoder.dispatchThreadgroups(threadGroupSize, threadsPerThreadgroup: threadCountPerGroup)
         
         

@@ -19,9 +19,9 @@ class ViewController {
     private let encoder: PipelineEncoder
     public let imageView: UIImageView
     public var denoisedView : UIImageView?
-    private let commandQueue: MTLCommandQueue
+    public let commandQueue: MTLCommandQueue
     private let textureManager: TextureManager
-    private var texturePair: (source: MTLTexture, destination: MTLTexture)?
+    public var texturePair: (source: MTLTexture, destination: MTLTexture)?
     private var denoiserAuxilaries: (albedo: MTLTexture, normal: MTLTexture)?
     var cancellables: Set<AnyCancellable> = []
     

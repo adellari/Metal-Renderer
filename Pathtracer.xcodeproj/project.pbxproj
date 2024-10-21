@@ -31,6 +31,7 @@
 		E04C64D02BED639D00C413B2 /* libOpenImageDenoise.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */; };
 		E068B2062BB4E41E006F2DB0 /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B2052BB4E41E006F2DB0 /* TextureManager.swift */; };
 		E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068B20C2BBD2533006F2DB0 /* Extensions.swift */; };
+		E090FA912CC2FC40002E5A53 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E090FA902CC2FC2F002E5A53 /* Presenter.swift */; };
 		E096DAD92BDD6EB300DE0432 /* MaterialMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */; };
 		E098C2D12BB3173400C3D3BA /* PathtracerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2D02BB3173400C3D3BA /* PathtracerApp.swift */; };
 		E098C2D32BB3173400C3D3BA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098C2D22BB3173400C3D3BA /* ContentView.swift */; };
@@ -81,6 +82,7 @@
 		E04C64CD2BED639100C413B2 /* libOpenImageDenoise.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libOpenImageDenoise.dylib; path = ../../../Denoiser/oidn/build/libOpenImageDenoise.dylib; sourceTree = "<group>"; };
 		E068B2052BB4E41E006F2DB0 /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		E068B20C2BBD2533006F2DB0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E090FA902CC2FC2F002E5A53 /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 		E096DAD82BDD6EB300DE0432 /* MaterialMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MaterialMenu.swift; path = Pathtracer/MaterialMenu.swift; sourceTree = "<group>"; };
 		E098C2CD2BB3173400C3D3BA /* Pathtracer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pathtracer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E098C2D02BB3173400C3D3BA /* PathtracerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathtracerApp.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 				E098C2E32BB32A6600C3D3BA /* Encoder.swift */,
 				E068B20C2BBD2533006F2DB0 /* Extensions.swift */,
 				E098C2E12BB3252100C3D3BA /* ViewController.swift */,
+				E090FA902CC2FC2F002E5A53 /* Presenter.swift */,
 				E098C2CF2BB3173400C3D3BA /* Pathtracer */,
 				E098C2CE2BB3173400C3D3BA /* Products */,
 				E04C643D2BE9D4DD00C413B2 /* Frameworks */,
@@ -275,6 +278,7 @@
 				E098C2E22BB3252100C3D3BA /* ViewController.swift in Sources */,
 				E098C2E02BB31A2B00C3D3BA /* Pathtracer.metal in Sources */,
 				E0FCE4BB2BFADDB60029DB92 /* SkyboxPicker.swift in Sources */,
+				E090FA912CC2FC40002E5A53 /* Presenter.swift in Sources */,
 				E068B20D2BBD2533006F2DB0 /* Extensions.swift in Sources */,
 				E04C64A12BEC6B9700C413B2 /* OIDNHandler.m in Sources */,
 			);
