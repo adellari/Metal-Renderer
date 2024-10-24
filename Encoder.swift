@@ -49,9 +49,9 @@ final class PipelineEncoder{
         let translation = self.sceneParams.cameraOffset.2;
         
         //sin(5) * radius, 0, cos(5) * radius
-        let theta = -(Float.pi - viewX);
+        let phi = -(Float.pi - viewX);
         //let phi = (Float(self.sceneParams.focalLength) / 50) * Float.pi;
-        let phi = (Float.pi - viewY) * 2;
+        let theta = (Float.pi - viewY) * 2;
         
         let _x = sin(theta) * cos(phi);
         let _y = sin(theta) * sin(phi);

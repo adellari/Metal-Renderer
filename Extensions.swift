@@ -112,6 +112,7 @@ extension float4x4{
         return WorldToCamera
     }
     
+    ///great resource but doesn't cover spherical https://www.3dgep.com/understanding-the-view-matrix/
     func WorldToCamera(eye: float3, phi: Float, theta: Float) -> float4x4 {
         
         let cosTheta = cos(theta);
